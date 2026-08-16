@@ -293,15 +293,13 @@ const PAGOS = [
 ];
 const FORMAS_CONTADO = ["TARJETA DEBITO","TRANSFERENCIA","DEPOSITO"];
 
+/* El cliente llega a esta cotización con el crédito ya aprobado.
+   Maxikash no pide nada más; Vento Credit sí pide documentos.        */
 const REQUISITOS = {
-  "MAXIKASH": {
-    inicial: ["INE vigente","Número telefónico","Correo electrónico"],
-    aprobado: []
-  },
-  "VENTO CREDIT": {
-    inicial: ["INE vigente","Número telefónico","Correo electrónico"],
-    aprobado: ["Comprobante de domicilio", ()=>estadosCuenta().tres, ()=>estadosCuenta().seis]
-  }
+  "VENTO CREDIT": [
+    "Comprobante de domicilio",
+    ()=>"Estados de cuenta de " + estadosCuenta()
+  ]
 };
 
 const OBSEQUIOS = [
@@ -324,16 +322,14 @@ function mesAtras(n){
   d.setMonth(d.getMonth()-n);
   return {m:MESES[d.getMonth()], a:d.getFullYear()};
 }
+/** Los cuatro meses que debe presentar, en una sola línea y en orden.
+ *  Ejemplo en agosto 2026 -> "febrero, mayo, junio y julio de 2026".   */
 function estadosCuenta(){
-  const t=[mesAtras(3),mesAtras(2),mesAtras(1)], s=mesAtras(6);
-  const aniosT=[...new Set(t.map(x=>x.a))];
-  const nom = aniosT.length===1
-    ? `${t[0].m}, ${t[1].m} y ${t[2].m} de ${t[0].a}`
-    : t.map(x=>`${x.m} de ${x.a}`).join(", ").replace(/, ([^,]*)$/, " y $1");
-  return {
-    tres: `Estados de cuenta bancarios de ${nom}`,
-    seis: `Estado de cuenta bancario de ${s.m} de ${s.a}`
-  };
+  const m = [mesAtras(6), mesAtras(3), mesAtras(2), mesAtras(1)];
+  const anios = [...new Set(m.map(x=>x.a))];
+  if(anios.length === 1)
+    return `${m[0].m}, ${m[1].m}, ${m[2].m} y ${m[3].m} de ${m[0].a}`;
+  return m.map(x=>`${x.m} de ${x.a}`).join(", ").replace(/, ([^,]*)$/, " y $1");
 }
 const texto_ = r => typeof r === "function" ? r() : r;
 
@@ -360,18 +356,19 @@ const p2 = n => String(n).padStart(2,"0");
    1432     hora y minuto en que se inició la cotización
    Se arma en el navegador, al instante y sin depender del internet.     */
 const FECHA_FOLIO = String(HOY.getFullYear()).slice(2)+p2(HOY.getMonth()+1)+p2(HOY.getDate());
-let HORA_FOLIO = "", FOLIO = "";
+let FOLIO = "";
 
-function nuevaHora(){ const d=new Date(); HORA_FOLIO = p2(d.getHours())+p2(d.getMinutes()); }
+/* La hora se toma en el momento, no al abrir la página. Así dos cotizaciones
+   distintas al mismo cliente nunca comparten folio.                        */
 function generarFolio(){
   const ini = t => { const c=(t||"").trim().replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ]/g,""); return c?c[0].toUpperCase():"X"; };
   const tel = soloDig($("fTel").value).slice(-2).padStart(2,"0");
-  return `VCH-${FECHA_FOLIO}-${ini($("fNombre").value)}${ini($("fApellidos").value)}${tel}-${HORA_FOLIO}`;
+  const d = new Date();
+  return `VCH-${FECHA_FOLIO}-${ini($("fNombre").value)}${ini($("fApellidos").value)}${tel}-${p2(d.getHours())}${p2(d.getMinutes())}`;
 }
 
 /* ═══════════ arranque ═══════════ */
 function init(){
-  nuevaHora();
   $("fechaHoy").textContent = fecha(HOY);
   $("estadoHoja").innerHTML = CONFIG.URL_GUARDADO
     ? '<span style="color:#6ee7b7">● Registro conectado</span>'
@@ -609,10 +606,8 @@ function render(){
   /* requisitos */
   const req = REQUISITOS[d.pago.n];
   $("pReq").innerHTML = (d.m && req)
-    ? `<div class="req"><div class="req-t">Requisitos para tu financiamiento ${d.pago.n}</div><div class="req-c">
-       <b>Para iniciar tu solicitud:</b> ${req.inicial.map(texto_).join(" · ")}
-       ${req.aprobado.length?`<br><b>Una vez aprobado:</b> ${req.aprobado.map(texto_).join(" · ")}`:""}
-       </div></div>` : "";
+    ? `<div class="req"><div class="req-t">Para continuar con tu crédito, proporciona a tu asesor</div>
+       <div class="req-c">${req.map(texto_).map(x=>"• "+x).join("<br>")}</div></div>` : "";
 
   ver($("pObsBloque"), !!d.nota); $("pObs").textContent=d.nota;
 
@@ -677,73 +672,52 @@ async function descargarPDF(v){
 }
 
 /* ═══════════ mensaje de WhatsApp ═══════════ */
+const MESES_LARGO = ["enero","febrero","marzo","abril","mayo","junio",
+                     "julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const fechaLetra = d => `${d.getDate()} de ${MESES_LARGO[d.getMonth()]}`;
+
 function mensaje(d){
-  const L=[];
-  L.push("*AGENCIA VENTO CHALCO*");
-  L.push("Cotización "+FOLIO);
+  const L = [];
+  L.push("🏍️ *AGENCIA VENTO CHALCO*");
   L.push("");
-  L.push(`Hola ${d.cliente}, gracias por tu interés. Aquí está tu cotización:`);
+  L.push(`¡Hola ${d.nombre}! Ya tengo lista tu cotización 👇`);
   L.push("");
   L.push(`*${d.m.m}*`);
-  L.push(`Código: ${d.m.c}`);
-  if(d.cant>1) L.push(`Cantidad: ${d.cant}`);
   L.push(`Precio de lista: ~${money(d.lista)}~`);
-  L.push(d.pago.tipo==="financiamiento"
-    ? `*Precio de promoción para tu financiamiento: ${money(d.total)}*`
-    : `*TOTAL A PAGAR: ${money(d.total)}*`);
+  L.push(`✨ *Tu precio hoy: ${money(d.total)}*`);
 
-  if(d.pago.tipo==="msi"){
+  if(d.pago.tipo === "msi"){
+    if(d.contado > 0) L.push(`Pago contado: ${money(d.contado)}`);
+    L.push(`💳 Llévatela con *${d.plazo} pagos de ${money(d.mensual)}* sin intereses`);
+  } else if(d.pago.tipo === "financiamiento"){
     L.push("");
-    L.push(`*Pago a ${d.plazo} meses sin intereses*`);
-    if(d.contado>0){
-      L.push(`Pago contado (${d.formaContado}): ${money(d.contado)}`);
-      L.push(`Monto diferido: ${money(d.diferido)}`);
-    }
-    L.push(`Mensualidad: *${money(d.mensual)}* × ${d.plazo} meses`);
-  } else if(d.pago.tipo==="financiamiento"){
-    L.push("");
-    L.push(`*Financiamiento ${d.pago.n}*`);
-    L.push(`Enganche: *${money(d.eng)}*`);
-    L.push(`Pago semanal: *${money(d.sem)}*`);
-    L.push(`Plazo: *${d.nsem} semanas*`);
-    L.push(`Sujeto a autorización.`);
-  } else {
-    L.push(`Forma de pago: ${d.pago.n}`);
+    L.push(`🏦 *Plan ${d.pago.n}*`);
+    L.push(`Enganche de *${money(d.eng)}*`);
+    L.push(`Y *${money(d.sem)}* semanales durante ${d.nsem} semanas`);
   }
 
   if(d.obs.length){
     L.push("");
-    L.push("*Incluye sin costo:*");
-    d.obs.forEach(o=>L.push("• "+o.n));
-  }
-  const benef = d.descProm+d.desc+d.valorObs;
-  if(benef>0){
-    L.push("");
-    L.push(`Descuento por promoción sobre precio de lista más el valor de tus obsequios: *${money(benef)}* — ya ${d.pago.tipo==="financiamiento"?"aplicado a tu precio de promoción":"incluido en el total"}.`);
+    L.push("🎁 Además se va con todos los obsequios de temporada.");
   }
 
-  const req=REQUISITOS[d.pago.n];
+  const req = REQUISITOS[d.pago.n];
   if(req){
     L.push("");
-    L.push(`*Requisitos para tu financiamiento ${d.pago.n}:*`);
-    L.push("Para iniciar tu solicitud necesitas:");
-    req.inicial.forEach(r=>L.push("• "+texto_(r)));
-    if(req.aprobado.length){
-      L.push("Una vez aprobado:");
-      req.aprobado.forEach(r=>L.push("• "+texto_(r)));
-    }
-    L.push("Si quieres, ve juntando estos documentos y agilizamos tu trámite.");
+    L.push("📋 *Para continuar con tu crédito, proporciona a tu asesor:*");
+    req.map(texto_).forEach(r => L.push("• " + r));
   }
 
   L.push("");
-  L.push(`Entrega: ${d.tiempo} · ${d.entrega}`);
-  if(d.nota) L.push(`Nota: ${d.nota}`);
-  L.push(`Vigencia: ${fecha(VIG)} (3 días). Sujeto a existencias.`);
+  L.push("📄 En la imagen te dejo el detalle completo.");
+  L.push(`⏳ Este precio es válido hasta el *${fechaLetra(VIG)}*.`);
+  if(d.nota) L.push(`📝 ${d.nota}`);
   L.push("");
-  L.push(`Tu asesor: *${d.vend.n}* · ${telFmt(d.vend.t)}`);
-  L.push("Enseñanza Técnica 5, Chalco Centro");
+  L.push("*Estás a un paso de estrenar tu Vento* 🔥");
+  L.push("Responde este mensaje y seguimos con tu compra.");
   L.push("");
-  L.push("Te comparto la cotización completa en la imagen. ¿Te gustaría apartarla?");
+  L.push(`${d.vend.n} · tu asesor`);
+  L.push(`📲 ${telFmt(d.vend.t)}`);
   return L.join("\n");
 }
 
@@ -783,31 +757,62 @@ async function guardar(d){
 }
 
 /* ═══════════ enviar ═══════════ */
+let ULTIMO_ENVIO = "";
+const firma = d => {
+  const base = [d.tel, d.m.c, d.total, d.pago.n];
+  if(d.pago.tipo === "msi") base.push(d.plazo, d.contado);
+  if(d.pago.tipo === "financiamiento") base.push(d.eng, d.sem, d.nsem);
+  return base.join("|");
+};
+
+/** ¿El navegador puede compartir archivos? Se prueba en seco, sin generar nada. */
+function puedeCompartirArchivo(){
+  try{
+    return !!(navigator.canShare &&
+      navigator.canShare({files:[new File([""], "x.png", {type:"image/png"})]}));
+  }catch(e){ return false; }
+}
+
 async function enviarWhatsApp(){
   const d=valida(); if(!d) return;
+
+  if(ULTIMO_ENVIO && ULTIMO_ENVIO === firma(d) &&
+     !confirm("Esta cotización ya se envió.\n\n¿Quieres enviarla otra vez? Se registrará como una cotización nueva."))
+    return;
+
   const b=$("btnWa"); b.disabled=true;
   try{
+    FOLIO = generarFolio();   // la hora queda fijada en este momento
+    render();
+    const texto = mensaje(d);
+
+    /* WhatsApp se abre AQUÍ, dentro del clic del vendedor. Si se abriera
+       después de generar la imagen, el navegador bloquearía la ventana.  */
+    const compartir = puedeCompartirArchivo();
+    if(!compartir) window.open(`https://wa.me/52${d.tel}?text=${encodeURIComponent(texto)}`,"_blank");
+
     aviso("Preparando la cotización "+FOLIO+"…","info");
     const guardando = guardar(d);          // corre en paralelo, no detiene nada
     const cv=await lienzo();
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
     const archivo=new File([blob],nombreArchivo(d)+".png",{type:"image/png"});
-    const texto=mensaje(d);
 
     let extra="";
-    if(navigator.canShare && navigator.canShare({files:[archivo]})){
+    if(compartir){
       await navigator.share({files:[archivo],text:texto});
     } else {
       const a=document.createElement("a");
       a.href=URL.createObjectURL(blob); a.download=archivo.name; a.click();
       setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-      window.open(`https://wa.me/52${d.tel}?text=${encodeURIComponent(texto)}`,"_blank");
-      extra="<br>Se abrió WhatsApp y se descargó la imagen. <b>Adjúntala</b> con el clip 📎 antes de enviar.";
+      extra="<br>Ya se abrió WhatsApp y se descargó la imagen. <b>Adjúntala</b> con el clip 📎 antes de enviar.";
     }
+    ULTIMO_ENVIO = firma(d);
     const res=await guardando;
     if(res===null)
       aviso("Cotización <b>"+FOLIO+"</b> lista, pero <b>no se pudo registrar en tu hoja</b>. "+
             "Cuando vuelva la conexión, vuelve a generarla para que quede en el seguimiento."+extra,"err");
+    else if(res.duplicado)
+      aviso("Cotización <b>"+FOLIO+"</b> lista. Ya estaba registrada en tu hoja, no se duplicó."+extra,"ok");
     else
       aviso("Cotización <b>"+FOLIO+"</b> lista"+(res.omitido?"":" y registrada en tu hoja")+"."+extra,"ok");
   }catch(e){
@@ -824,7 +829,7 @@ function limpiar(){
   document.querySelectorAll("#fObsequios input").forEach(i=>i.checked=false);
   document.querySelectorAll(".malo").forEach(e=>e.classList.remove("malo"));
   $("fVendedor").value=v;
-  nuevaHora();
+  ULTIMO_ENVIO = "";
   $("aviso").classList.remove("ver");
   render(); $("fNombre").focus();
 }
