@@ -259,7 +259,7 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
    ══════════════════════════════════════════════════════════════════ */
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
-  URL_PRECIOS_CSV: "",
+  URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
   FECHA_LISTA_INCLUIDA: "tomada de tu Sheet el 14/08/2026"
 };
 /* ══════════════════════════════════════════════════════════════════ */
@@ -405,7 +405,7 @@ function pintarModelos(){
 
 /* ═══════════ lista de precios en vivo ═══════════ */
 const MIN_FRESCA = 10;
-let ULTIMA = null, ORIGEN = "incluida", CARGANDO = false;
+let ULTIMA = null, ORIGEN = "incluida", CARGANDO = false, ULTIMA_QUEJA = "";
 const COLS = {
   m:["modelo"],
   c:["codigo netsuite","código netsuite","codigo","código","sku"],
@@ -445,16 +445,47 @@ async function cargarPrecios(manual){
     let iE=-1, mapa=null;
     for(let i=0;i<Math.min(filas.length,8);i++){ const mm=mapear(filas[i]); if(mm){ iE=i; mapa=mm; break; } }
     if(!mapa) throw new Error("No encontré los encabezados Modelo, Codigo Netsuite, Precio Publico y Precio de Contado.");
-    const num = s => { const n=parseFloat(String(s||"").replace(/[^0-9.\-]/g,"")); return isFinite(n)?n:0; };
-    const nuevos = filas.slice(iE+1)
-      .filter(f=>(f[mapa.c]||"").trim() && num(f[mapa.con])>0)
+    /* Google publica el precio TAL COMO SE VE, y una misma columna puede traer
+       las dos convenciones: "$136,999.00" y "$136.999,00". Leerlo a la brava
+       convertiría el segundo en 136.99 pesos. Regla: el separador decimal es el
+       último punto o coma que aparezca, y solo si detrás quedan 1 o 2 dígitos;
+       cualquier otro punto o coma es separador de miles y se tira.          */
+    const num = s => {
+      let t = String(s==null?"":s).replace(/[^0-9.,\-]/g,"").trim();
+      if(!t) return 0;
+      const ult = Math.max(t.lastIndexOf(","), t.lastIndexOf("."));
+      if(ult >= 0){
+        const cola = t.length - ult - 1;
+        t = (cola===1||cola===2)
+          ? t.slice(0,ult).replace(/[.,]/g,"") + "." + t.slice(ult+1)
+          : t.replace(/[.,]/g,"");
+      }
+      const n = parseFloat(t);
+      return isFinite(n) ? n : 0;
+    };
+    const conCodigo = filas.slice(iE+1).filter(f=>(f[mapa.c]||"").trim());
+    /* Un renglón sin precio legible (celda angosta que muestra #####, texto,
+       celda vacía) se descarta: ese modelo desaparecería de la lista sin que
+       nadie se entere. Por eso se avisa por nombre.                        */
+    const fuera = conCodigo.filter(f=>!(num(f[mapa.con])>0))
+                           .map(f=>((f[mapa.m]||"").trim()||(f[mapa.c]||"").trim()));
+    const nuevos = conCodigo.filter(f=>num(f[mapa.con])>0)
       .map(f=>({m:(f[mapa.m]||"").trim(), c:(f[mapa.c]||"").trim().replace(/\s+(20\d\d)$/,"-$1"),
                 pub:num(f[mapa.pub])||num(f[mapa.con]), con:num(f[mapa.con])}));
     if(!nuevos.length) throw new Error("No encontré renglones con código y precio de contado");
-    const dups = nuevos.map(x=>x.c).filter((v,i,a)=>a.indexOf(v)!==i);
+    const dups = [...new Set(nuevos.map(x=>x.c).filter((v,i,a)=>a.indexOf(v)!==i))];
     MODELOS=nuevos; ULTIMA=new Date(); ORIGEN="en vivo"; pintarModelos(); render(); pintarEstado();
-    if(manual) aviso(`Precios actualizados: <b>${MODELOS.length} modelos</b> leídos el ${fechaHora(ULTIMA)}.`+
-      (dups.length?`<br>⚠ Códigos repetidos en tu hoja: <b>${[...new Set(dups)].join(", ")}</b>`:""),"ok");
+    const pegas = (dups.length?`<br>⚠ Códigos repetidos en tu hoja: <b>${dups.join(", ")}</b>`:"")+
+      (fuera.length?`<br>⚠ Sin precio legible, <b>no aparecen en la lista</b>: <b>${fuera.join(", ")}</b>`+
+                    `<br>Suele ser la columna muy angosta (se ve <b>#####</b>). Ensánchala en tu hoja.`:"");
+    /* Los problemas se avisan aunque la carga haya sido automática, pero una
+       sola vez por problema: si no, brincaría cada 10 minutos.             */
+    if(manual)
+      aviso(`Precios actualizados: <b>${MODELOS.length} modelos</b> leídos el ${fechaHora(ULTIMA)}.`+pegas,
+            pegas?"err":"ok");
+    else if(pegas && pegas!==ULTIMA_QUEJA)
+      aviso(`Se leyeron <b>${MODELOS.length} modelos</b> de tu hoja, con avisos:`+pegas,"err");
+    ULTIMA_QUEJA = pegas;
     return true;
   }catch(err){
     ORIGEN = ULTIMA?"en vivo":"incluida"; pintarEstado();
@@ -792,49 +823,4 @@ async function enviarWhatsApp(){
     if(!compartir) window.open(`https://wa.me/52${d.tel}?text=${encodeURIComponent(texto)}`,"_blank");
 
     aviso("Preparando la cotización "+FOLIO+"…","info");
-    const guardando = guardar(d);          // corre en paralelo, no detiene nada
-    const cv=await lienzo();
-    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
-    const archivo=new File([blob],nombreArchivo(d)+".png",{type:"image/png"});
-
-    let extra="";
-    if(compartir){
-      await navigator.share({files:[archivo],text:texto});
-    } else {
-      const a=document.createElement("a");
-      a.href=URL.createObjectURL(blob); a.download=archivo.name; a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-      extra="<br>Ya se abrió WhatsApp y se descargó la imagen. <b>Adjúntala</b> con el clip 📎 antes de enviar.";
-    }
-    ULTIMO_ENVIO = firma(d);
-    const res=await guardando;
-    if(res===null)
-      aviso("Cotización <b>"+FOLIO+"</b> lista, pero <b>no se pudo registrar en tu hoja</b>. "+
-            "Cuando vuelva la conexión, vuelve a generarla para que quede en el seguimiento."+extra,"err");
-    else if(res.duplicado)
-      aviso("Cotización <b>"+FOLIO+"</b> lista. Ya estaba registrada en tu hoja, no se duplicó."+extra,"ok");
-    else
-      aviso("Cotización <b>"+FOLIO+"</b> lista"+(res.omitido?"":" y registrada en tu hoja")+"."+extra,"ok");
-  }catch(e){
-    if(e&&e.name==="AbortError") aviso("Envío cancelado.","info");
-    else aviso("No se pudo generar la imagen. Usa «Descargar imagen» y envíala manualmente.","err");
-  }finally{ b.disabled=false; }
-}
-
-/* ═══════════ limpiar ═══════════ */
-function limpiar(){
-  const v=$("fVendedor").value;
-  ["fNombre","fApellidos","fTel","fModelo","fObs","fContado","fEnganche","fSemanal","fSemanas"].forEach(id=>$(id).value="");
-  $("fCantidad").value=1; $("fPlazo").value=12;
-  document.querySelectorAll("#fObsequios input").forEach(i=>i.checked=false);
-  document.querySelectorAll(".malo").forEach(e=>e.classList.remove("malo"));
-  $("fVendedor").value=v;
-  ULTIMO_ENVIO = "";
-  $("aviso").classList.remove("ver");
-  render(); $("fNombre").focus();
-}
-
-init();
-</script>
-</body>
-</html>
+    const guardando = guardar(d);          
