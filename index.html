@@ -823,4 +823,49 @@ async function enviarWhatsApp(){
     if(!compartir) window.open(`https://wa.me/52${d.tel}?text=${encodeURIComponent(texto)}`,"_blank");
 
     aviso("Preparando la cotización "+FOLIO+"…","info");
-    const guardando = guardar(d);          
+    const guardando = guardar(d);          // corre en paralelo, no detiene nada
+    const cv=await lienzo();
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    const archivo=new File([blob],nombreArchivo(d)+".png",{type:"image/png"});
+
+    let extra="";
+    if(compartir){
+      await navigator.share({files:[archivo],text:texto});
+    } else {
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download=archivo.name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+      extra="<br>Ya se abrió WhatsApp y se descargó la imagen. <b>Adjúntala</b> con el clip 📎 antes de enviar.";
+    }
+    ULTIMO_ENVIO = firma(d);
+    const res=await guardando;
+    if(res===null)
+      aviso("Cotización <b>"+FOLIO+"</b> lista, pero <b>no se pudo registrar en tu hoja</b>. "+
+            "Cuando vuelva la conexión, vuelve a generarla para que quede en el seguimiento."+extra,"err");
+    else if(res.duplicado)
+      aviso("Cotización <b>"+FOLIO+"</b> lista. Ya estaba registrada en tu hoja, no se duplicó."+extra,"ok");
+    else
+      aviso("Cotización <b>"+FOLIO+"</b> lista"+(res.omitido?"":" y registrada en tu hoja")+"."+extra,"ok");
+  }catch(e){
+    if(e&&e.name==="AbortError") aviso("Envío cancelado.","info");
+    else aviso("No se pudo generar la imagen. Usa «Descargar imagen» y envíala manualmente.","err");
+  }finally{ b.disabled=false; }
+}
+
+/* ═══════════ limpiar ═══════════ */
+function limpiar(){
+  const v=$("fVendedor").value;
+  ["fNombre","fApellidos","fTel","fModelo","fObs","fContado","fEnganche","fSemanal","fSemanas"].forEach(id=>$(id).value="");
+  $("fCantidad").value=1; $("fPlazo").value=12;
+  document.querySelectorAll("#fObsequios input").forEach(i=>i.checked=false);
+  document.querySelectorAll(".malo").forEach(e=>e.classList.remove("malo"));
+  $("fVendedor").value=v;
+  ULTIMO_ENVIO = "";
+  $("aviso").classList.remove("ver");
+  render(); $("fNombre").focus();
+}
+
+init();
+</script>
+</body>
+</html>
