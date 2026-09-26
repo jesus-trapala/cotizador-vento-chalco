@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<!-- © 2026 Jesús Trapala · Todos los derechos reservados.
+     Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción,
+     distribución o uso en otras agencias sin autorización escrita del autor. -->
 <title>Cotizador · Agencia Vento Chalco</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -111,6 +115,8 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
 #hoja .asesor .nm{font-size:13px;font-weight:800;margin-top:2px}
 #hoja .gracias{text-align:center;margin-top:10px;font-size:11px;font-weight:800;letter-spacing:2.2px;color:var(--rojo)}
 #hoja .legal{margin-top:7px;font-size:7.5px;color:#9ca3af;text-align:center;line-height:1.5}
+.pie-app{max-width:1520px;margin:0 auto;padding:4px 18px 18px;font-size:10.5px;color:#9ca3af;text-align:right;line-height:1.5}
+.aviso button{display:inline-flex;margin-top:8px;padding:9px 14px;font-size:13.5px;background:var(--verde);color:#fff}
 </style>
 </head>
 <body>
@@ -130,8 +136,8 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
     <div class="panel">
       <h2>1 · Cliente</h2>
       <div class="fila">
-        <div class="campo"><label>Nombre(s) *</label><input id="fNombre" placeholder="OSCAR" autocomplete="off"></div>
-        <div class="campo"><label>Apellidos *</label><input id="fApellidos" placeholder="GARCÍA LÓPEZ" autocomplete="off"></div>
+        <div class="campo"><label>Nombre(s) *</label><input id="fNombre" placeholder="Nombre del cliente" autocomplete="off"></div>
+        <div class="campo"><label>Apellidos *</label><input id="fApellidos" placeholder="Apellidos del cliente" autocomplete="off"></div>
       </div>
       <div class="fila">
         <div class="campo"><label>WhatsApp del cliente *</label><input id="fTel" type="tel" placeholder="55 1234 5678" autocomplete="off"><div class="ayuda">10 dígitos.</div></div>
@@ -150,7 +156,7 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
       </div>
       <div class="fila3">
         <div class="campo"><label>Cantidad</label><input id="fCantidad" type="number" min="1" max="99" value="1"></div>
-        <div class="campo" style="grid-column:span 2"><label>Categoría</label><select id="fCategoria"></select></div>
+        <div class="campo" style="grid-column:span 2"><label>Categoría *</label><select id="fCategoria"></select></div>
       </div>
     </div>
 
@@ -245,26 +251,31 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
           <div class="gracias">GRACIAS POR SU VISITA, VUELVA PRONTO</div>
           <div class="legal">
             Este presupuesto tiene una vigencia de 3 días contados posterior a la fecha de emisión. Sujeto a existencias. Consulte restricciones.<br>
-            Este documento es informativo, sujeto a cambios sin previo aviso. No es un comprobante de pago. VENTO POWERSPORTS, S.A.
+            Este documento es informativo, sujeto a cambios sin previo aviso. No es un comprobante de pago. VENTO POWERSPORTS, S.A. · <span class="ver-hoja"></span>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<footer class="pie-app"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
 
 <script>
+/* © 2026 Jesús Trapala · Todos los derechos reservados. Uso interno Agencia Vento Chalco. */
 /* ══════════════════════════════════════════════════════════════════
    CONFIGURACIÓN — edita solo este bloque
    ══════════════════════════════════════════════════════════════════ */
+/* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
+   de la hoja, formas de pago o secciones completas.                    */
+const VERSION = "1.4", VERSION_FECHA = "26 sep 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
-  FECHA_LISTA_INCLUIDA: "tomada de tu Sheet el 14/08/2026"
+  FECHA_LISTA_INCLUIDA: "tomada de tu Sheet el 26/09/2026"
 };
 /* ══════════════════════════════════════════════════════════════════ */
 
-let MODELOS = [{"m":"ALPINA 300 2026","c":"ALPINA300/GR-2026","pub":61999.0,"con":45999.0},{"m":"ATOM 170 2.0 2026","c":"ATOM2.0170/GR-2026","pub":28999.0,"con":20999.0},{"m":"ATOM 170 2.0 2027","c":"ATOM2.0170/GR-2027","pub":28999.0,"con":22999.0},{"m":"AXUS 170 2026","c":"AXUS170/RE-2026","pub":22999.0,"con":19499.0},{"m":"AXUS 170 2027","c":"AXUS170/RE-2027","pub":22999.0,"con":20499.0},{"m":"BLAST 125 2026","c":"BLAST125/BK-2026","pub":23999.0,"con":17999.0},{"m":"COLT 300CC 2026","c":"COLT300/BK-2026","pub":67999.0,"con":57999.0},{"m":"CORSEL 300 2026","c":"CORSEL300/WT-2026","pub":80999.0,"con":64999.0},{"m":"CORSEL 300 2027","c":"CORSEL300/WT-2027","pub":80999.0,"con":65999.0},{"m":"COUGAR 250 2026","c":"COUGAR250/BK-2026","pub":32999.0,"con":26999.0},{"m":"COUGAR 250 2027","c":"COUGAR250/BK-2027","pub":32999.0,"con":27999.0},{"m":"CROSSMAX 170 2026","c":"CROSSMAX170/RE-2026","pub":34999.0,"con":27999.0},{"m":"CROSSMAX 170 2027","c":"CROSSMAX170/RE-2027","pub":34999.0,"con":28999.0},{"m":"CROSSMAX 220 NEGRO 2026","c":"CROSSMAX220/BK-2026","pub":37999.0,"con":27999.0},{"m":"CROSSMAX 220 GRIS 2026","c":"CROSSMAX220/GR-2026","pub":37999.0,"con":27999.0},{"m":"CROSSMAX 220 NEGRO LED 2026","c":"CROSSMAX220L/BK-2026","pub":37999.0,"con":30999.0},{"m":"CROSSMAX 220 NEGRO LED 2027","c":"CROSSMAX220L/BK-2027","pub":37999.0,"con":31999.0},{"m":"CROSSMAX 250 ROJO 2026","c":"CROSSMAX250/RE-2026","pub":41999.0,"con":36999.0},{"m":"CROSSMAX 250 ROJO LED 2027","c":"CROSSMAX250L/RE-2027","pub":41999.0,"con":37999.0},{"m":"CROSSMAX 300 RALLY TRX 2026","c":"CROSSMAX300RALLYTRX/BK-2026","pub":47999.0,"con":37999.0},{"m":"CROSSMAX 330 RALLY TRX 2026","c":"CROSSMAX330RALLYTRX/BK-2026","pub":47999.0,"con":41999.0},{"m":"CROSSMAX 330 RALLY TRX 2027","c":"CROSSMAX330RALLYTRX/BK-2027","pub":47999.0,"con":42999.0},{"m":"CYCLONE 210 GRIS 2026","c":"CYCLONE210/SL-2026","pub":36999.0,"con":26999.0},{"m":"CYCLONE 210 GRIS 2027","c":"CYCLONE210/SL-2027","pub":36999.0,"con":28999.0},{"m":"DAKAR 300CC 2026","c":"DAKAR300/GR-2026","pub":54999.0,"con":41999.0},{"m":"DAKAR 330CC 2026","c":"DAKAR330/GR-2026","pub":54999.0,"con":43999.0},{"m":"DAKAR 330CC 2027","c":"DAKAR330/GR-2027","pub":54999.0,"con":44999.0},{"m":"FALKON 250 2026","c":"FALKON250Z3/WT-2026","pub":39999.0,"con":29999.0},{"m":"FALKON 250 2027","c":"FALKON250Z3/WT-2027","pub":39999.0,"con":30999.0},{"m":"GLADIATOR 200 2.0 2026","c":"GLADIATOR200.2.0/GR-2026","pub":58999.0,"con":44999.0},{"m":"GLADIATOR 200 2.0 2027","c":"GLADIATOR200.2.0/GR-2027","pub":58999.0,"con":45999.0},{"m":"GTS 300 2026","c":"GTSPRO300/GR-2026","pub":51999.0,"con":38999.0},{"m":"HYPER 310 2026","c":"HYPER310/BK-2026","pub":69999.0,"con":49999.0},{"m":"HYPER 310 2027","c":"HYPER310/BK-2027","pub":69999.0,"con":50999.0},{"m":"INTREPID SX 125 2026","c":"INTREPIDSX125/BK-2026","pub":26999.0,"con":21499.0},{"m":"INTREPID SX 125 2027","c":"INTREPIDSX125/BK-2027","pub":26999.0,"con":22999.0},{"m":"LITHIUM 190 2026","c":"LITHIUM190/BK-2026","pub":26999.0,"con":21499.0},{"m":"LITHIUM 190 2027","c":"LITHIUM190/BK-2027","pub":26999.0,"con":22499.0},{"m":"M1 200 2026","c":"M1.200/WT-2026","pub":46999.0,"con":31999.0},{"m":"M1 200 2027","c":"M1.200/WT-2027","pub":46999.0,"con":32999.0},{"m":"NITROX 250 T3 2026","c":"NITROX250T3/GE-2026","pub":47999.0,"con":34999.0},{"m":"NITROX 300 T3 2026","c":"NITROX300T3/RE-2026","pub":52999.0,"con":38999.0},{"m":"NITROX 330 2026","c":"NITROX330/BK-2026","pub":59999.0,"con":39999.0},{"m":"NITROX 330 2027","c":"NITROX330/BK-2027","pub":59999.0,"con":41999.0},{"m":"ONYX 2026","c":"ONYX250/BK-2026","pub":34999.0,"con":28999.0},{"m":"ONYX 2027","c":"ONYX250/BK-2027","pub":34999.0,"con":29999.0},{"m":"OVNI 170 2026","c":"OVNI170/BK-2026","pub":32999.0,"con":25999.0},{"m":"OVNI 170 2027","c":"OVNI170/BK-2027","pub":32999.0,"con":26999.0},{"m":"OVNI TRACK 170 2026","c":"OVNITRACK170/BK-2026","pub":32999.0,"con":26999.0},{"m":"OVNI TRACK 170 2027","c":"OVNITRACK170/BK-2027","pub":32999.0,"con":27999.0},{"m":"PHANTOM S 170 2026","c":"PHANTOM170S/BK-2026","pub":34999.0,"con":25999.0},{"m":"PHANTOM S 170 2027","c":"PHANTOM170S/BK-2027","pub":34999.0,"con":26999.0},{"m":"RAMBLER 125 2026","c":"RAMBLER125/BK-2026","pub":21999.0,"con":16999.0},{"m":"RAMBLER 125 2027","c":"RAMBLER125/BK-2027","pub":21999.0,"con":18999.0},{"m":"RAPID RT 125 2026","c":"RAPID125RT/GR-2026","pub":21999.0,"con":18999.0},{"m":"REPTILE TREK 200 2026","c":"REPTILE200XT/RE-2026","pub":53999.0,"con":37999.0},{"m":"REPTILE TREK 200 2027","c":"REPTILE200XT/RE-2027","pub":53999.0,"con":38999.0},{"m":"REX 350CC 2026","c":"REX350/RE-2026","pub":129999.0,"con":95999.0},{"m":"REX 350CC 2027","c":"REX350/RE-2027","pub":129999.0,"con":96999.0},{"m":"REX 550CC 2026","c":"REX550/SA-2026","pub":169999.0,"con":136999.0},{"m":"REX 550CC 2027","c":"REX550/SA-2027","pub":169999.0,"con":137999.0},{"m":"ROCKETMAN 300 GRIS 2026","c":"ROCKETMAN300/GR-2026","pub":42999.0,"con":30999.0},{"m":"ROCKETMAN 300 PLATINUM 2026","c":"ROCKETMAN300PL/GR-2026","pub":42999.0,"con":32999.0},{"m":"RUDA 170 2026","c":"RUDAF4170/SL-2026","pub":29999.0,"con":21499.0},{"m":"RUDA 170 2027","c":"RUDAF4170/SL-2027","pub":29999.0,"con":22999.0},{"m":"RYDER 190 2026","c":"RYDER190/YE-2026","pub":25999.0,"con":19999.0},{"m":"RYDER 190 2027","c":"RYDER190/YE-2027","pub":25999.0,"con":20999.0},{"m":"SCREAMER SPORTIVO AZUL 300 2026","c":"SCREAMER.SPORTIVO300/BL-2026","pub":54999.0,"con":39999.0},{"m":"SCREAMER SPORTIVO AZUL 300 2027","c":"SCREAMER.SPORTIVO300/BL-2027","pub":54999.0,"con":40999.0},{"m":"SCREAMER 300 GRIS 2026","c":"SCREAMER300/GR-2026","pub":51999.0,"con":37999.0},{"m":"SCREAMER 300 GRIS 2027","c":"SCREAMER300/GR-2027","pub":51999.0,"con":38999.0},{"m":"SPECTRA 7i 2026","c":"SPECTRA125/GR-2026","pub":24999.0,"con":16999.0},{"m":"SPECTRA 7i 2027","c":"SPECTRA125/GR-2027","pub":24999.0,"con":17999.0},{"m":"SPIRIT 170 2026","c":"SPIRIT170/WT-2026","pub":27999.0,"con":22999.0},{"m":"SPIRIT 170 2027","c":"SPIRIT170/WT-2027","pub":27999.0,"con":23999.0},{"m":"STORM 300 2.0 NEGRO 2026","c":"STORM2.0300/BK-2026","pub":48999.0,"con":39999.0},{"m":"STORM 300 2.0 NEGRO 2027","c":"STORM2.0300/BK-2027","pub":48999.0,"con":40999.0},{"m":"STREETROD ROJO 170 2026","c":"STREETROD170/RE-2026","pub":34999.0,"con":27999.0},{"m":"TERRA 170 DS 2026","c":"TERRADS170/SL-2026","pub":29999.0,"con":23999.0},{"m":"TERRA 170 DS 2027","c":"TERRADS170/SL-2027","pub":29999.0,"con":24999.0},{"m":"THRILLER 250 2026","c":"THRILLER250/BK-2026","pub":35999.0,"con":26999.0},{"m":"THRILLER 250 2027","c":"THRILLER250/BK-2027","pub":35999.0,"con":27999.0},{"m":"THUNDERSTAR 300 CUSTOM 2026","c":"THUNDER300CUS/BK-2026","pub":41999.0,"con":34999.0},{"m":"TORNADO 300 NEGRO 2026","c":"TORNADO300/BK-2026","pub":41999.0,"con":33999.0},{"m":"WORKMAN 190 2026","c":"WORKMAN190/WT-2026","pub":25999.0,"con":19999.0},{"m":"WORKMAN 250 2026","c":"WORKMAN250/WT-2026","pub":37999.0,"con":27999.0},{"m":"WORKMAN 250 2027","c":"WORKMAN250/WT-2027","pub":37999.0,"con":28999.0},{"m":"XPLOR 190 2026","c":"XPLOR190/BK-2026","pub":26999.0,"con":23999.0},{"m":"XPRESS SPORT 170 2026","c":"XPRESS170/GR-2026","pub":24999.0,"con":17999.0},{"m":"XPRESS SPORT 170 2027","c":"XPRESS170/GR-2027","pub":24999.0,"con":19499.0},{"m":"YUMA 250 2026","c":"YUMA250/OR-2026","pub":67999.0,"con":53999.0},{"m":"YUMA 250 2027","c":"YUMA250/OR-2027","pub":67999.0,"con":54999.0}];
+let MODELOS = [{"m":"ALPINA 300 2026","c":"ALPINA300/GR-2026","pub":61999,"con":45999},{"m":"ALPINA 300 2027","c":"ALPINA300/GR-2027","pub":61999,"con":46999},{"m":"ASTRO 150 2027","c":"ASTRO150/RE-2027","pub":34999,"con":27999},{"m":"ATOM 170 2.0 2026","c":"ATOM2.0170/GR-2026","pub":28999,"con":19999},{"m":"ATOM 170 2.0 2027","c":"ATOM2.0170/GR-2027","pub":28999,"con":21999},{"m":"ATOM 200 2.0 2027","c":"ATOM200/GR-2027","pub":28999,"con":23999},{"m":"AXUS 170 2026","c":"AXUS170/RE-2026","pub":22999,"con":18999},{"m":"AXUS 170 2027","c":"AXUS170/RE-2027","pub":22999,"con":20499},{"m":"AXUS 200 2027","c":"AXUS200/RE-2027","pub":23999,"con":21999},{"m":"BLAST 125 2026","c":"BLAST125/BK-2026","pub":23999,"con":16999},{"m":"BLAST 125 2027","c":"BLAST125/BK-2027","pub":23999,"con":17999},{"m":"COLT 300CC 2026","c":"COLT300/BK-2026","pub":67999,"con":54999},{"m":"COLT 300CC 2027","c":"COLT300/BK-2027","pub":67999,"con":57999},{"m":"CORSEL 300 2026","c":"CORSEL300/WT-2026","pub":80999,"con":64999},{"m":"CORSEL 300 2027","c":"CORSEL300/WT-2027","pub":80999,"con":65999},{"m":"COUGAR 250 2026","c":"COUGAR250/BK-2026","pub":32999,"con":26999},{"m":"COUGAR 250 2027","c":"COUGAR250/BK-2027","pub":32999,"con":27999},{"m":"CROSSMAX 170 2026","c":"CROSSMAX170/RE-2026","pub":34999,"con":26999},{"m":"CROSSMAX 170 2027","c":"CROSSMAX170/RE-2027","pub":34999,"con":27999},{"m":"CROSSMAX 220 NEGRO 2026","c":"CROSSMAX220/GR-2026","pub":37999,"con":27999},{"m":"CROSSMAX 220 NEGRO LED 2026","c":"CROSSMAX220L/BK-2026","pub":37999,"con":29999},{"m":"CROSSMAX 220 NEGRO LED 2027","c":"CROSSMAX220L/BK-2027","pub":37999,"con":31999},{"m":"CROSSMAX 250 ROJO 2026","c":"CROSSMAX250/RE-2026","pub":41999,"con":35999},{"m":"CROSSMAX 250 ROJO LED 2027","c":"CROSSMAX250L/RE-2027","pub":41999,"con":36999},{"m":"CROSSMAX 300 RALLY TRX 2026","c":"CROSSMAX300RALLYTRX/GR-2026","pub":47999,"con":37999},{"m":"CROSSMAX 330 RALLY TRX 2026","c":"CROSSMAX330RALLYTRX/BK-2026","pub":47999,"con":41999},{"m":"CROSSMAX 330 RALLY TRX 2027","c":"CROSSMAX330RALLYTRX/BK-2027","pub":47999,"con":42999},{"m":"CYCLONE 210 GRIS 2026","c":"CYCLONE210/SL-2026","pub":36999,"con":26999},{"m":"CYCLONE 210 GRIS 2027","c":"CYCLONE210/SL-2027","pub":36999,"con":27999},{"m":"DAKAR 300CC 2026","c":"DAKAR300/GR-2026","pub":54999,"con":41999},{"m":"DAKAR 330CC 2026","c":"DAKAR330/GR-2026","pub":54999,"con":43999},{"m":"DAKAR 330CC 2027","c":"DAKAR330/GR-2027","pub":54999,"con":44999},{"m":"FALKON 250 2026","c":"FALKON250Z3/WT-2026","pub":39999,"con":29999},{"m":"FALKON 250 2027","c":"FALKON250Z3/WT-2027","pub":39999,"con":30999},{"m":"GLADIATOR 200 2.0 2026","c":"GLADIATOR200.2.0/GR-2026","pub":58999,"con":42999},{"m":"GLADIATOR 200 2.0 2027","c":"GLADIATOR200.2.0/GR-2027","pub":58999,"con":45999},{"m":"GTS 300 2026","c":"GTSPRO300/GR-2026","pub":51999,"con":38999},{"m":"HYPER 310 2026","c":"HYPER310/BK-2026","pub":69999,"con":49999},{"m":"HYPER 310 2027","c":"HYPER310/BK-2027","pub":69999,"con":50999},{"m":"INTREPID SX 125 2026","c":"INTREPIDSX125/BK-2026","pub":26999,"con":20999},{"m":"INTREPID SX 125 2027","c":"INTREPIDSX125/BK-2027","pub":26999,"con":21999},{"m":"LITHIUM 190 2026","c":"LITHIUM190/BK-2026","pub":26999,"con":20999},{"m":"LITHIUM 190 2027","c":"LITHIUM190/BK-2027","pub":26999,"con":21999},{"m":"LITHIUM 220 2027","c":"LITHIUM220/BK-2027","pub":30999,"con":23999},{"m":"M1 200 2026","c":"M1.200/WT-2026","pub":46999,"con":31999},{"m":"M1 200 2027","c":"M1.200/WT-2027","pub":46999,"con":32999},{"m":"M2 200 2027","c":"M2.200/BK-2027","pub":48999,"con":36999},{"m":"N400 BRISTOL 2026","c":"N400/GR.ABS-2026","pub":95999,"con":84999},{"m":"N400 BRISTOL 2026 ABS","c":"N400/GR.ABS-2027","pub":100999,"con":88999},{"m":"N400 BRISTOL 2027","c":"N400/GR-2026","pub":95999,"con":85999},{"m":"N400 BRISTOL 2027 ABS","c":"N400/GR-2027","pub":100999,"con":89999},{"m":"NITROX 250 T3 2026","c":"NITROX250T3/GE-2026","pub":47999,"con":33999},{"m":"NITROX 250 T3 2027","c":"NITROX250T3/GE-2027","pub":47999,"con":35999},{"m":"NITROX 300 T3 2026","c":"NITROX300T3/RE-2026","pub":52999,"con":38999},{"m":"NITROX 330 2026","c":"NITROX330/BK-2026","pub":59999,"con":39999},{"m":"NITROX 330 2027","c":"NITROX330/BK-2027","pub":59999,"con":41999},{"m":"ONYX 2026","c":"ONYX250/BK-2026","pub":34999,"con":28999},{"m":"ONYX 2027","c":"ONYX250/BK-2027","pub":34999,"con":29999},{"m":"OVNI 170 2026","c":"OVNI170/BK-2026","pub":32999,"con":25999},{"m":"OVNI 170 2027","c":"OVNI170/BK-2027","pub":32999,"con":26999},{"m":"OVNI 200 2027","c":"OVNI200/BK-2027","pub":33999,"con":28999},{"m":"OVNI TRACK 170 2026","c":"OVNITRACK170/BK-2026","pub":32999,"con":26999},{"m":"OVNI TRACK 170 2027","c":"OVNITRACK170/BK-2027","pub":32999,"con":27999},{"m":"OVNI TRACK 200 2027","c":"OVNITRACK200/BK-2027","pub":34999,"con":29999},{"m":"PHANTOM S 170 2026","c":"PHANTOM170S/BK-2026","pub":34999,"con":24999},{"m":"PHANTOM S 170 2027","c":"PHANTOM170S/BK-2027","pub":34999,"con":26999},{"m":"PHANTOM S 200 2027","c":"PHANTOM200S/BK-2027","pub":37999,"con":28999},{"m":"R300 CALIFORNIA 2026","c":"R300/RE.ABS-2026","pub":86999,"con":64999},{"m":"R300 CALIFORNIA 2026 ABS","c":"R300/RE.ABS-2027","pub":91999,"con":69999},{"m":"R300 CALIFORNIA 2027","c":"R300/RE-2026","pub":86999,"con":65999},{"m":"R300 CALIFORNIA 2027 ABS","c":"R300/RE-2027","pub":91999,"con":70999},{"m":"RAMBLER 125 2026","c":"RAMBLER125/BK-2026","pub":21999,"con":16999},{"m":"RAMBLER 125 2027","c":"RAMBLER125/BK-2027","pub":21999,"con":18999},{"m":"RAPID RT 125 2026","c":"RAPID125RT/GR-2026","pub":26999,"con":18999},{"m":"RAPID RT 125 2027","c":"RAPID125RT/GR-2027","pub":26999,"con":19999},{"m":"REPTILE TREK 200 2026","c":"REPTILE200XT/RE-2026","pub":53999,"con":37999},{"m":"REPTILE TREK 200 2027","c":"REPTILE200XT/RE-2027","pub":53999,"con":38999},{"m":"REX 350CC 2026","c":"REX350/RE-2026","pub":129999,"con":95999},{"m":"REX 350CC 2027","c":"REX350/RE-2027","pub":129999,"con":97999},{"m":"REX 550CC 2026","c":"REX550/SA-2026","pub":169999,"con":136999},{"m":"REX 550CC 2027","c":"REX550/SA-2027","pub":169999,"con":139999},{"m":"ROCKETMAN 300 GRIS 2026","c":"ROCKETMAN300/GR-2026","pub":42999,"con":30999},{"m":"ROCKETMAN 300 PLATINUM 2026","c":"ROCKETMAN300PL/GR-2026","pub":42999,"con":31999},{"m":"ROCKETMAN 300 PLATINUM 2027","c":"ROCKETMAN300PL/GR-2027","pub":42999,"con":32999},{"m":"RUDA 170 2026","c":"RUDAF4170/SL-2026","pub":29999,"con":20999},{"m":"RUDA 170 2027","c":"RUDAF4170/SL-2027","pub":29999,"con":22999},{"m":"RYDER 190 2026","c":"RYDER190/YE-2026","pub":25999,"con":19999},{"m":"RYDER 190 2027","c":"RYDER190/YE-2027","pub":25999,"con":20999},{"m":"SCREAMER 300 GRIS 2026","c":"SCREAMER.SPORTIVO300/BL-2026","pub":51999,"con":36999},{"m":"SCREAMER 300 GRIS 2027","c":"SCREAMER.SPORTIVO300/BL-2027","pub":51999,"con":37999},{"m":"SCREAMER SPORTIVO AZUL 300 2026","c":"SCREAMER300/GR-2026","pub":54999,"con":38999},{"m":"SCREAMER SPORTIVO AZUL 300 2027","c":"SCREAMER300/GR-2027","pub":54999,"con":39999},{"m":"SPECTRA 7i 2026","c":"SPECTRA125/GR-2026","pub":24999,"con":16999},{"m":"SPECTRA 7i 2027","c":"SPECTRA125/GR-2027","pub":24999,"con":17499},{"m":"SPIRIT 170 2026","c":"SPIRIT170/WT-2026","pub":27999,"con":22999},{"m":"SPIRIT 170 2027","c":"SPIRIT170/WT-2027","pub":27999,"con":23999},{"m":"STORM 300 2.0 NEGRO 2026","c":"STORM2.0300/BK-2026","pub":48999,"con":38999},{"m":"STORM 300 2.0 NEGRO 2027","c":"STORM2.0300/BK-2027","pub":48999,"con":39999},{"m":"STREETROD ROJO 170 2026","c":"STREETROD170/RE-2026","pub":34999,"con":27999},{"m":"STREETROD ROJO 200 2027","c":"STREETROD200/RE-2027","pub":36999,"con":29499},{"m":"TERRA 170 DS 2026","c":"TERRADS170/SL-2026","pub":29999,"con":23999},{"m":"TERRA 170 DS 2027","c":"TERRADS170/SL-2027","pub":29999,"con":24999},{"m":"TERRA 200 DS 2027","c":"TERRADS200/SL-2027","pub":30999,"con":26999},{"m":"THRILLER 250 2026","c":"THRILLER250/BK-2026","pub":35999,"con":26999},{"m":"THRILLER 250 2027","c":"THRILLER250/BK-2027","pub":35999,"con":27999},{"m":"THUNDERSTAR 300 CUSTOM 2026","c":"THUNDER300S/BK-2026","pub":41999,"con":34999},{"m":"TORNADO 300 NEGRO 2026","c":"TORNADO300/BK-2026","pub":41999,"con":32999},{"m":"WORKMAN 190 2026","c":"WORKMAN190/WT-2026","pub":25999,"con":19999},{"m":"WORKMAN 250 2026","c":"WORKMAN250/WT-2026","pub":37999,"con":27499},{"m":"WORKMAN 250 2027","c":"WORKMAN250/WT-2027","pub":37999,"con":28499},{"m":"XPLOR 190 2026","c":"XPLOR190/BK-2026","pub":26999,"con":22999},{"m":"XPLOR 220 2027","c":"XPLOR220/GR-2027","pub":31999,"con":25999},{"m":"XPRESS SPORT 170 2026","c":"XPRESS170/GR-2026","pub":24999,"con":17999},{"m":"XPRESS SPORT 170 2027","c":"XPRESS170/GR-2027","pub":24999,"con":19499},{"m":"YUMA 250 2026","c":"YUMA250/OR-2026","pub":67999,"con":52999},{"m":"YUMA 250 2027","c":"YUMA250/OR-2027","pub":67999,"con":53999}];
 
 const VENDEDORES = [
   {n:"JESUS TRAPALA", t:"5566579534"},
@@ -345,35 +356,66 @@ const ver = (el,mostrar) => el.classList.toggle("oculto", !mostrar);
 function ops(sel, arr){ sel.innerHTML = arr.map(t=>`<option value="${t}">${t}</option>`).join(""); }
 function aviso(msg,tipo){ const a=$("aviso"); a.className="aviso ver "+tipo; a.innerHTML=msg; if(tipo==="ok") setTimeout(()=>a.classList.remove("ver"),11000); }
 
-const HOY = new Date(), VIG = new Date(Date.now()+3*86400000);
+/* La fecha se toma en el momento, nunca al abrir la página: la pestaña se
+   queda abierta días enteros y la cotización saldría con fecha de ayer.  */
+const DIAS_VIGENCIA = 3;
+const hoy = () => new Date();
+const vigencia = () => new Date(Date.now()+DIAS_VIGENCIA*86400000);
 const p2 = n => String(n).padStart(2,"0");
 
-/* ── Folio: VCH-260814-OG84-1432 ──────────────────────────────────────
+/* ── Folio: VCH-260814-OG84-143207 ────────────────────────────────────
    VCH      agencia Vento Chalco
    260814   fecha (año, mes, día a dos dígitos)
    OG       inicial del nombre + inicial del apellido del cliente
    84       últimos 2 dígitos de su WhatsApp
-   1432     hora y minuto en que se inició la cotización
-   Se arma en el navegador, al instante y sin depender del internet.     */
-const FECHA_FOLIO = String(HOY.getFullYear()).slice(2)+p2(HOY.getMonth()+1)+p2(HOY.getDate());
-let FOLIO = "";
+   143207   hora, minuto y segundo en que se generó la cotización
+   Se arma en el navegador, al instante y sin depender del internet.
+   Con segundos, dos motos cotizadas al mismo cliente en el mismo minuto
+   ya no comparten folio.                                                */
+let FOLIO = "", FOLIO_FIJO = "", FIRMA_FIJA = "";
 
-/* La hora se toma en el momento, no al abrir la página. Así dos cotizaciones
-   distintas al mismo cliente nunca comparten folio.                        */
 function generarFolio(){
   const ini = t => { const c=(t||"").trim().replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ]/g,""); return c?c[0].toUpperCase():"X"; };
   const tel = soloDig($("fTel").value).slice(-2).padStart(2,"0");
   const d = new Date();
-  return `VCH-${FECHA_FOLIO}-${ini($("fNombre").value)}${ini($("fApellidos").value)}${tel}-${p2(d.getHours())}${p2(d.getMinutes())}`;
+  const f = String(d.getFullYear()).slice(2)+p2(d.getMonth()+1)+p2(d.getDate());
+  return `VCH-${f}-${ini($("fNombre").value)}${ini($("fApellidos").value)}${tel}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
+}
+/* Todo lo que cambia la cotización. Mientras esto no cambie, el folio no
+   cambia: el PDF, la imagen y el WhatsApp de la misma cotización llevan
+   el mismo folio aunque se generen con minutos de diferencia.           */
+const firmaFolio = d => [d.nombre,d.apellidos,d.tel,d.m&&d.m.c,d.cant,d.total,d.pago.n,d.plazo,d.contado,
+  d.formaContado,d.eng,d.sem,d.nsem,d.vend&&d.vend.n,d.categoria,d.tiempo,d.obs.map(o=>o.n).join(","),d.nota].join("|");
+function folioVigente(d){ return FOLIO_FIJO && firmaFolio(d)===FIRMA_FIJA ? FOLIO_FIJO : ""; }
+/** Congela el folio en el momento en que la cotización sale (PDF, imagen o WhatsApp). */
+const FOLIOS_USADOS = new Set();
+function fijarFolio(d, nuevo){
+  if(nuevo || !folioVigente(d)){
+    /* Dos cotizaciones distintas en el mismo segundo tendrían el mismo folio
+       y la hoja descartaría la segunda como repetida: se le agrega -2, -3… */
+    const base = generarFolio(); let f = base, n = 1;
+    while(FOLIOS_USADOS.has(f)) f = base+"-"+(++n);
+    FOLIOS_USADOS.add(f);
+    FOLIO_FIJO = f; FIRMA_FIJA = firmaFolio(d);
+  }
+  FOLIO = FOLIO_FIJO; render();
 }
 
 /* ═══════════ arranque ═══════════ */
 function init(){
-  $("fechaHoy").textContent = fecha(HOY);
+  $("fechaHoy").textContent = fecha(hoy());
+  document.querySelectorAll(".ver-app").forEach(e=>e.textContent=`Cotizador v${VERSION} · ${VERSION_FECHA}`);
+  document.querySelectorAll(".ver-hoja").forEach(e=>e.textContent=`Cotizador v${VERSION}`);
   $("estadoHoja").innerHTML = CONFIG.URL_GUARDADO
-    ? '<span style="color:#6ee7b7">● Registro conectado</span>'
+    ? '<span style="color:#d1d5db">● Registro configurado</span>'
     : '<span style="color:#fca5a5">● Sin conectar a la hoja</span>';
-  ops($("fContacto"),CONTACTOS); ops($("fCategoria"),CATEGORIAS);
+  ops($("fContacto"),CONTACTOS);
+  $("fCategoria").innerHTML = '<option value="">— Elige la categoría —</option>'+CATEGORIAS.map(t=>`<option value="${t}">${t}</option>`).join("");
+  /* Cada etiqueta queda ligada a su campo: tocar el texto activa el campo. */
+  document.querySelectorAll(".campo").forEach(c=>{
+    const l=c.querySelector("label"), f=c.querySelector("input:not([type=checkbox]),select,textarea");
+    if(l && f && f.id && !l.htmlFor) l.htmlFor=f.id;
+  });
   ops($("fTiempo"),TIEMPOS.concat(TIEMPO_FIN));
   ops($("fFormaContado"),FORMAS_CONTADO);
   $("fPago").innerHTML = PAGOS.map(p=>`<option value="${p.n}">${p.n}</option>`).join("");
@@ -393,24 +435,45 @@ function init(){
   $("btnLimpiar").onclick = limpiar;
   $("btnRecargar").onclick = ()=>cargarPrecios(true);
 
+  /* Mientras llegan los precios en vivo, se arranca con la última lectura
+     guardada en este equipo (si la hay), que es más nueva que la del archivo. */
+  const copia = CONFIG.URL_PRECIOS_CSV ? leerCopia() : null;
+  if(copia){ MODELOS=copia.modelos; ULTIMA=copia.t; ORIGEN="guardada"; pintarModelos(); }
   cargarPrecios(false);
+  probarRegistro();
   setInterval(()=>{ if(!document.hidden) cargarPrecios(false); }, MIN_FRESCA*60000);
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden && minsDesde(ULTIMA)>MIN_FRESCA) cargarPrecios(false); });
-  setInterval(pintarEstado,60000);
+  setInterval(()=>{ pintarEstado(); $("fechaHoy").textContent = fecha(hoy()); render(); },60000);
   render();
+}
+/* Pregunta de verdad a la hoja si responde, en vez de solo revisar que la
+   dirección esté escrita.                                                */
+async function probarRegistro(){
+  if(!CONFIG.URL_GUARDADO) return;
+  const e=$("estadoHoja");
+  try{
+    const r=await fetch(CONFIG.URL_GUARDADO,{cache:"no-store"}); const j=await r.json();
+    if(!j||!j.ok) throw 0;
+    e.innerHTML='<span style="color:#6ee7b7">● Registro conectado</span>';
+  }catch(x){
+    e.innerHTML='<span style="color:#fca5a5">● La hoja no responde</span>';
+  }
 }
 function pintarModelos(){
   $("listaModelos").innerHTML = MODELOS.map(m=>`<option value="${m.c}">${m.m}</option>`).join("");
 }
 
 /* ═══════════ lista de precios en vivo ═══════════ */
-const MIN_FRESCA = 10;
+/* 30 min: cada lectura es una oportunidad de fallar, y Google cachea el CSV
+   publicado ~5 min. Lo que importa es releer al volver a la pestaña.     */
+const MIN_FRESCA = 30;
 let ULTIMA = null, ORIGEN = "incluida", CARGANDO = false, ULTIMA_QUEJA = "";
 const COLS = {
   m:["modelo"],
   c:["codigo netsuite","código netsuite","codigo","código","sku"],
   pub:["precio publico todo el canal","precio público todo el canal","precio publico","precio público","publico","público","lista"],
-  con:["precio de contado","contado"]
+  con:["precio de contado","contado"],
+  cat:["categoria","categoría"]   // opcional: si el Sheet trae esta columna, manda sobre CAT_MODELO
 };
 const minsDesde = d => d ? (Date.now()-d.getTime())/60000 : Infinity;
 
@@ -422,13 +485,67 @@ function pintarEstado(){
     e.className = viejo?"err":"ok";
     e.innerHTML = `<b>${MODELOS.length} modelos · lista en vivo ${viejo?"⚠":"✓"}</b><span class="cuando">Precios leídos el ${fechaHora(ULTIMA)}`+
       (m<1?" (hace un momento)":m<60?` (hace ${Math.round(m)} min)`:"")+`</span>`;
+  } else if(ORIGEN==="guardada"){
+    e.className = "err";
+    e.innerHTML = `<b>${MODELOS.length} modelos · última lectura guardada ${esDeHoy(ULTIMA)?"⚠":"✕"}</b><span class="cuando">Sin conexión · precios leídos el ${fechaHora(ULTIMA)}</span>`;
   } else {
     e.className = CONFIG.URL_PRECIOS_CSV?"err":"ok";
     e.innerHTML = `<b>${MODELOS.length} modelos · lista incluida</b><span class="cuando">`+
-      (CONFIG.URL_PRECIOS_CSV?"No se pudo leer el Sheet · usando respaldo":"Precios en el archivo · "+CONFIG.FECHA_LISTA_INCLUIDA)+`</span>`;
+      (CONFIG.URL_PRECIOS_CSV?"No se pudo leer el Sheet · no se puede cotizar":"Precios en el archivo · "+CONFIG.FECHA_LISTA_INCLUIDA)+`</span>`;
   }
   c.classList.toggle("ver",viejo);
   if(viejo) c.innerHTML = `⚠ Los precios se leyeron hace ${Math.round(m)} minutos. Presiona <b>Recargar precios</b> antes de cotizar.`;
+}
+
+const esDeHoy = d => !!d && d.toDateString()===new Date().toDateString();
+const espera = ms => new Promise(ok=>setTimeout(ok,ms));
+
+/* ── De dónde salen los precios, en orden ───────────────────────────
+   1. El CSV publicado del Sheet, directo. Google a veces falla una lectura
+      suelta, así que se reintenta.
+   2. El mismo CSV pedido a través del Apps Script del registro. Es otro
+      camino dentro de Google: lo lee el servidor de Google, no el navegador.
+      Funciona aunque el camino 1 falle o el archivo se abra con doble clic.
+   Si los dos fallan, se usa la última lectura buena guardada en el equipo. */
+async function obtenerCSV(){
+  let ultimoError=null;
+  if(location.protocol!=="file:"){   // con doble clic Google nunca responde por aquí
+    const sep = CONFIG.URL_PRECIOS_CSV.includes("?")?"&":"?";
+    for(let intento=0; intento<2; intento++){
+      if(intento) await espera(1500);
+      try{
+        const r = await fetch(CONFIG.URL_PRECIOS_CSV+sep+"_="+Date.now(),{cache:"no-store"});
+        if(r.ok) return await r.text();
+        ultimoError = new Error("El Sheet respondió "+r.status);
+      }catch(e){ ultimoError=e; }
+    }
+  }
+  if(CONFIG.URL_GUARDADO){
+    for(let intento=0; intento<2; intento++){
+      if(intento) await espera(2000);
+      try{
+        const r = await fetch(CONFIG.URL_GUARDADO+"?accion=precios&_="+Date.now(),{cache:"no-store"});
+        const j = await r.json();
+        if(j && j.ok && j.csv) return j.csv;
+        ultimoError = new Error(j && j.error ? j.error : "El respaldo de Apps Script no trajo precios");
+      }catch(e){ ultimoError=e; }
+    }
+  }
+  throw ultimoError || new Error("Sin conexión");
+}
+
+/* Cada lectura buena se guarda en el equipo. Si luego falla el internet, se
+   cotiza con la lectura más reciente, no con la lista vieja del archivo. */
+const LLAVE_COPIA = "vch_precios_v1";
+function guardarCopia(){
+  try{ localStorage.setItem(LLAVE_COPIA, JSON.stringify({t:ULTIMA.toISOString(), modelos:MODELOS})); }catch(e){}
+}
+function leerCopia(){
+  try{
+    const c = JSON.parse(localStorage.getItem(LLAVE_COPIA)||"null");
+    if(c && c.t && Array.isArray(c.modelos) && c.modelos.length) return {t:new Date(c.t), modelos:c.modelos};
+  }catch(e){}
+  return null;
 }
 
 async function cargarPrecios(manual){
@@ -438,10 +555,7 @@ async function cargarPrecios(manual){
   if(CARGANDO) return false;
   CARGANDO=true; $("btnRecargar").classList.add("girando"); $("btnRecargar").disabled=true; pintarEstado();
   try{
-    const sep = CONFIG.URL_PRECIOS_CSV.includes("?")?"&":"?";
-    const r = await fetch(CONFIG.URL_PRECIOS_CSV+sep+"_="+Date.now(),{cache:"no-store"});
-    if(!r.ok) throw new Error("El Sheet respondió "+r.status);
-    const filas = parseCSV(await r.text()).filter(f=>f.some(x=>String(x).trim()));
+    const filas = parseCSV(await obtenerCSV()).filter(f=>f.some(x=>String(x).trim()));
     let iE=-1, mapa=null;
     for(let i=0;i<Math.min(filas.length,8);i++){ const mm=mapear(filas[i]); if(mm){ iE=i; mapa=mm; break; } }
     if(!mapa) throw new Error("No encontré los encabezados Modelo, Codigo Netsuite, Precio Publico y Precio de Contado.");
@@ -471,15 +585,16 @@ async function cargarPrecios(manual){
                            .map(f=>((f[mapa.m]||"").trim()||(f[mapa.c]||"").trim()));
     const nuevos = conCodigo.filter(f=>num(f[mapa.con])>0)
       .map(f=>({m:(f[mapa.m]||"").trim(), c:(f[mapa.c]||"").trim().replace(/\s+(20\d\d)$/,"-$1"),
-                pub:num(f[mapa.pub])||num(f[mapa.con]), con:num(f[mapa.con])}));
+                pub:num(f[mapa.pub])||num(f[mapa.con]), con:num(f[mapa.con]),
+                cat:mapa.cat>=0 ? catValida(f[mapa.cat]) : ""}));
     if(!nuevos.length) throw new Error("No encontré renglones con código y precio de contado");
     const dups = [...new Set(nuevos.map(x=>x.c).filter((v,i,a)=>a.indexOf(v)!==i))];
-    MODELOS=nuevos; ULTIMA=new Date(); ORIGEN="en vivo"; pintarModelos(); render(); pintarEstado();
+    MODELOS=nuevos; ULTIMA=new Date(); ORIGEN="en vivo"; guardarCopia(); pintarModelos(); render(); pintarEstado();
     const pegas = (dups.length?`<br>⚠ Códigos repetidos en tu hoja: <b>${dups.join(", ")}</b>`:"")+
       (fuera.length?`<br>⚠ Sin precio legible, <b>no aparecen en la lista</b>: <b>${fuera.join(", ")}</b>`+
                     `<br>Suele ser la columna muy angosta (se ve <b>#####</b>). Ensánchala en tu hoja.`:"");
     /* Los problemas se avisan aunque la carga haya sido automática, pero una
-       sola vez por problema: si no, brincaría cada 10 minutos.             */
+       sola vez por problema: si no, brincaría en cada recarga.             */
     if(manual)
       aviso(`Precios actualizados: <b>${MODELOS.length} modelos</b> leídos el ${fechaHora(ULTIMA)}.`+pegas,
             pegas?"err":"ok");
@@ -488,11 +603,26 @@ async function cargarPrecios(manual){
     ULTIMA_QUEJA = pegas;
     return true;
   }catch(err){
-    ORIGEN = ULTIMA?"en vivo":"incluida"; pintarEstado();
-    aviso("<b>No se pudieron leer los precios del Sheet.</b><br>"+err.message+
-      "<br>Se está cotizando con la lista "+(ULTIMA?"de la última carga exitosa.":"incluida en el archivo."),"err");
+    /* Sin precios en vivo: se usa la última lectura buena guardada en ESTE
+       equipo, si es más nueva que la que ya se tiene en pantalla.         */
+    const copia = leerCopia();
+    if(copia && (!ULTIMA || copia.t > ULTIMA)){
+      MODELOS=copia.modelos; ULTIMA=copia.t; ORIGEN="guardada"; pintarModelos(); render();
+    } else if(!ULTIMA){ ORIGEN="incluida"; }
+    pintarEstado();
+    const que = ORIGEN==="incluida"
+      ? "<b>No se puede cotizar</b> hasta leer los precios: la lista del archivo es de cuando se publicó."
+      : ORIGEN==="guardada" && !esDeHoy(ULTIMA)
+        ? `La última lectura guardada es del ${fechaHora(ULTIMA)} · <b>No se puede cotizar</b> con precios de otro día.`
+        : `Se está cotizando con los precios leídos el ${fechaHora(ULTIMA)}`;
+    aviso("<b>No se pudieron leer los precios en vivo.</b> "+err.message+"<br>"+que+
+      "<br>Revisa el internet y presiona <b>Recargar precios</b>."+
+      (location.protocol==="file:" ? "<br>Estás abriendo el archivo desde tu computadora: usa la dirección publicada, jesus-trapala.github.io/cotizador-vento-chalco" : ""),"err");
     return false;
-  }finally{ CARGANDO=false; $("btnRecargar").classList.remove("girando"); $("btnRecargar").disabled=false; }
+  /* pintarEstado() se corta solo si CARGANDO sigue en true, así que hay que
+     repintar AQUÍ, ya con la bandera abajo. Si no, el letrero se queda en
+     "Leyendo precios…" hasta el siguiente tic del reloj, un minuto después. */
+  }finally{ CARGANDO=false; $("btnRecargar").classList.remove("girando"); $("btnRecargar").disabled=false; pintarEstado(); }
 }
 function mapear(fila){
   const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
@@ -517,12 +647,18 @@ function modeloActual(){
   const v=$("fModelo").value.trim().toUpperCase();
   return MODELOS.find(m=>m.c.toUpperCase()===v||m.m.toUpperCase()===v)||null;
 }
-/* La categoría sale del catálogo. Si es un modelo nuevo que aún no está
-   en la lista, deja lo que haya elegido el vendedor y no lo pisa.        */
+/** Categoría escrita en el Sheet, solo si es una de las oficiales. */
+function catValida(t){
+  const n=s=>String(s||"").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g," ").trim();
+  return CATEGORIAS.find(c=>n(c)===n(t)) || "";
+}
+/* La categoría sale del Sheet (columna Categoria, si existe) o del catálogo.
+   Si el modelo no tiene categoría, el campo se VACÍA y el vendedor tiene
+   que elegirla: antes se quedaba la del modelo anterior sin que nadie lo
+   notara (una N400 salía como ADVENTURE).                                */
 function autoCategoria(){
   const m=modeloActual(); if(!m) return;
-  const c=CAT_MODELO[m.c] || CAT_MODELO[m.c.replace(/\s+(20\d\d)$/,"-$1")];
-  if(c) $("fCategoria").value=c;
+  $("fCategoria").value = m.cat || CAT_MODELO[m.c] || CAT_MODELO[m.c.replace(/\s+(20\d\d)$/,"-$1")] || "";
 }
 function datos(){
   const m=modeloActual();
@@ -539,8 +675,8 @@ function datos(){
   const valorObs = obs.reduce((a,o)=>a+(o.v||0),0);
 
   const plazo = parseInt($("fPlazo").value)||12;
-  let contado = Math.max(0, parseFloat($("fContado").value)||0);
-  if(contado>total) contado = total;
+  const contadoCaptura = Math.max(0, parseFloat($("fContado").value)||0);
+  const contado = Math.min(contadoCaptura, total);
   const diferido = Math.max(0, total-contado);
   const mensual = pago.tipo==="msi" && plazo ? diferido/plazo : 0;
 
@@ -550,7 +686,7 @@ function datos(){
   const totalPlan = eng + sem*nsem;
 
   return {m,pago,cant,desc,vend,obs,lista,bruto,total,descProm,valorObs,
-    plazo,contado,diferido,mensual,eng,sem,nsem,totalPlan,
+    plazo,contado,contadoCaptura,diferido,mensual,eng,sem,nsem,totalPlan,
     formaContado:$("fFormaContado").value,
     nombre:$("fNombre").value.trim().toUpperCase(), apellidos:$("fApellidos").value.trim().toUpperCase(),
     cliente:($("fNombre").value.trim()+" "+$("fApellidos").value.trim()).trim().toUpperCase(),
@@ -562,13 +698,13 @@ function datos(){
 /* ═══════════ pintar ═══════════ */
 function render(){
   const d=datos();
-  FOLIO = generarFolio();
   /* en financiamiento la entrega la dicta la financiera */
   const esFin = d.pago.tipo==="financiamiento";
   if(esFin && $("fTiempo").value!==TIEMPO_FIN) $("fTiempo").value = TIEMPO_FIN;
   if(!esFin && $("fTiempo").value===TIEMPO_FIN) $("fTiempo").value = TIEMPOS[0];
   $("fTiempo").disabled = esFin;
   d.tiempo = $("fTiempo").value;
+  FOLIO = folioVigente(d) || generarFolio();
 
   ver($("cajaMSI"), d.pago.tipo==="msi");
   ver($("cajaFin"), d.pago.tipo==="financiamiento");
@@ -579,8 +715,8 @@ function render(){
     ? `<b>${d.m.m}</b> · lista ${money(d.m.pub)} · contado <b>${money(d.m.con)}</b>`
     : "Puedes buscar por código o por nombre.";
 
-  $("pFolio").textContent=FOLIO; $("pFecha").textContent=fecha(HOY);
-  $("pVigencia").textContent=fecha(VIG); $("pContacto").textContent=d.contacto;
+  $("pFolio").textContent=FOLIO; $("pFecha").textContent=fecha(hoy());
+  $("pVigencia").textContent=fecha(vigencia()); $("pContacto").textContent=d.contacto;
   $("pCliente").textContent=d.cliente||"—"; $("pTel").textContent=telFmt(d.tel);
   $("pVendedor").textContent=d.vend?d.vend.n:"—";
   $("pPago").textContent = d.pago.tipo==="msi" ? `${d.plazo} MESES SIN INTERESES` : d.pago.n;
@@ -590,9 +726,10 @@ function render(){
 
   let h="";
   if(d.m){
-    h+=`<tr><td class="ctr">${d.cant}</td><td>${d.categoria}</td>
+    const cu = d.cant>1 ? `<div style="font-size:9px;color:#9ca3af;text-decoration:none">c/u</div>` : "";
+    h+=`<tr><td class="ctr">${d.cant}</td><td>${d.categoria||"—"}</td>
         <td><b>${d.m.c}</b><div style="font-size:9.5px;color:#9ca3af">${d.m.m}</div></td>
-        <td class="num tach">${money(d.m.pub)}</td><td class="num"><b>${money(d.m.con)}</b></td></tr>`;
+        <td class="num"><span class="tach">${money(d.m.pub)}</span>${cu}</td><td class="num"><b>${money(d.m.con)}</b>${cu}</td></tr>`;
   } else {
     h+=`<tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:26px">Selecciona un modelo</td></tr>`;
   }
@@ -670,12 +807,41 @@ function valida(){
   mk("fTel",d.tel.length!==10,"WhatsApp a 10 dígitos");
   mk("fVendedor",!d.vend,"vendedor");
   mk("fModelo",!d.m,"modelo válido de la lista");
+  mk("fCategoria",!d.categoria,"categoría");
   if(d.pago.tipo==="financiamiento"){
     mk("fEnganche",!(d.eng>0),"enganche");
     mk("fSemanal",!(d.sem>0),"pago semanal");
     mk("fSemanas",!(d.nsem>0),"plazo en semanas");
   }
   if(malos.length){ aviso("Faltan datos: "+faltan.join(", ")+".","err"); $(malos[0]).focus(); return null; }
+
+  /* Datos completos pero que no cuadran */
+  const alto = (id,msg) => { $(id).classList.add("malo"); aviso(msg,"err"); $(id).focus(); return null; };
+  if(d.pago.tipo==="msi" && d.contadoCaptura>=d.total)
+    return alto("fContado",`El pago contado (${money(d.contadoCaptura)}) cubre todo el total (${money(d.total)}): no queda nada a meses. `+
+      `Cambia la forma de pago a una de contado, o baja el pago contado.`);
+  if(d.pago.tipo==="financiamiento" && d.eng>=d.total)
+    return alto("fEnganche",`El enganche (${money(d.eng)}) es igual o mayor al precio de la unidad (${money(d.total)}). Revisa la captura.`);
+  if(d.pago.tipo==="financiamiento" && d.totalPlan<d.total &&
+     !confirm(`Revisa el plan: enganche + ${d.nsem} pagos de ${money(d.sem)} suman ${money(d.totalPlan)}, `+
+              `menos que el precio de la unidad (${money(d.total)}).\n\n¿Los datos son correctos y quieres continuar?`)) {
+    $("fSemanal").focus(); return null;
+  }
+  /* Precios: la lista que viene dentro del archivo es de cuando se publicó,
+     y una lectura de otro día puede traer precios que ya cambiaron. Con
+     cualquiera de las dos NO se cotiza. Una lectura de hoy sin conexión
+     se permite, preguntando.                                             */
+  if(CONFIG.URL_PRECIOS_CSV){
+    if(ORIGEN==="incluida" || !esDeHoy(ULTIMA)){
+      aviso("<b>No se puede cotizar sin precios de hoy.</b> "+
+        (ULTIMA ? `Los últimos precios leídos son del ${fechaHora(ULTIMA)}` : "No se han podido leer los precios.")+
+        "<br>Revisa el internet y presiona <b>Recargar precios</b>.","err");
+      return null;
+    }
+    if(ORIGEN==="guardada" &&
+       !confirm(`Sin conexión con el Sheet.\n\nSe cotizaría con los precios leídos hoy a las ${hora(ULTIMA)}\n\n¿Continuar?`))
+      return null;
+  }
   return d;
 }
 
@@ -685,6 +851,7 @@ const nombreArchivo = d => `Cotizacion_${FOLIO}_${d.cliente.replace(/[^A-Z0-9]+/
 
 async function descargarImagen(v){
   const d=v?valida():datos(); if(!d) return;
+  fijarFolio(d);
   aviso("Generando imagen…","info");
   const cv=await lienzo(); const a=document.createElement("a");
   a.href=cv.toDataURL("image/png"); a.download=nombreArchivo(d)+".png"; a.click();
@@ -692,6 +859,7 @@ async function descargarImagen(v){
 }
 async function descargarPDF(v){
   const d=v?valida():datos(); if(!d) return;
+  fijarFolio(d);
   aviso("Generando PDF…","info");
   const cv=await lienzo(); const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:"p",unit:"mm",format:"letter"});
@@ -741,7 +909,7 @@ function mensaje(d){
 
   L.push("");
   L.push("📄 En la imagen te dejo el detalle completo.");
-  L.push(`⏳ Este precio es válido hasta el *${fechaLetra(VIG)}*.`);
+  L.push(`⏳ Este precio es válido hasta el *${fechaLetra(vigencia())}*.`);
   if(d.nota) L.push(`📝 ${d.nota}`);
   L.push("");
   L.push("*Estás a un paso de estrenar tu Vento* 🔥");
@@ -755,7 +923,7 @@ function mensaje(d){
 /* ═══════════ guardar + folio consecutivo ═══════════ */
 function carga(d){
   return {
-    folio:FOLIO, fecha:new Date().toISOString(), vigencia:VIG.toISOString(),
+    folio:FOLIO, fecha:new Date().toISOString(), vigencia:vigencia().toISOString(), version:VERSION,
     vendedor:d.vend.n, vendedor_tel:d.vend.t,
     nombre:d.nombre, apellidos:d.apellidos, cliente:d.cliente, telefono:d.tel,
     origen:d.contacto, categoria:d.categoria, modelo:d.m.m, codigo:d.m.c, cantidad:d.cant,
@@ -804,18 +972,28 @@ function puedeCompartirArchivo(){
   }catch(e){ return false; }
 }
 
+/** Texto del aviso según lo que contestó la hoja. */
+function textoRegistro(res){
+  if(res===null) return " pero <b>no se pudo registrar en tu hoja</b>. Cuando vuelva la conexión, vuelve a enviarla para que quede en el seguimiento.";
+  if(res.omitido) return ".";
+  if(res.duplicado) return ". Ya estaba registrada en tu hoja, no se duplicó.";
+  if(res.clienteNuevo===false)
+    return ` y registrada. <b>Cliente que ya estaba en seguimiento</b>: se agregó a su mismo renglón (lleva ${res.cotizaciones} cotizaciones).`;
+  return " y registrada en tu hoja.";
+}
+
 async function enviarWhatsApp(){
   const d=valida(); if(!d) return;
 
-  if(ULTIMO_ENVIO && ULTIMO_ENVIO === firma(d) &&
-     !confirm("Esta cotización ya se envió.\n\n¿Quieres enviarla otra vez? Se registrará como una cotización nueva."))
+  const reenvio = ULTIMO_ENVIO && ULTIMO_ENVIO === firma(d);
+  if(reenvio && !confirm("Esta cotización ya se envió.\n\n¿Quieres enviarla otra vez? Sale con folio nuevo y queda en el historial del mismo cliente."))
     return;
 
   const b=$("btnWa"); b.disabled=true;
+  let archivo=null, texto="", guardando=null;
   try{
-    FOLIO = generarFolio();   // la hora queda fijada en este momento
-    render();
-    const texto = mensaje(d);
+    fijarFolio(d, reenvio);   // mismo folio que el PDF o la imagen de esta cotización
+    texto = mensaje(d);
 
     /* WhatsApp se abre AQUÍ, dentro del clic del vendedor. Si se abriera
        después de generar la imagen, el navegador bloquearía la ventana.  */
@@ -823,10 +1001,10 @@ async function enviarWhatsApp(){
     if(!compartir) window.open(`https://wa.me/52${d.tel}?text=${encodeURIComponent(texto)}`,"_blank");
 
     aviso("Preparando la cotización "+FOLIO+"…","info");
-    const guardando = guardar(d);          // corre en paralelo, no detiene nada
+    guardando = guardar(d);                // corre en paralelo, no detiene nada
     const cv=await lienzo();
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
-    const archivo=new File([blob],nombreArchivo(d)+".png",{type:"image/png"});
+    archivo=new File([blob],nombreArchivo(d)+".png",{type:"image/png"});
 
     let extra="";
     if(compartir){
@@ -839,16 +1017,25 @@ async function enviarWhatsApp(){
     }
     ULTIMO_ENVIO = firma(d);
     const res=await guardando;
-    if(res===null)
-      aviso("Cotización <b>"+FOLIO+"</b> lista, pero <b>no se pudo registrar en tu hoja</b>. "+
-            "Cuando vuelva la conexión, vuelve a generarla para que quede en el seguimiento."+extra,"err");
-    else if(res.duplicado)
-      aviso("Cotización <b>"+FOLIO+"</b> lista. Ya estaba registrada en tu hoja, no se duplicó."+extra,"ok");
-    else
-      aviso("Cotización <b>"+FOLIO+"</b> lista"+(res.omitido?"":" y registrada en tu hoja")+"."+extra,"ok");
+    aviso("Cotización <b>"+FOLIO+"</b> lista"+textoRegistro(res)+extra, res===null?"err":"ok");
   }catch(e){
-    if(e&&e.name==="AbortError") aviso("Envío cancelado.","info");
-    else aviso("No se pudo generar la imagen. Usa «Descargar imagen» y envíala manualmente.","err");
+    const res = guardando ? await guardando : null;
+    if(e&&e.name==="AbortError"){
+      aviso("Envío cancelado."+(res&&!res.omitido?" La cotización <b>"+FOLIO+"</b> ya quedó registrada en tu hoja.":""),"info");
+    } else if(e&&e.name==="NotAllowedError" && archivo){
+      /* El navegador solo deja abrir el menú de compartir unos segundos después
+         del toque. En un teléfono lento la imagen tarda más que eso y el permiso
+         se vence. La imagen ya está hecha: basta un segundo toque.            */
+      aviso("La imagen de <b>"+FOLIO+"</b> ya está lista"+textoRegistro(res)+
+            "<br><button type='button' id='btnCompartirYa'>Compartir por WhatsApp</button>","info");
+      $("btnCompartirYa").onclick = async ()=>{
+        try{ await navigator.share({files:[archivo],text:texto}); ULTIMO_ENVIO=firma(d);
+             aviso("Cotización <b>"+FOLIO+"</b> compartida.","ok"); }
+        catch(x){ if(!(x&&x.name==="AbortError")) aviso("No se pudo compartir. Usa «Descargar imagen» y envíala manualmente.","err"); }
+      };
+    } else {
+      aviso("No se pudo generar la imagen. Usa «Descargar imagen» y envíala manualmente.","err");
+    }
   }finally{ b.disabled=false; }
 }
 
@@ -860,7 +1047,8 @@ function limpiar(){
   document.querySelectorAll("#fObsequios input").forEach(i=>i.checked=false);
   document.querySelectorAll(".malo").forEach(e=>e.classList.remove("malo"));
   $("fVendedor").value=v;
-  ULTIMO_ENVIO = "";
+  ULTIMO_ENVIO = ""; FOLIO_FIJO = ""; FIRMA_FIJA = "";
+  $("fCategoria").value = "";
   $("aviso").classList.remove("ver");
   render(); $("fNombre").focus();
 }
