@@ -551,7 +551,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "2.3", VERSION_FECHA = "3 oct 2026";
+const VERSION = "2.4", VERSION_FECHA = "3 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1436,11 +1436,11 @@ function pintarVendedores(sinRender){
 
 /* ═══════════ fichas técnicas ═══════════ */
 const baseCodigo = c => String(c||"").split("/")[0].toUpperCase().replace(/[.\s]/g,"");
-function fichaDe(codigo){
-  const a = CFG && CFG.fichas && CFG.fichas[baseCodigo(codigo)];
-  if(!a) return "";
-  return /^https?:\/\//i.test(a) ? a : "fichas/"+encodeURIComponent(a);
-}
+const urlFicha = a => !a ? "" : /^https?:\/\//i.test(a) ? a : "fichas/"+encodeURIComponent(a);
+function fichaDe(codigo){ return urlFicha(CFG && CFG.fichas && CFG.fichas[baseCodigo(codigo)]); }
+/** Ficha de un cliente de Seguimiento: el servidor la manda pegada al cliente
+ *  (c.ficha). Si no viene, se busca en la configuración guardada.        */
+const fichaCliente = c => c.ficha ? urlFicha(c.ficha) : fichaDe(c.codigo);
 const FICHAS_ARCH = new Map();
 function archivoFicha(url){
   if(!FICHAS_ARCH.has(url)){
@@ -1724,7 +1724,7 @@ function claveSugerida(c){
   if(c.estatus==="SIN RESPUESTA") k="REACTIVACION";
   else switch(Number(c.paso)){
     case 1: k="PASO_1"; break;
-    case 3: k=fichaDe(c.codigo)?"PASO_3":"FOTOS_UNIDAD"; break;
+    case 3: k=fichaCliente(c)?"PASO_3":"FOTOS_UNIDAD"; break;
     case 5: k=c.forma_pago==="MAXIKASH"?"PASO_5_SIN_POLIZA":"PASO_5"; break;
     case 10: { const t=tipoPago(c.forma_pago);
       k = t==="financiamiento" ? (requisitosDe(c.forma_pago).length?"PASO_10_CREDITO":"LIBRE") : t==="msi" ? "PASO_10_MSI" : "PASO_10_CONTADO"; break; }
@@ -1737,7 +1737,7 @@ function claveSugerida(c){
 let MSG = null;
 function abrirMensaje(c){
   const k=claveSugerida(c);
-  MSG={c, clave:k, sugerida:k, ficha:fichaDe(c.codigo)};
+  MSG={c, clave:k, sugerida:k, ficha:fichaCliente(c)};
   if(MSG.ficha) archivoFicha(MSG.ficha).catch(()=>{});   // se adelanta la descarga para compartir al instante
   pintarComponer();
 }
@@ -1752,6 +1752,7 @@ function pintarComponer(){
     <label for="msClave">Mensaje · usar otro mensaje</label>
     <select id="msClave">${ps.map(x=>`<option value="${esc(x.clave)}" ${x.clave===MSG.clave?"selected":""}>${esc(x.nombre)}${x.clave===MSG.sugerida?" · sugerido":""}</option>`).join("")}</select>
     <div class="sugerido">${c.estatus==="SIN RESPUESTA"?"Reactivación del mes":"Le toca el paso del día "+esc(c.paso||"—")} · puedes editar el texto antes de enviarlo</div>
+    <div class="sugerido">${MSG.ficha ? "Ficha técnica: "+esc(decodeURIComponent(MSG.ficha.split("/").pop())) : "Sin ficha técnica para "+esc(baseCodigo(c.codigo)||"este modelo")}</div>
     <label for="msTexto">Texto</label>
     <textarea id="msTexto">${esc(texto)}</textarea>
     <div class="pila">
