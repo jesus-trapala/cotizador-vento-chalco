@@ -551,7 +551,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "2.4", VERSION_FECHA = "3 oct 2026";
+const VERSION = "2.5", VERSION_FECHA = "3 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1742,8 +1742,12 @@ function abrirMensaje(c){
   pintarComponer();
 }
 function pintarComponer(){
-  const {c}=MSG, ps=plantillas();
+  const {c}=MSG;
+  /* Del día 3 solo aparece el mensaje que aplica: con ficha, "Ficha técnica";
+     sin ficha, "Fotos (sin ficha)". Las dos plantillas siguen en CONFIGURACION. */
+  const ps=plantillas().filter(x=>!(MSG.ficha && x.clave==="FOTOS_UNIDAD") && !(!MSG.ficha && x.clave==="PASO_3"));
   const p=ps.find(x=>x.clave===MSG.clave)||ps[0];
+  MSG.clave=p.clave;
   const texto=llenar(p.texto, varsDe(c));
   const conFicha = MSG.ficha && (MSG.clave==="PASO_3");
   abrirSheet(`<div class="cab-s"><div><h3>${esc(tc(c.nombre+" "+c.apellidos))}</h3>
@@ -1756,19 +1760,26 @@ function pintarComponer(){
     <label for="msTexto">Texto</label>
     <textarea id="msTexto">${esc(texto)}</textarea>
     <div class="pila">
-      ${conFicha?`<button class="btn btn-acc" id="msFicha">Compartir ficha con el mensaje</button>`:""}
-      <button class="btn btn-wa" id="msAbrir">${conFicha?"Solo el mensaje por WhatsApp":"Abrir WhatsApp"}</button>
+      ${conFicha
+        ? `<button class="btn btn-wa" id="msAbrir">1 · Enviar mensaje por WhatsApp</button>
+           <button class="btn btn-acc" id="msFicha">2 · Compartir ficha</button>
+           <div class="sugerido" id="msGuia">Primero manda el mensaje: se abre directo el chat del cliente. Al regresar aquí, toca «Compartir ficha», elige WhatsApp y al cliente, que ya te sale hasta arriba en tus chats.</div>`
+        : `<button class="btn btn-wa" id="msAbrir">Abrir WhatsApp</button>`}
       ${MSG.clave==="FOTOS_UNIDAD"?`<div class="sugerido">Este modelo no tiene ficha técnica: adjunta en WhatsApp fotos o video de la moto en piso.</div>`:""}
-      <button class="btn btn-sec" id="msSolo">Ya lo contacté · solo registrar</button>
+      <button class="btn btn-sec" id="msSolo">${conFicha?"Registrar resultado":"Ya lo contacté · solo registrar"}</button>
     </div>`);
   $("msClave").onchange=e=>{ MSG.clave=e.target.value; pintarComponer(); };
   $("msAbrir").onclick=()=>{
     window.open(`https://wa.me/52${c.tel}?text=${encodeURIComponent($("msTexto").value)}`,"_blank");
-    pintarResultado();
+    if(!conFicha){ pintarResultado(); return; }
+    /* Con ficha: la ventana se queda abierta para el paso 2 */
+    $("msAbrir").textContent="1 · Mensaje enviado ✓ (volver a abrir)";
+    $("msGuia").innerHTML="<b>Ahora el paso 2:</b> toca «Compartir ficha», elige WhatsApp y al cliente (ya sale hasta arriba en tus chats).";
   };
   $("msSolo").onclick=()=>pintarResultado();
   if(conFicha) $("msFicha").onclick=async()=>{
-    const r=await compartirFicha(MSG.ficha, $("msTexto").value, c.tel);
+    /* El mensaje ya se mandó por separado: la ficha va sola */
+    const r=await compartirFicha(MSG.ficha, "", c.tel);
     if(r!=="cancelado" && r!=="reintentar") pintarResultado();
   };
 }
