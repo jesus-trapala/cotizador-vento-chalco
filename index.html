@@ -295,6 +295,7 @@ body{background:var(--bg);color:var(--text)}
 #vCot .pie-app{color:var(--muted)}
 /* La cotización conserva su letra y colores aunque la app esté en modo oscuro */
 #hoja{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;color:#111}
+.leyenda{font-size:10.5px;line-height:1.5;color:var(--muted);text-align:center;margin-top:28px;padding:0 4px max(8px,env(safe-area-inset-bottom))}
 .oculto{display:none!important}
 .banda-ver{background:var(--accent);color:#fff;text-align:center;font-size:13.5px;padding:9px 16px;cursor:pointer;font-family:Inter,system-ui,sans-serif}
 </style>
@@ -315,7 +316,7 @@ body{background:var(--bg);color:var(--text)}
       <button class="btn btn-acc" id="lgEntrar" style="margin-top:14px">Entrar</button>
       <div class="msg-err" id="lgError"></div>
     </div>
-    <div class="muted" style="font-size:11px;text-align:center;margin-top:14px"><span class="ver-app"></span></div>
+    <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
 
@@ -347,7 +348,7 @@ body{background:var(--bg);color:var(--text)}
         <div><h3>Gerencia</h3><p>Embudo, conversión, cruce de ventas y por confirmar</p></div>
       </button>
     </div>
-    <div class="muted" style="font-size:11px;text-align:center;margin-top:22px"><span class="ver-app"></span></div>
+    <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
 
@@ -371,6 +372,7 @@ body{background:var(--bg);color:var(--text)}
       <button class="btn btn-sec btn-chico" id="segRecargar" title="Volver a leer la hoja">↻ Actualizar</button>
     </div>
     <div id="segLista"><div class="vacio">Cargando clientes…</div></div>
+    <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
 
@@ -384,6 +386,7 @@ body{background:var(--bg);color:var(--text)}
   <div class="app-main">
     <div class="filtros"><input type="month" id="gerMes" style="max-width:200px"><button class="btn btn-sec btn-chico" id="gerRecargar">↻ Actualizar</button></div>
     <div id="gerCuerpo"><div class="vacio">Cargando…</div></div>
+    <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
 
@@ -543,7 +546,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "2.1", VERSION_FECHA = "3 oct 2026";
+const VERSION = "2.2", VERSION_FECHA = "3 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
