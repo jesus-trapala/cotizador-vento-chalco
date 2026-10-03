@@ -159,9 +159,9 @@ button:active{transform:scale(.985)}button:disabled{opacity:.5;cursor:not-allowe
    conserva su diseño negro con rojo.                                        */
 :root{--bg:#f7f3ec;--card:#ffffff;--text:#16181d;--muted:#6b6f78;--border:#e6e0d6;
   --accent:#2B6EF2;--alerta:#e63329;--ok:#1e9e57;--warn:#d18a00;--bad:#e63329;
-  --m-hoy:#2f7cf6;--m-asesores:#14a08f;--m-vc:#7b5cf0;--m-racha:#e2a21a;--wa:#25D366;--suave:#f1ece3}
+  --m-hoy:#2f7cf6;--m-asesores:#14a08f;--m-vc:#7b5cf0;--m-racha:#e2a21a;--m-entregas:#e07a2e;--wa:#25D366;--suave:#f1ece3}
 [data-theme="dark"]{--bg:#0d0f14;--card:#141821;--text:#f2f4f8;--muted:#8d95a6;--border:#232733;
-  --ok:#3ecf7a;--warn:#f0b429;--bad:#ff5a4f;--m-hoy:#1f55d6;--m-asesores:#0e7468;--m-vc:#5137b8;--m-racha:#9a5d0a;--suave:#1b202b}
+  --ok:#3ecf7a;--warn:#f0b429;--bad:#ff5a4f;--m-entregas:#a4521a;--m-hoy:#1f55d6;--m-asesores:#0e7468;--m-vc:#5137b8;--m-racha:#9a5d0a;--suave:#1b202b}
 body.en-app{background:var(--bg)}
 .app{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .app .num,.app .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
@@ -199,7 +199,7 @@ body.en-app{background:var(--bg)}
 .tile p{font-size:13px;opacity:.9;font-weight:500}
 .tile .cnt{font-family:"IBM Plex Mono",monospace;font-size:40px;line-height:1}
 .tile svg{width:28px;height:28px}
-.t-cot{background:var(--accent)}.t-seg{background:var(--m-asesores)}.t-ger{background:var(--m-vc)}
+.t-cot{background:var(--accent)}.t-seg{background:var(--m-asesores)}.t-ger{background:var(--m-vc)}.t-ven{background:var(--m-entregas)}
 @media(max-width:420px){.tile{min-height:140px;padding:15px}.tile h3{font-size:21px}}
 /* Pastillas de estado: punto + texto, nunca color solo */
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--suave);color:var(--text);white-space:nowrap}
@@ -296,6 +296,7 @@ body{background:var(--bg);color:var(--text)}
 /* La cotización conserva su letra y colores aunque la app esté en modo oscuro */
 #hoja{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;color:#111}
 .leyenda{font-size:10.5px;line-height:1.5;color:var(--muted);text-align:center;margin-top:28px;padding:0 4px max(8px,env(safe-area-inset-bottom))}
+#vCot .vend-fijo{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--suave);font-weight:600;font-size:15px}
 .oculto{display:none!important}
 .banda-ver{background:var(--accent);color:#fff;text-align:center;font-size:13.5px;padding:9px 16px;cursor:pointer;font-family:Inter,system-ui,sans-serif}
 </style>
@@ -343,7 +344,11 @@ body{background:var(--bg);color:var(--text)}
         </div>
         <div><h3>Seguimiento</h3><p id="iniPendTxt">pendientes de hoy</p></div>
       </button>
-      <button class="tile t-ger ancho oculto" data-ir="gerencia" id="tileGer">
+      <button class="tile t-ven" id="tileVentas">
+        <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <div><h3 id="tileVentasTit">Mis ventas</h3><p id="tileVentasTxt">Dashboard del mes</p></div>
+      </button>
+      <button class="tile t-ger oculto" data-ir="gerencia" id="tileGer">
         <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <div><h3>Gerencia</h3><p>Embudo, conversión, cruce de ventas y por confirmar</p></div>
       </button>
@@ -418,7 +423,7 @@ body{background:var(--bg);color:var(--text)}
         <div class="campo"><label>WhatsApp del cliente *</label><input id="fTel" type="tel" placeholder="55 1234 5678" autocomplete="off"><div class="ayuda">10 dígitos.</div></div>
         <div class="campo"><label>Origen del contacto</label><select id="fContacto"></select></div>
       </div>
-      <div class="campo"><label>Vendedor *</label><select id="fVendedor"></select></div>
+      <div class="campo"><label>Vendedor *</label><select id="fVendedor"></select><div id="fVendedorFijo" class="vend-fijo oculto"></div></div>
     </div>
 
     <div class="panel">
@@ -546,7 +551,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "2.2", VERSION_FECHA = "3 oct 2026";
+const VERSION = "2.3", VERSION_FECHA = "3 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1417,7 +1422,11 @@ function aplicarConfig(){
 function pintarVendedores(sinRender){
   const s=$("fVendedor"), antes=s.value;
   s.innerHTML='<option value="">— Selecciona —</option>'+VENDEDORES.map(v=>`<option value="${esc(v.n)}">${esc(v.n)}</option>`).join("");
-  if(SES && SES.rol!=="GERENTE"){ s.value=SES.nombre; s.disabled=true; }
+  /* El vendedor sale de quien entró con PIN: se muestra como dato, no como lista.
+     El gerente sí puede elegir, para cotizar a nombre de otro.              */
+  const fijo = !!(SES && SES.rol!=="GERENTE");
+  ver(s, !fijo); ver($("fVendedorFijo"), fijo);
+  if(fijo){ s.value=SES.nombre; s.disabled=true; $("fVendedorFijo").textContent=SES.nombre; }
   else {
     s.disabled=false;
     s.value = VENDEDORES.some(v=>v.n===antes) ? antes : (SES && VENDEDORES.some(v=>v.n===SES.nombre) ? SES.nombre : "");
@@ -1534,6 +1543,9 @@ async function entrar(){
 }
 
 /* ═══════════ navegación ═══════════ */
+/* Dashboard de ventas (repo reportes-agencia-chalco). Se abre con el usuario
+   que entró con PIN y sin el botón para cambiarlo.                       */
+const URL_DASHBOARD = "https://jesus-trapala.github.io/reportes-agencia-chalco/dashboard-ventas-chalco.html";
 const RUTAS = {inicio:"vInicio", cotizar:"vCot", seguimiento:"vSeg", gerencia:"vGer"};
 function vistaActual(){ return ["vLogin","vInicio","vCot","vSeg","vGer"].find(id=>!$(id).classList.contains("oculto")); }
 function ruta(){
@@ -1570,7 +1582,11 @@ function pintarInicio(){
   const h=new Date().getHours();
   $("iniHola").textContent=(h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches")+", "+pila(SES.nombre);
   $("iniFecha").textContent=new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
-  ver($("tileGer"), SES.rol==="GERENTE");
+  const ger = SES.rol==="GERENTE";
+  ver($("tileGer"), ger);
+  $("tileVentas").classList.toggle("ancho", !ger);   // vendedor: 3 mosaicos; gerente: 2 × 2
+  $("tileVentasTit").textContent = ger ? "Ventas" : "Mis ventas";
+  $("tileVentasTxt").textContent = ger ? "Dashboard de la agencia" : "Tu avance del mes";
   const n=CLIENTES.filter(esPendiente).length;
   $("iniPend").textContent = CLI_LEIDOS ? n : "…";
   $("iniPendTxt").textContent = SES.rol==="GERENTE" ? "pendientes de hoy · todo el equipo" : "pendientes de hoy";
@@ -1925,6 +1941,7 @@ async function arrancar(){
   INIT_HECHO = true;
 
   $("lgEntrar").onclick=entrar;
+  $("tileVentas").onclick=()=>{ if(SES) location.href=URL_DASHBOARD+"?usuario="+encodeURIComponent(SES.nombre.split(" ")[0])+"&desde=app"; };
   $("lgPin").addEventListener("keydown",e=>{ if(e.key==="Enter") entrar(); });
   $("lgUsuario").addEventListener("change",()=>$("lgPin").focus());
   $("btnSalir").onclick=()=>{ if(confirm("¿Salir? Se pedirá el PIN otra vez.")) cerrarSesion(); };

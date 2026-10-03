@@ -5,7 +5,7 @@
    · Nunca se toca nada de Google (Apps Script, Sheets): clientes y precios
      siempre llegan frescos.
    Al publicar, sube también el número de CACHE para limpiar lo viejo.      */
-const CACHE = "vento-2.2";
+const CACHE = "vento-2.3";
 const BASE = ["./", "./index.html", "./manifest.json", "./iconos/icono-192.png", "./iconos/icono-512.png", "./iconos/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
