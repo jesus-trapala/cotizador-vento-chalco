@@ -317,6 +317,7 @@ body{background:var(--bg);color:var(--text)}
       <button class="btn btn-acc" id="lgEntrar" style="margin-top:14px">Entrar</button>
       <div class="msg-err" id="lgError"></div>
     </div>
+    <button class="btn btn-sec btn-instalar oculto" style="margin-top:12px">Instalar app en este celular</button>
     <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
@@ -353,6 +354,7 @@ body{background:var(--bg);color:var(--text)}
         <div><h3>Gerencia</h3><p>Embudo, conversión, cruce de ventas y por confirmar</p></div>
       </button>
     </div>
+    <button class="btn btn-sec btn-instalar oculto" style="margin-top:14px">Instalar app en este celular</button>
     <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
 </div>
@@ -551,7 +553,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "2.5", VERSION_FECHA = "3 oct 2026";
+const VERSION = "2.6", VERSION_FECHA = "3 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1941,6 +1943,21 @@ function registrarSW(){
     document.addEventListener("visibilitychange",()=>{ if(!document.hidden) reg.update().catch(()=>{}); });
   }).catch(()=>{});
 }
+
+/* ═══════════ instalar como app ═══════════
+   Cuando Chrome permite instalarla, aparece el botón "Instalar app en este
+   celular" (en la entrada y en el inicio). Así no hay que buscar la opción
+   en el menú ⋮ ni confundirla con "Agregar a la pantalla principal".     */
+let PROMPT_INSTALAR = null;
+const botonesInstalar = mostrar => document.querySelectorAll(".btn-instalar").forEach(b=>ver(b,mostrar));
+window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); PROMPT_INSTALAR=e; botonesInstalar(true); });
+window.addEventListener("appinstalled", ()=>{ PROMPT_INSTALAR=null; botonesInstalar(false); toast("App instalada. Ábrela desde el ícono de Vento."); });
+document.addEventListener("click", async e=>{
+  if(!e.target.closest(".btn-instalar") || !PROMPT_INSTALAR) return;
+  PROMPT_INSTALAR.prompt();
+  try{ await PROMPT_INSTALAR.userChoice; }catch(x){}
+  PROMPT_INSTALAR=null; botonesInstalar(false);
+});
 
 /* ═══════════ arranque ═══════════ */
 async function arrancar(){
