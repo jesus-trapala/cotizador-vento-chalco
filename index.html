@@ -565,7 +565,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.1", VERSION_FECHA = "5 oct 2026";
+const VERSION = "3.2", VERSION_FECHA = "5 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1602,6 +1602,7 @@ const ICO = {
   ent:'<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
   eva:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
   exp:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  pre:'<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
   candado:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
 };
 const HERRAMIENTAS = [
@@ -1611,7 +1612,8 @@ const HERRAMIENTAS = [
   {k:"GERENCIA",    t:"Gerencia",     d:"Embudo, conversión y cruce de ventas", c:"var(--m-vc)",  i:"ger", ir:"gerencia"},
   {k:"CHECKLIST ENTREGA", t:"Entregas", d:"Checklist de entrega de unidad", c:"var(--m-pilot)",  i:"ent", url:"https://jesus-trapala.github.io/reportes-agencia-chalco/checklist-entrega.html"},
   {k:"EVALUACIONES", t:"Evaluaciones", d:"Evaluación de asesores",     c:"var(--m-resenas)",     i:"eva", url:"https://jesus-trapala.github.io/evaluaciones-vento/"},
-  {k:"EXPEDIENTES", t:"Expedientes",  d:"Revisión de expedientes",     c:"var(--m-expedientes)", i:"exp", url:"https://jesus-trapala.github.io/expedientes-vento/"}
+  {k:"EXPEDIENTES", t:"Expedientes",  d:"Revisión de expedientes",     c:"var(--m-expedientes)", i:"exp", url:"https://jesus-trapala.github.io/expedientes-vento/"},
+  {k:"PRECIADORES", t:"Preciadores",  d:"Imprimir preciadores del piso", c:"var(--m-hoy)",       i:"pre", url:"https://jesus-trapala.github.io/preciadores-vento/chalco/"}
 ];
 const RUTA_HERR = {vCot:"COTIZADOR", vSeg:"SEGUIMIENTO", vGer:"GERENCIA"};
 function permiso(k){
@@ -1619,7 +1621,7 @@ function permiso(k){
   const fila = CFG && CFG.permisos && CFG.permisos[k];
   let p = fila && fila[SES.nombre];
   /* Sin la sección PERMISOS en la hoja: los mismos valores con que se crea */
-  if(!p) p = SES.rol==="GERENTE" ? "SI" : ({GERENCIA:"OCULTO", EVALUACIONES:"NO"})[k] || "SI";
+  if(!p) p = SES.rol==="GERENTE" ? "SI" : ({GERENCIA:"OCULTO", EVALUACIONES:"NO", PRECIADORES:"OCULTO"})[k] || "SI";
   if(k==="GERENCIA" && SES.rol!=="GERENTE" && p==="SI") p = "NO";         // Gerencia además pide rol de gerente
   return p;
 }
