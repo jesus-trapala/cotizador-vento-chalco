@@ -565,7 +565,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.2", VERSION_FECHA = "5 oct 2026";
+const VERSION = "3.3", VERSION_FECHA = "5 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1904,7 +1904,11 @@ function pintarGerencia(){
   if(!SES || SES.rol!=="GERENTE" || !TABLERO) return;
   const [a,m]=$("gerMes").value.split("-").map(Number);
   const enMes = v => { if(!v) return false; const d=new Date(v); return d.getFullYear()===a && d.getMonth()+1===m; };
-  const reales=CLIENTES.filter(c=>!c.prueba);
+  /* Los gerentes no cuentan para las métricas: sus cotizaciones se guardan,
+     pero no entran al embudo, la conversión ni el semáforo. */
+  const nom = x => String(x||"").trim().toUpperCase();
+  const gerentes=new Set((CFG?CFG.usuarios:[]).filter(u=>u.rol==="GERENTE").map(u=>nom(u.n)));
+  const reales=CLIENTES.filter(c=>!c.prueba && !gerentes.has(nom(c.vendedor)));
   const delMes=reales.filter(c=>enMes(c.fecha)), n=delMes.length;
   const llego = k => delMes.filter(c=>(c.etapa||0)>=k || (k===1 && c.intentos>0)).length;
   const vendidas=delMes.filter(c=>c.estatus==="VENDIDO").length;
@@ -1912,7 +1916,7 @@ function pintarGerencia(){
   const grupo = key => { const g={}; delMes.forEach(c=>{ const k=String(c[key]||"—").trim()||"—"; g[k]=g[k]||{n:0,v:0}; g[k].n++; if(c.estatus==="VENDIDO") g[k].v++; });
     return Object.entries(g).sort((x,y)=>y[1].n-x[1].n); };
   const atrasados=reales.filter(c=>EN_CADENCIA.includes(c.estatus) && c.prox && hoyN()-diaN(c.prox)>=2);
-  const vend=[...new Set((CFG?CFG.usuarios.map(u=>u.n):[]).concat(reales.filter(c=>EN_CADENCIA.includes(c.estatus)).map(c=>c.vendedor)))].filter(Boolean);
+  const vend=[...new Set((CFG?CFG.usuarios.map(u=>u.n):[]).concat(reales.filter(c=>EN_CADENCIA.includes(c.estatus)).map(c=>c.vendedor)))].filter(v=>v && !gerentes.has(nom(v)));
   const motivos={}; reales.filter(c=>c.estatus==="PERDIDO" && enMes(c.ultimo||c.base)).forEach(c=>{ const k=c.motivo||"Sin motivo"; motivos[k]=(motivos[k]||0)+1; });
   const conFac=delMes.filter(c=>c.factura);
   const dias=conFac.filter(c=>c.fecha_venta).map(c=>diaN(c.fecha_venta)-diaN(c.fecha));
@@ -1931,7 +1935,7 @@ function pintarGerencia(){
     </div>
     <h2 class="sec">Embudo del mes</h2>
     <div class="card embudo">${embudo.map(([k,v])=>`<div class="fila-e"><div>${k}</div><div class="barra"><i style="width:${Math.round(v*100/maxE)}%"></i></div><div class="num" style="text-align:right">${v} <span class="muted">${k==="Cotizaciones"?"":pct(v,n)}</span></div></div>`).join("")}
-      <div class="muted" style="font-size:11.5px;margin-top:6px">Clientes cuyo primer contacto fue en el mes. Cada etapa cuenta a quien llegó a ella o más lejos. Sin pruebas.</div></div>
+      <div class="muted" style="font-size:11.5px;margin-top:6px">Clientes cuyo primer contacto fue en el mes. Cada etapa cuenta a quien llegó a ella o más lejos. Sin pruebas ni cotizaciones de gerentes.</div></div>
     <h2 class="sec">Semáforo de seguimiento</h2>
     <div class="card tabla-w"><table class="tabla"><thead><tr><th>Vendedor</th><th>Más de 48 h sin contacto</th></tr></thead><tbody>
       ${vend.map(v=>{ const l=atrasados.filter(c=>c.vendedor===v); return `<tr><td>${esc(tc(v))}</td><td>${semaforo(l.length)}${l.length?`<div class="muted" style="font-size:12px;margin-top:4px">${l.slice(0,6).map(c=>esc(tc(c.nombre+" "+c.apellidos))).join(", ")}${l.length>6?"…":""}</div>`:""}</td></tr>`; }).join("")}
