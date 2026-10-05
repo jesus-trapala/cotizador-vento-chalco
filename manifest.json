@@ -5,7 +5,7 @@
   "description": "Cotizador y seguimiento de clientes · Agencia Vento Chalco",
   "lang": "es-MX",
   "start_url": "/cotizador-vento-chalco/",
-  "scope": "/cotizador-vento-chalco/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#111214",
