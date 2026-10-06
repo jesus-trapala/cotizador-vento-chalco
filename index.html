@@ -251,6 +251,43 @@ body.en-app{background:var(--bg)}
 .embudo .barra i{display:block;height:100%;background:var(--accent);border-radius:6px}
 .tabla-w{overflow-x:auto}
 .tabla{width:100%;border-collapse:collapse;font-size:13px}
+/* Gerencia · cotizaciones del mes */
+.cot-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:620px){.cot-kpis{grid-template-columns:1fr 1fr}.cot-kpis .kpi:last-child{grid-column:span 2}}
+.cot-kpis .s{font-size:12px;color:var(--muted);margin-top:2px}
+.cot-sube{color:var(--ok);font-weight:700}.cot-baja{color:var(--bad);font-weight:700}
+.cot-sem{margin-top:10px}
+.cot-sem .fila{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:center;margin:8px 0;font-size:13px}
+.cot-sem .barra{height:10px;border-radius:5px;background:var(--suave);overflow:hidden}
+.cot-sem .barra i{display:block;height:100%;border-radius:5px;background:var(--c,var(--accent))}
+.cot-sem .num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cot-graf{margin-top:10px}
+.cot-graf .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:13px}
+.cot-graf .top b{font-family:Oswald,sans-serif;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.cot-graf .ley{font-size:12px;color:var(--muted)}
+.cot-graf .ley i{display:inline-block;width:18px;border-top:2px dashed var(--muted);vertical-align:middle;margin-right:4px}
+.cot-barras{position:relative;display:flex;align-items:flex-end;gap:3px;height:150px;margin-top:12px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.cot-barras .meta{position:absolute;left:0;right:0;border-top:2px dashed var(--muted);opacity:.7;pointer-events:none}
+.cot-bar{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;background:none;border:none;padding:0;cursor:pointer;color:var(--muted)}
+.cot-bar:disabled{cursor:default}
+.cot-bar i{display:block;width:100%;max-width:24px;background:var(--accent);border-radius:4px 4px 0 0;opacity:.8}
+.cot-bar.fut i{background:var(--border)}
+.cot-bar.hoy i{opacity:1}
+.cot-bar.sel i{background:var(--warn);opacity:1}
+.cot-bar .n{font:600 10px "IBM Plex Mono",monospace;margin-bottom:2px}
+.cot-bar .d{position:absolute;bottom:-17px;font:500 10px "IBM Plex Mono",monospace}
+@media(max-width:620px){.cot-bar .n{display:none}}
+.cot-dia{margin-top:24px;border-top:1px solid var(--border);padding-top:10px;font-size:13px}
+.cot-dia .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.cot-dia .chip{border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12.5px}
+.cot-dia .chip b{font-family:"IBM Plex Mono",monospace}
+.tabla td.cv{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabla td.cv .v{color:var(--ok);font-weight:700}
+.tabla td.cv .sl{color:var(--muted);margin:0 3px}
+.tabla td.cv .p{display:block;font-size:10.5px;color:var(--muted)}
+.tabla td.cv.cero{color:var(--muted);opacity:.6}
+.tabla td.cv.t{background:var(--suave);font-weight:700}
+.tabla tr.tot td{border-top:2px solid var(--text);border-bottom:none;font-weight:700}
 .tabla th{text-align:left;color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;padding:7px 8px;border-bottom:1px solid var(--border)}
 .tabla td{padding:8px;border-bottom:1px solid var(--border)}
 .tabla td.n,.tabla th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
@@ -565,7 +602,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.3", VERSION_FECHA = "5 oct 2026";
+const VERSION = "3.4", VERSION_FECHA = "6 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1900,13 +1937,102 @@ function tablaGrupo(titulo, filas){
     <tbody>${filas.length?filas.map(([k,o])=>`<tr><td>${esc(tc(k))}</td><td class="n">${o.n}</td><td class="n">${o.v}</td><td class="n">${pct(o.v,o.n)}</td></tr>`).join("")
       :`<tr><td colspan="4" class="muted">Sin cotizaciones este mes</td></tr>`}</tbody></table></div>`;
 }
+/* ═══ Gerencia · Cotizaciones del mes ═══
+   Cuenta CLIENTES (cada uno una vez, con la forma de pago de su última
+   cotización). Vendido = estatus VENDIDO, sin importar el modelo. Las
+   ventas sin cotización son de piso y no entran aquí. Meta: 3 clientes
+   por vendedor al día y 18 a la semana (descansan 1 día).               */
+const COT_META_DIA = 3, COT_META_SEM = 18;
+const COT_FORMAS = ["Contado","MSI","Vento Credit","Maxikash"];
+function grupoForma(f){
+  const x=String(f||"").toUpperCase();
+  if(x.includes("VENTO")) return "Vento Credit";
+  if(x.includes("MAXIKASH")) return "Maxikash";
+  if(x.includes("MESES") || x.includes("MSI")) return "MSI";
+  return "Contado";
+}
+const nom = x => String(x||"").trim().toUpperCase();
+let GER_DIA = null;   // día del mes elegido en la gráfica
+function cotDetalleDia(lista, dia, mesTxt, esHoy){
+  const delDia=lista.filter(c=>new Date(c.fecha).getDate()===dia);
+  const por={}; delDia.forEach(c=>{ const v=pila(c.vendedor)||"—"; por[v]=(por[v]||0)+1; });
+  const n=delDia.length;
+  return `<b>${esHoy?"Hoy, ":""}${dia} de ${mesTxt}</b> · ${n} cliente${n===1?"":"s"} cotizado${n===1?"":"s"}`+
+    (n?`<div class="chips">${Object.entries(por).sort((x,y)=>y[1]-x[1]).map(([v,k])=>`<span class="chip">${esc(v)} <b>${k}</b></span>`).join("")}</div>`
+      :`<div class="muted" style="margin-top:4px">Nadie cotizó este día.</div>`);
+}
+function seccionCotizaciones(delMes, reales, vendedores, a, m){
+  const ahora=new Date(), esMesActual = ahora.getFullYear()===a && ahora.getMonth()+1===m;
+  const diasMes=new Date(a,m,0).getDate(), hoyDia=esMesActual?ahora.getDate():diasMes;
+  const mesTxt=new Date(a,m-1,1).toLocaleDateString("es-MX",{month:"long"});
+  const nMes=delMes.length;
+
+  // contadores
+  const minutos = d => d.getHours()*60+d.getMinutes();
+  const hoy=reales.filter(c=>diaN(c.fecha)===hoyN()).length;
+  const ayerHora=reales.filter(c=>diaN(c.fecha)===hoyN()-1 && minutos(new Date(c.fecha))<=minutos(ahora)).length;
+  const lunes=new Date(ahora.getFullYear(),ahora.getMonth(),ahora.getDate()-((ahora.getDay()+6)%7));
+  const diasSem=(ahora.getDay()+6)%7+1;   // lunes = 1 … domingo = 7
+  const semana=reales.filter(c=>diaN(c.fecha)>=diaN(lunes));
+  const dif=hoy-ayerHora;
+  const kpiHoy = esMesActual
+    ? `<div class="card kpi"><div class="k">Hoy</div><div class="v">${hoy}</div><div class="s">Ayer a esta hora: ${ayerHora}${dif?` · <span class="${dif>0?"cot-sube":"cot-baja"}">${dif>0?"+":""}${dif}</span>`:""}</div></div>
+       <div class="card kpi"><div class="k">Esta semana</div><div class="v">${semana.length}</div><div class="s">Desde el lunes ${lunes.getDate()} · meta ${COT_META_SEM*vendedores.length}</div></div>`
+    : "";
+  const kpiMes=`<div class="card kpi"><div class="k">${esMesActual?"Mes":"Total de "+mesTxt}</div><div class="v">${nMes}</div><div class="s">Promedio ${(nMes/Math.max(hoyDia,1)).toFixed(1)} por día · ${hoyDia} de ${diasMes} días</div></div>`;
+
+  // avance de la semana por vendedor contra 18 (se tolera 1 día de descanso)
+  let sem="";
+  if(esMesActual && vendedores.length){
+    const esperado=Math.min(COT_META_SEM, COT_META_DIA*(diasSem-1));
+    sem=`<div class="card cot-sem"><div class="muted" style="font-size:12px">Avance de la semana · meta ${COT_META_SEM} clientes por vendedor</div>`+
+      vendedores.map(v=>{
+        const n=semana.filter(c=>nom(c.vendedor)===nom(v)).length;
+        const [est,color]= n>=COT_META_SEM ? ["Cumplida","var(--ok)"] : n>=esperado ? ["Al día","var(--ok)"]
+          : esperado-n<=COT_META_DIA ? ["Atrasado · faltan "+(esperado-n),"var(--warn)"] : ["Atrasado · faltan "+(esperado-n),"var(--bad)"];
+        return `<div class="fila"><div>${esc(pila(v))}</div><div class="barra"><i style="width:${Math.min(100,Math.round(n*100/COT_META_SEM))}%;--c:${color}"></i></div>
+          <div class="num">${n} / ${COT_META_SEM} <span class="pill" style="--c:${color}"><i></i>${est}</span></div></div>`;
+      }).join("")+`</div>`;
+  }
+
+  // barras por día
+  const porDia=Array(diasMes+1).fill(0);
+  delMes.forEach(c=>{ porDia[new Date(c.fecha).getDate()]++; });
+  const metaDia=COT_META_DIA*Math.max(vendedores.length,1);
+  const tope=Math.max(metaDia+1, ...porDia);
+  if(!GER_DIA || GER_DIA.a!==a || GER_DIA.m!==m || GER_DIA.d>hoyDia) GER_DIA={a,m,d:hoyDia};
+  let barras=`<div class="meta" style="bottom:calc(18px + ${Math.round(metaDia/tope*132)}px)"></div>`;
+  for(let d=1; d<=diasMes; d++){
+    const fut=d>hoyDia, k=porDia[d];
+    barras+=`<button class="cot-bar${fut?" fut":""}${esMesActual&&d===hoyDia?" hoy":""}${d===GER_DIA.d?" sel":""}" data-dia="${d}"${fut?" disabled":""} aria-label="Día ${d}: ${k}">
+      ${fut?"":`<span class="n">${k}</span>`}<i style="height:${fut?3:Math.max(Math.round(k/tope*132),3)}px"></i><span class="d">${d===1||d%5===0?d:""}</span></button>`;
+  }
+  const graf=`<div class="card cot-graf"><div class="top"><b>Clientes cotizados por día</b><span class="ley"><i></i>Meta diaria: ${metaDia}</span></div>
+    <div class="cot-barras">${barras}</div><div class="cot-dia" id="cotDia">${cotDetalleDia(delMes, GER_DIA.d, mesTxt, esMesActual&&GER_DIA.d===hoyDia)}</div></div>`;
+
+  // tabla vendedor × forma de pago (cotizados / vendidos)
+  const vend=[...new Set(vendedores.map(nom).concat(delMes.map(c=>nom(c.vendedor))))].filter(Boolean);
+  const celda=(c,v,cls="")=> !c ? `<td class="cv cero${cls}">0</td>`
+    : `<td class="cv${cls}">${c}<span class="sl">/</span><span class="v">${v}</span><span class="p">${Math.round(v*100/c)}%</span></td>`;
+  const cuenta=lista=>[lista.length, lista.filter(c=>c.estatus==="VENDIDO").length];
+  const filas=vend.map(v=>{
+    const suyos=delMes.filter(c=>nom(c.vendedor)===v);
+    return `<tr><td>${esc(tc(v))}</td>${COT_FORMAS.map(fp=>celda(...cuenta(suyos.filter(c=>grupoForma(c.forma_pago)===fp)))).join("")}${celda(...cuenta(suyos)," t")}</tr>`;
+  }).join("");
+  const tot=`<tr class="tot"><td>Total</td>${COT_FORMAS.map(fp=>celda(...cuenta(delMes.filter(c=>grupoForma(c.forma_pago)===fp)))).join("")}${celda(...cuenta(delMes)," t")}</tr>`;
+  const tabla=`<h2 class="sec">Por vendedor y forma de pago</h2><div class="card tabla-w"><table class="tabla"><thead><tr><th>Vendedor</th>${COT_FORMAS.map(fp=>`<th class="n">${fp}</th>`).join("")}<th class="n">Total</th></tr></thead>
+    <tbody>${vend.length?filas+tot:`<tr><td colspan="6" class="muted">Sin cotizaciones este mes</td></tr>`}</tbody></table>
+    <div class="muted" style="font-size:11.5px;margin-top:8px">Cada casilla: cotizados / <span style="color:var(--ok);font-weight:700">vendidos</span>. Cada cliente cuenta una vez, con la forma de pago de su última cotización. Vendido = estatus VENDIDO, sin importar el modelo. Contado agrupa débito, crédito, transferencia y depósito. Las ventas sin cotización son de piso y no cuentan aquí. Sin pruebas ni gerentes.</div></div>`;
+
+  return `<h2 class="sec">Cotizaciones del mes</h2><div class="kpis cot-kpis">${kpiHoy}${kpiMes}</div>${sem}${graf}${tabla}`;
+}
+
 function pintarGerencia(){
   if(!SES || SES.rol!=="GERENTE" || !TABLERO) return;
   const [a,m]=$("gerMes").value.split("-").map(Number);
   const enMes = v => { if(!v) return false; const d=new Date(v); return d.getFullYear()===a && d.getMonth()+1===m; };
   /* Los gerentes no cuentan para las métricas: sus cotizaciones se guardan,
      pero no entran al embudo, la conversión ni el semáforo. */
-  const nom = x => String(x||"").trim().toUpperCase();
   const gerentes=new Set((CFG?CFG.usuarios:[]).filter(u=>u.rol==="GERENTE").map(u=>nom(u.n)));
   const reales=CLIENTES.filter(c=>!c.prueba && !gerentes.has(nom(c.vendedor)));
   const delMes=reales.filter(c=>enMes(c.fecha)), n=delMes.length;
@@ -1923,6 +2049,7 @@ function pintarGerencia(){
   const diasProm=dias.length?Math.round(dias.reduce((s,x)=>s+x,0)/dias.length):null;
   const otro=reales.filter(c=>c.factura && c.vendedor_facturo && enMes(c.fecha_venta) &&
     pila(c.vendedor).toUpperCase()!==String(c.vendedor_facturo).trim().split(/\s+/)[0].toUpperCase());
+  const vendActivos=(CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE").map(u=>u.n);
   const T=TABLERO, uc=T.ultimoCruce;
   const maxE=Math.max(1,n);
 
@@ -1933,6 +2060,7 @@ function pintarGerencia(){
       <div class="card kpi"><div class="v">${pct(vendidas,n)}</div><div class="k">Conversión</div></div>
       <div class="card kpi"><div class="v">${atrasados.length}</div><div class="k">Atrasados +48 h (hoy)</div></div>
     </div>
+    ${seccionCotizaciones(delMes, reales, vendActivos, a, m)}
     <h2 class="sec">Embudo del mes</h2>
     <div class="card embudo">${embudo.map(([k,v])=>`<div class="fila-e"><div>${k}</div><div class="barra"><i style="width:${Math.round(v*100/maxE)}%"></i></div><div class="num" style="text-align:right">${v} <span class="muted">${k==="Cotizaciones"?"":pct(v,n)}</span></div></div>`).join("")}
       <div class="muted" style="font-size:11.5px;margin-top:6px">Clientes cuyo primer contacto fue en el mes. Cada etapa cuenta a quien llegó a ella o más lejos. Sin pruebas ni cotizaciones de gerentes.</div></div>
@@ -1969,8 +2097,8 @@ function pintarGerencia(){
       :`<div class="card muted" style="font-size:13.5px">Nada por confirmar.</div>`}
     ${otro.length?`<h2 class="sec">Cotizó uno y facturó otro</h2><div class="card tabla-w"><table class="tabla"><thead><tr><th>Cliente</th><th>Cotizó</th><th>Facturó</th><th>Factura</th></tr></thead><tbody>
       ${otro.map(c=>`<tr><td>${esc(tc(c.nombre+" "+c.apellidos))}</td><td>${esc(pila(c.vendedor))}</td><td>${esc(tc(c.vendedor_facturo))}</td><td class="mono">${esc(c.factura)}</td></tr>`).join("")}</tbody></table></div>`:""}
-    ${(T.sinCotizacion||[]).length?`<h2 class="sec">Ventas sin cotización previa</h2><div class="card tabla-w"><table class="tabla"><thead><tr><th>Fecha</th><th>Cliente</th><th>Modelo</th><th>Vendedor</th></tr></thead><tbody>
-      ${T.sinCotizacion.map(v=>`<tr><td>${fechaCorta(v.fecha)}</td><td>${esc(v.cliente)}</td><td>${esc(v.modelo)}</td><td>${esc(tc(v.vendedor))}</td></tr>`).join("")}</tbody></table></div>`:""}`;
+    ${(T.sinCotizacion||[]).length?`<h2 class="sec">Ventas sin cotización previa</h2><div class="card tabla-w"><table class="tabla"><thead><tr><th>Fecha</th><th>Cliente</th><th>Modelo</th><th>Forma de pago</th><th>Vendedor</th></tr></thead><tbody>
+      ${T.sinCotizacion.map(v=>`<tr><td>${fechaCorta(v.fecha)}</td><td>${esc(v.cliente)}</td><td>${esc(v.modelo)}</td><td>${v.forma?esc(tc(v.forma)):'<span class="muted">—</span>'}</td><td>${esc(tc(v.vendedor))}</td></tr>`).join("")}</tbody></table></div>`:""}`;
 }
 async function accionGerencia(accion, datos, boton){
   if(boton) boton.disabled=true;
@@ -2052,6 +2180,8 @@ async function arrancar(){
   $("gerRecargar").onclick=()=>cargarGerencia(true);
   $("gerCuerpo").addEventListener("click",e=>{
     if(e.target.closest("#btnCruzar")) return accionGerencia("cruzar",{},e.target.closest("#btnCruzar"));
+    const bd=e.target.closest("[data-dia]");
+    if(bd){ if(GER_DIA) GER_DIA.d=+bd.dataset.dia; pintarGerencia(); return; }
     const c=e.target.closest("[data-conf]"), d=e.target.closest("[data-desc]"), b=c||d; if(!b) return;
     const [factura,tel]=(c?c.dataset.conf:d.dataset.desc).split("|");
     if(c && !confirm("¿Marcar este cliente como VENDIDO con la factura "+factura+"?")) return;
