@@ -602,7 +602,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.4", VERSION_FECHA = "6 oct 2026";
+const VERSION = "3.5", VERSION_FECHA = "7 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1562,6 +1562,7 @@ async function api(accion, datos){
   }catch(e){
     if(e && e.name==="AbortError") throw new Error("La hoja tardó demasiado. Revisa el internet.");
     if(e instanceof TypeError) throw new Error("Sin conexión con la hoja. Revisa el internet.");
+    if(e instanceof SyntaxError) throw new Error("La hoja respondió con un error (puede ser el Apps Script o que Google tardó). Intenta de nuevo en un momento.");
     throw e;
   }finally{ clearTimeout(t); }
 }
@@ -1699,14 +1700,15 @@ const esPendiente = c => EN_CADENCIA.includes(c.estatus) && !!c.prox && diaN(c.p
 const esReact = c => c.estatus==="SIN RESPUESTA" && (!c.ultimo || mesN(c.ultimo)<mesN(new Date()));
 const tipoPago = forma => (PAGOS.find(p=>p.n===forma)||{}).tipo || "contado";
 
-let CLIENTES = [], CLI_LEIDOS = 0, CLI_CARGANDO = null;
+let CLIENTES = [], CLI_LEIDOS = 0, CLI_CARGANDO = null, CLI_ERROR = "";
 function cargarClientes(forzar){
   if(!SES) return Promise.resolve();
   if(!forzar && CLI_LEIDOS && Date.now()-CLI_LEIDOS<60000){ pintarTodo(); return Promise.resolve(); }
   if(CLI_CARGANDO) return CLI_CARGANDO;
   CLI_CARGANDO = (async()=>{
-    try{ const j=await api("clientes"); CLIENTES=j.clientes||[]; CLI_LEIDOS=Date.now(); }
+    try{ const j=await api("clientes"); CLIENTES=j.clientes||[]; CLI_LEIDOS=Date.now(); CLI_ERROR=""; }
     catch(e){
+      CLI_ERROR=e.message;
       toast(e.message,true);
       if(!CLI_LEIDOS && SES) $("segLista").innerHTML=`<div class="vacio">No se pudo leer el seguimiento.<br>${esc(e.message)}</div>`;
     }
@@ -1922,6 +1924,8 @@ async function cargarGerencia(forzar){
   if(!TABLERO || TABLERO.mes!==mes) $("gerCuerpo").innerHTML='<div class="vacio">Cargando…</div>';
   try{
     await cargarClientes(!!forzar);
+    // Si la lista de clientes no llegó, se intenta una vez más antes de rendirse
+    if(!CLI_LEIDOS){ $("gerCuerpo").innerHTML='<div class="vacio">Cargando… (segundo intento)</div>'; await cargarClientes(true); }
     TABLERO = await api("tablero",{mes});
   }catch(e){ toast(e.message,true); if(!TABLERO) TABLERO={mes, error:e.message, porConfirmar:[], sinCotizacion:[]}; }
   pintarGerencia();
@@ -2028,7 +2032,15 @@ function seccionCotizaciones(delMes, reales, vendedores, a, m){
 }
 
 function pintarGerencia(){
-  if(!SES || SES.rol!=="GERENTE" || !TABLERO) return;
+  if(!SES || SES.rol!=="GERENTE") return;
+  /* Sin la lista de clientes no se pintan ceros: se avisa y se ofrece reintentar. */
+  if(!CLI_LEIDOS && !CLI_CARGANDO && CLI_ERROR){
+    $("gerCuerpo").innerHTML=`<div class="vacio">No se pudo leer la hoja, por eso no hay cifras.<br><span class="muted">${esc(CLI_ERROR)}</span><br><br>
+      <button class="btn btn-sec" id="gerReintentar">↻ Reintentar</button></div>`;
+    $("gerReintentar").onclick=()=>{ $("gerCuerpo").innerHTML='<div class="vacio">Cargando…</div>'; cargarGerencia(true); };
+    return;
+  }
+  if(!TABLERO) return;
   const [a,m]=$("gerMes").value.split("-").map(Number);
   const enMes = v => { if(!v) return false; const d=new Date(v); return d.getFullYear()===a && d.getMonth()+1===m; };
   /* Los gerentes no cuentan para las métricas: sus cotizaciones se guardan,
