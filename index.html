@@ -192,6 +192,13 @@ body.en-app{background:var(--bg)}
 .msg-err{color:var(--bad);font-size:13px;margin-top:10px;min-height:18px}
 /* Inicio: mosaicos (se tocan → color sólido) */
 .hola{font-family:Oswald,sans-serif;font-size:24px;margin:6px 0 2px}
+/* Cambiar vista (solo gerente) */
+.cambiar-vista{background:none;border:none;padding:0;color:var(--accent);font-size:13.5px;font-weight:600;text-decoration:underline;cursor:pointer;min-height:44px}
+.franja-vista{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  background:var(--warn);color:#1a1300;padding:6px 12px;font-size:14px;font-weight:600;text-align:center}
+.franja-vista button{background:#1a1300;color:#fff;border:none;border-radius:999px;min-height:36px;padding:6px 14px;font-weight:700;font-size:13px;cursor:pointer}
+.lista-vista{display:grid;gap:10px;margin-top:8px}
+.lista-vista button{min-height:52px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;text-align:left;padding:10px 16px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .tile{border-radius:18px;padding:18px;color:#fff;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;box-shadow:0 8px 18px -10px rgba(0,0,0,.45)}
 .tile.ancho{grid-column:1/-1;min-height:120px}
@@ -368,6 +375,7 @@ body{background:var(--bg);color:var(--text)}
 </style>
 </head>
 <body>
+<div class="franja-vista oculto" id="franjaVista" role="status"><span id="fvTexto"></span><button type="button" id="fvSalir">Volver a mi vista</button></div>
 <div id="bandaVersion" class="banda-ver oculto"></div>
 
 <!-- ═══════════ Entrada con PIN ═══════════ -->
@@ -400,6 +408,7 @@ body{background:var(--bg);color:var(--text)}
   <div class="app-main">
     <div class="hola" id="iniHola"></div>
     <div class="muted" id="iniFecha" style="font-size:13.5px"></div>
+    <button type="button" class="cambiar-vista oculto" id="btnCambiarVista">Cambiar vista</button>
     <div class="tiles" id="tiles"></div>
     <button class="btn btn-sec btn-instalar oculto" style="margin-top:14px">Instalar app en este celular</button>
     <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
@@ -602,7 +611,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.7", VERSION_FECHA = "10 oct 2026";
+const VERSION = "3.8", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1428,6 +1437,8 @@ function limpiar(){
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 const tc = s => String(s||"").toLowerCase().replace(/(^|\s)\S/g, m=>m.toUpperCase());
 const pila = s => tc(String(s||"").trim().split(/\s+/)[0]||"");
+/** Nombre de pila de un usuario de la app, con acento (en la hoja van en mayúsculas sin acento). */
+const pilaUsuario = s => ({Jesus:"Jesús"})[pila(s)] || pila(s);
 const listaY = a => a.length<=1 ? (a[0]||"") : a.slice(0,-1).join(", ")+" y "+a[a.length-1];
 const diaN = v => { if(!v) return null; const d=v instanceof Date?v:new Date(v); if(isNaN(d)) return null;
   return Math.round(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000); };
@@ -1475,9 +1486,10 @@ function pintarVendedores(sinRender){
   s.innerHTML='<option value="">— Selecciona —</option>'+VENDEDORES.map(v=>`<option value="${esc(v.n)}">${esc(v.n)}</option>`).join("");
   /* El vendedor sale de quien entró con PIN: se muestra como dato, no como lista.
      El gerente sí puede elegir, para cotizar a nombre de otro.              */
-  const fijo = !!(SES && SES.rol!=="GERENTE");
+  const u = SES ? yo() : null;
+  const fijo = !!(u && u.rol!=="GERENTE");
   ver(s, !fijo); ver($("fVendedorFijo"), fijo);
-  if(fijo){ s.value=SES.nombre; s.disabled=true; $("fVendedorFijo").textContent=SES.nombre; }
+  if(fijo){ s.value=u.nombre; s.disabled=true; $("fVendedorFijo").textContent=u.nombre; }
   else {
     s.disabled=false;
     s.value = VENDEDORES.some(v=>v.n===antes) ? antes : (SES && VENDEDORES.some(v=>v.n===SES.nombre) ? SES.nombre : "");
@@ -1540,13 +1552,47 @@ function cerrarSheet(){ $("sheet").classList.add("oculto"); $("sheetCont").inner
    que devuelve (dura 12 h), para no pedir el PIN en cada pantalla.       */
 const LLAVE_SES = "vch_sesion_v1";
 let SES = null;
+
+/* ═══════════ cambiar vista (solo gerente) ═══════════
+   El gerente puede ver la app exactamente como la ve un asesor, sin su PIN.
+   La sesión (token) sigue siendo la del gerente: lo que registre en esa vista
+   se guarda con su nombre. Una cotización sí queda a nombre del asesor (es su
+   vendedor), igual que cuando el gerente cotiza y elige vendedor.         */
+const LLAVE_VISTA = "vch_vista_v1";
+let VISTA = null;                       // nombre del asesor que se está viendo
+const esVista = () => !!(VISTA && SES && SES.rol==="GERENTE");
+/** Usuario con el que se pinta la app: el asesor en "ver como", si no quien entró. */
+const yo = () => esVista() ? {nombre:VISTA, rol:"VENDEDOR"} : SES;
+/** Clientes que vería ese usuario (el gerente recibe todos del servidor). */
+const misClientes = () => esVista() ? CLIENTES.filter(c=>String(c.vendedor||"").trim().toUpperCase()===VISTA.toUpperCase()) : CLIENTES;
+function guardarVista(n){
+  VISTA = n || null;
+  try{ if(VISTA) localStorage.setItem(LLAVE_VISTA, VISTA); else localStorage.removeItem(LLAVE_VISTA); }catch(e){}
+}
+function pintarVista(){
+  const on = esVista();
+  ver($("franjaVista"), on);
+  if(on) $("fvTexto").textContent = pilaUsuario(SES.nombre)+" viendo como "+pilaUsuario(VISTA);
+  ver($("btnCambiarVista"), !!(SES && SES.rol==="GERENTE" && !on));
+}
+function ponerVista(n){
+  guardarVista(n); cerrarSheet(); pintarVista(); pintarVendedores();
+  location.hash="#inicio"; ruta();
+}
+function elegirVista(){
+  const ases=(CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE");
+  abrirSheet(`<div class="cab-s"><div><h3>Cambiar vista</h3><div class="muted" style="font-size:13px">Ver la app exactamente como la ve el asesor. Lo que registres se guarda a tu nombre.</div></div>
+    <button class="btn btn-sec btn-chico" data-cerrar>Cerrar</button></div>
+    <div class="lista-vista">${ases.length?ases.map(u=>`<button type="button" data-vista="${esc(u.n)}">${esc(tc(u.n))}</button>`).join(""):'<div class="muted">No hay asesores en CONFIGURACION.</div>'}</div>`);
+  document.querySelectorAll("[data-vista]").forEach(b=>b.onclick=()=>ponerVista(b.dataset.vista));
+}
 function leerSesion(){
   try{ const s=JSON.parse(localStorage.getItem(LLAVE_SES)||"null"); if(s && s.token && s.exp>Date.now()) return s; }catch(e){}
   return null;
 }
 function guardarSesion(s){ SES=s; try{ localStorage.setItem(LLAVE_SES, JSON.stringify(s)); }catch(e){} }
 function cerrarSesion(){
-  SES=null; CLIENTES=[]; CLI_LEIDOS=0; TABLERO=null;
+  SES=null; CLIENTES=[]; CLI_LEIDOS=0; TABLERO=null; guardarVista(null); pintarVista();
   try{ localStorage.removeItem(LLAVE_SES); }catch(e){}
   pintarVendedores(); location.hash="#inicio"; ruta();
 }
@@ -1585,6 +1631,7 @@ async function entrar(){
   try{
     const j=await api("login",{nombre:n, pin});
     guardarSesion({token:j.token, nombre:j.nombre, rol:j.rol, exp:Date.now()+11.5*3600000});
+    guardarVista(null); pintarVista();
     try{ localStorage.setItem("vch_ultimo_usuario", j.nombre); }catch(x){}
     $("lgPin").value="";
     pintarVendedores();
@@ -1656,19 +1703,21 @@ const HERRAMIENTAS = [
 const RUTA_HERR = {vCot:"COTIZADOR", vSeg:"SEGUIMIENTO", vGer:"GERENCIA"};
 function permiso(k){
   if(!SES) return "OCULTO";
+  const u = yo();
   const fila = CFG && CFG.permisos && CFG.permisos[k];
-  let p = fila && fila[SES.nombre];
+  let p = fila && fila[u.nombre];
   /* Sin la sección PERMISOS en la hoja: los mismos valores con que se crea */
-  if(!p) p = SES.rol==="GERENTE" ? "SI" : ({GERENCIA:"OCULTO", EVALUACIONES:"NO"})[k] || "SI";
-  if(k==="GERENCIA" && SES.rol!=="GERENTE" && p==="SI") p = "NO";         // Gerencia además pide rol de gerente
+  if(!p) p = u.rol==="GERENTE" ? "SI" : ({GERENCIA:"OCULTO", EVALUACIONES:"NO"})[k] || "SI";
+  if(k==="GERENCIA" && u.rol!=="GERENTE" && p==="SI") p = "NO";         // Gerencia además pide rol de gerente
   return p;
 }
 function pintarInicio(){
   if(!SES) return;
-  const h=new Date().getHours(), ger=SES.rol==="GERENTE";
-  $("iniHola").textContent=(h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches")+", "+pila(SES.nombre);
+  const u=yo(), h=new Date().getHours(), ger=u.rol==="GERENTE";
+  $("iniHola").textContent=(h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches")+", "+pilaUsuario(u.nombre);
+  pintarVista();
   $("iniFecha").textContent=new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
-  const n=CLIENTES.filter(esPendiente).length;
+  const n=misClientes().filter(esPendiente).length;
   const lista=HERRAMIENTAS.map(x=>Object.assign({},x,{p:permiso(x.k)})).filter(x=>x.p!=="OCULTO");
   $("tiles").innerHTML=lista.map((x,ix)=>{
     const bloq=x.p!=="SI", ancho=lista.length%2===1 && ix===lista.length-1;
@@ -1686,7 +1735,8 @@ function abrirHerramienta(k){
   if(permiso(k)!=="SI"){ toast("No tienes permiso para usar esta herramienta. Si la necesitas, pídesela al gerente.",true); return; }
   if(x.ir){ location.hash="#"+x.ir; return; }
   const sep=x.url.includes("?")?"&":"?";
-  location.href = x.url+sep+"desde=app"+(x.conUsuario?"&usuario="+encodeURIComponent(SES.nombre.split(" ")[0]):"");
+  location.href = x.url+sep+"desde=app"+(x.conUsuario?"&usuario="+encodeURIComponent(yo().nombre.split(" ")[0]):"")
+    +(x.conUsuario && esVista() ? "&vista="+encodeURIComponent(SES.nombre.split(" ")[0]) : "");
 }
 
 /* ═══════════ clientes (filtrados en el servidor) ═══════════ */
@@ -1739,7 +1789,7 @@ function tarjeta(c){
   const pasos = cad.map((p,i)=>`<i class="${c.estatus==="SIN RESPUESTA"||(idx>=0&&i<idx)?"h":(i===idx?"a":"")}"></i>`).join("");
   const borde = pend ? (atraso>=2?"var(--bad)":atraso>=1?"var(--warn)":"var(--accent)") : (EST_COLOR[c.estatus]||"var(--border)");
   const nota = ultimaNota(c.notas);
-  const quien = SES && SES.rol==="GERENTE" ? " · "+esc(pila(c.vendedor)) : "";
+  const quien = SES && yo().rol==="GERENTE" ? " · "+esc(pila(c.vendedor)) : "";
   const cuando = pend ? (atraso>0 ? ` · <b style="color:var(--bad)">atrasado ${atraso} día${atraso===1?"":"s"}</b>` : " · <b>toca hoy</b>")
                       : (c.prox ? " · siguiente "+fechaCorta(c.prox) : "");
   return `<div class="cli" style="--c:${borde}">
@@ -1761,7 +1811,7 @@ function tarjeta(c){
 let SEG_TAB = "hoy";
 function pintarSeg(){
   if(!SES || !INIT_HECHO) return;
-  const g = SES.rol==="GERENTE";
+  const g = yo().rol==="GERENTE";
   ver($("segBuscar"), SEG_TAB==="todos"); ver($("segEstatus"), SEG_TAB==="todos"); ver($("segVendedor"), g);
   if(!$("segEstatus").options.length)
     $("segEstatus").innerHTML='<option value="">Todos los estatus</option>'+Object.keys(EST_TXT).map(k=>`<option value="${k}">${EST_TXT[k]}</option>`).join("");
@@ -1773,7 +1823,7 @@ function pintarSeg(){
   }
   document.querySelectorAll("#segTabs button").forEach(b=>b.classList.toggle("on", b.dataset.t===SEG_TAB));
   const fv=$("segVendedor").value;
-  const base=CLIENTES.filter(c=>!g||!fv||c.vendedor===fv);
+  const base=misClientes().filter(c=>!g||!fv||c.vendedor===fv);
   const hoy=base.filter(esPendiente).sort((a,b)=>diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
   const react=base.filter(esReact).sort((a,b)=>diaN(a.ultimo||a.base)-diaN(b.ultimo||b.base));
   $("cHoy").textContent = CLI_LEIDOS ? "· "+hoy.length : "";
@@ -2164,6 +2214,9 @@ document.addEventListener("click", async e=>{
 async function arrancar(){
   CFG = leerCfgGuardada();
   SES = leerSesion();
+  try{ VISTA = localStorage.getItem(LLAVE_VISTA) || null; }catch(e){}
+  if(new URLSearchParams(location.search).get("vista")==="salir"){ guardarVista(null); history.replaceState(null,"",location.pathname+location.hash); }
+  if(!SES || SES.rol!=="GERENTE") guardarVista(null);
   if(CFG) VENDEDORES = CFG.usuarios.map(u=>({n:u.n, t:soloDig(u.t), rol:u.rol}));
   init();
   INIT_HECHO = true;
@@ -2172,6 +2225,9 @@ async function arrancar(){
   $("tiles").addEventListener("click",e=>{ const t=e.target.closest(".tile[data-h]"); if(t) abrirHerramienta(t.dataset.h); });
   $("lgPin").addEventListener("keydown",e=>{ if(e.key==="Enter") entrar(); });
   $("lgUsuario").addEventListener("change",()=>$("lgPin").focus());
+  $("btnCambiarVista").onclick=elegirVista;
+  $("fvSalir").onclick=()=>ponerVista(null);
+  pintarVista();
   $("btnSalir").onclick=()=>{ if(confirm("¿Salir? Se pedirá el PIN otra vez.")) cerrarSesion(); };
   document.querySelectorAll(".btn-tema").forEach(b=>b.onclick=cambiarTema);
   document.addEventListener("click",e=>{
