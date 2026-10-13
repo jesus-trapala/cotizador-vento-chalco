@@ -434,6 +434,7 @@ body{background:var(--bg);color:var(--text)}
       <select id="segEstatus" class="oculto"></select>
       <select id="segVendedor" class="oculto"></select>
       <button class="btn btn-sec btn-chico" id="segRecargar" title="Volver a leer la hoja">↻ Actualizar</button>
+      <button class="btn btn-sec btn-chico oculto" id="segCambiarVista" title="Ver Seguimiento como un asesor">Cambiar vista</button>
       <button class="btn btn-sec btn-chico" data-ir="cotizar">Ir al Cotizador</button>
     </div>
     <div id="segLista"><div class="vacio">Cargando clientes…</div></div>
@@ -613,7 +614,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.9", VERSION_FECHA = "13 oct 2026";
+const VERSION = "3.10", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1580,10 +1581,13 @@ function pintarVista(){
     document.documentElement.style.setProperty("--alto-franja", $("franjaVista").offsetHeight+"px");
   }
   ver($("btnCambiarVista"), !!(SES && SES.rol==="GERENTE" && !on));
+  ver($("segCambiarVista"), !!(SES && SES.rol==="GERENTE" && !on));
 }
 function ponerVista(n){
+  const enSeg = vistaActual()==="vSeg";
   guardarVista(n); cerrarSheet(); pintarVista(); pintarVendedores();
-  location.hash="#inicio"; ruta();
+  if(enSeg){ SEG_TAB="hoy"; pintarSeg(); window.scrollTo(0,0); }
+  else { location.hash="#inicio"; ruta(); }
 }
 function elegirVista(){
   const ases=(CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE");
@@ -1818,6 +1822,7 @@ let SEG_TAB = "hoy";
 function pintarSeg(){
   if(!SES || !INIT_HECHO) return;
   const g = yo().rol==="GERENTE";
+  pintarVista();
   ver($("segBuscar"), SEG_TAB==="todos"); ver($("segEstatus"), SEG_TAB==="todos"); ver($("segVendedor"), g);
   if(!$("segEstatus").options.length)
     $("segEstatus").innerHTML='<option value="">Todos los estatus</option>'+Object.keys(EST_TXT).map(k=>`<option value="${k}">${EST_TXT[k]}</option>`).join("");
@@ -2232,6 +2237,7 @@ async function arrancar(){
   $("lgPin").addEventListener("keydown",e=>{ if(e.key==="Enter") entrar(); });
   $("lgUsuario").addEventListener("change",()=>$("lgPin").focus());
   $("btnCambiarVista").onclick=elegirVista;
+  $("segCambiarVista").onclick=elegirVista;
   $("fvSalir").onclick=()=>ponerVista(null);
   pintarVista();
   $("btnSalir").onclick=()=>{ if(confirm("¿Salir? Se pedirá el PIN otra vez.")) cerrarSesion(); };
