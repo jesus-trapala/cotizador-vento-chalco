@@ -722,7 +722,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.1", VERSION_FECHA = "13 oct 2026";
+const VERSION = "4.2", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1961,7 +1961,7 @@ async function cargarVentas(mes, forzar){
   if(!forzar && v && Date.now()-v.t < 300000) return v;
   try{
     const j = await api("ventas",{mes});
-    VENTAS[mes] = {t:Date.now(), ventas:j.ventas||[], error:"", faltan:j.faltan||[]};
+    VENTAS[mes] = {t:Date.now(), ventas:j.ventas||[], error:"", faltan:j.faltan||[], agencia:j.agencia||null};
   }catch(e){
     VENTAS[mes] = {t:Date.now(), ventas:[], error: /desconocida/i.test(e.message)
       ? "Para ver ventas, conversión y cuánto falta hay que pegar el Apps Script v5." : e.message};
@@ -2005,7 +2005,7 @@ function ventasDeAsesor(lista, vend, clase){
   return lista.filter(v=>{
     const c = claseVenta(v);
     if(clase && c!==clase) return false;
-    if(!vend) return true;
+    if(!vend) return !(c!=="natural" && v.vendedorCot && gerentesSet().has(nom(v.vendedorCot)));   // agencia: sin cotizaciones de gerentes
     if(c!=="natural" && v.vendedorCot) return nom(v.vendedorCot)===nom(vend);
     return primerN(v.vendedor)===primerN(vend);
   });
@@ -2054,14 +2054,29 @@ function calcFalta(vend, lista){
   const vs = facturadasPor(ventasMes(k,k), vend), llevo = vs.reduce((s,x)=>s+(x.precio||0)/1.16, 0);
   let tk = vs.length ? llevo/vs.length : 0, tkAnt = false;
   if(!tk){ const va=facturadasPor(ventasMes(k,ant), vend); tk = va.length ? va.reduce((s,x)=>s+(x.precio||0)/1.16,0)/va.length : 0; tkAnt = true; }
+  /* Conversión para el cálculo: la propia si lleva 3 o más ventas de gestión en el
+     mes; si no, la de la agencia del mes (o del mes anterior si aún no hay). */
   const cv = conversionDe(vend, lista, k);
-  let conv = cv.g>=3 ? cv.pct : null, convAnt = false;
-  if(conv==null){ const ca=conversionDe(vend, lista, ant); conv = ca.g ? ca.pct : null; convAnt = true; }
+  let conv = null, fuenteConv = "";
+  const usa = (c, txt) => { if(conv==null && c && c.g && c.p){ conv = c.g/c.p; fuenteConv = txt; } };
+  if(vend){ if(cv.g>=3) usa(cv, ""); usa(convAgencia(k), "agencia"); usa(convAgencia(ant), "agencia del mes anterior"); }
+  else { usa(cv, ""); usa(convAgencia(ant), "mes anterior"); }
+  const convAnt = !!fuenteConv;
   const faltan = cuota!=null ? Math.max(cuota-llevo,0) : null;
   const motos = faltan!=null && tk ? Math.ceil(faltan/tk) : null;
   const prosp = motos!=null && conv ? Math.ceil(motos/conv) : null;
   const dias = diasHabilesRestantes(vend);
-  return {cuota, llevo, tk, tkAnt, conv, convAnt, cv, faltan, motos, prosp, dias, porDia: prosp!=null && dias ? Math.ceil(prosp/dias) : null};
+  return {cuota, llevo, tk, tkAnt, conv, convAnt, fuenteConv, cv, faltan, motos, prosp, dias, porDia: prosp!=null && dias ? Math.ceil(prosp/dias) : null};
+}
+/** {p, g} de la agencia en un mes: del Apps Script v6, o calculado aquí si es el gerente. */
+function convAgencia(k){
+  const a = ((VENTAS[mesActual()]||{}).agencia||{})[k];
+  if(a) return {p:a.prospectos, g:a.gestion};
+  if(SES && SES.rol==="GERENTE"){
+    const ger = gerentesSet();
+    return conversionDe(null, CLIENTES.filter(c=>!ger.has(nom(c.vendedor))), k);
+  }
+  return null;
 }
 
 /* ── piezas visuales ── */
@@ -2074,14 +2089,13 @@ function htmlConversion(vend, lista, titulo, quien){
       <div class="sv-muted" style="margin-top:4px">${vend?"Solo ventas que salieron de una cotización tuya":"Ventas de gestión de cotizaciones del equipo"}</div></div></div>
       ${x?`<div class="sv-phrase">${quien} <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}`;
   };
-  let cuerpo;
-  if(cv.g >= 3) cuerpo = ring(cv);
-  else {
-    const ant = mesAnt(k), ca = conversionDe(vend, lista, ant);
-    cuerpo = `<div class="sv-phrase" style="margin-top:0">${vend?"Tu":"La"} conversión de ${mesNombre(k)} se está calculando. Sigue cotizando y vendiendo para ver ${vend?"tu":"el"} resultado.</div>
-      <div class="sv-sec" style="margin-top:14px">${tc(mesNombre(ant))} (mes anterior)</div>${ring(ca)}`;
-  }
-  return `<div class="sv-card"><div class="sv-sec">${titulo}</div>${cuerpo}</div>`;
+  const ant = mesAnt(k), ca = vend || (SES && SES.rol==="GERENTE") ? conversionDe(vend, lista, ant) : null;
+  const cuerpo = cv.g ? ring(cv)
+    : `<div class="sv-phrase" style="margin-top:0">Aún sin ventas de ${vend?"tus cotizaciones":"cotizaciones del equipo"} en ${mesNombre(k)} · <b>${cv.p}</b> prospectos</div>`;
+  const comp = ca ? `<div class="sv-muted" style="margin-top:10px">${tc(mesNombre(ant))}: ${ca.g
+      ? `<b style="color:var(--ink)">${Math.round(ca.pct*100)}%</b> · 1 de cada ${Math.round(ca.p/ca.g)} (${ca.g} de ${ca.p})`
+      : `sin ventas de gestión (${ca.p} prospectos)`}</div>` : "";
+  return `<div class="sv-card"><div class="sv-sec">${titulo}</div>${cuerpo}${comp}</div>`;
 }
 function htmlCalc(vend, lista, titulo, objTxt){
   const r = calcFalta(vend, lista);
@@ -2097,7 +2111,7 @@ function htmlCalc(vend, lista, titulo, objTxt){
     <div class="line"><span>Motos por vender</span><b>${r.motos??"—"}</b></div>
     <div class="res"><div style="font-size:13px;opacity:.9">${vend?"Necesito cotizar":"Hay que cotizar"}</div>
       <div class="n">${r.prosp!=null ? r.prosp+" prospectos" : "—"}</div>
-      <div style="font-size:13px">${r.prosp!=null ? `≈ ${r.porDia} por día ${vend?"en los ":"entre los dos asesores ("}${r.dias} días hábiles${vend?" que quedan":")"}` : "Falta la conversión para calcularlo"}${r.convAnt && r.prosp!=null?" · con la conversión del mes anterior":""}</div></div>`}
+      <div style="font-size:13px">${r.prosp!=null ? `≈ ${r.porDia} por día ${vend?"en los ":"entre los dos asesores ("}${r.dias} días hábiles${vend?" que quedan":")"}` : "Falta la conversión para calcularlo"}${r.convAnt && r.prosp!=null?` · con la conversión de la ${r.fuenteConv.startsWith("agencia")?r.fuenteConv:"agencia del "+r.fuenteConv} (1 de cada ${Math.round(1/r.conv)})`:""}</div></div>`}
   </div>`;
 }
 
