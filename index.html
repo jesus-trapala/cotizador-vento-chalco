@@ -197,6 +197,8 @@ body.en-app{background:var(--bg)}
 .franja-vista{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
   background:var(--warn);color:#1a1300;padding:6px 12px;font-size:14px;font-weight:600;text-align:center}
 .franja-vista button{background:#1a1300;color:#fff;border:none;border-radius:999px;min-height:36px;padding:6px 14px;font-weight:700;font-size:13px;cursor:pointer}
+/* En "ver como", los encabezados fijos bajan para no quedar debajo de la franja */
+body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .lista-vista{display:grid;gap:10px;margin-top:8px}
 .lista-vista button{min-height:52px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;text-align:left;padding:10px 16px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
@@ -611,7 +613,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.8", VERSION_FECHA = "13 oct 2026";
+const VERSION = "3.9", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1572,7 +1574,11 @@ function guardarVista(n){
 function pintarVista(){
   const on = esVista();
   ver($("franjaVista"), on);
-  if(on) $("fvTexto").textContent = pilaUsuario(SES.nombre)+" viendo como "+pilaUsuario(VISTA);
+  document.body.classList.toggle("con-vista", on);
+  if(on){
+    $("fvTexto").textContent = pilaUsuario(SES.nombre)+" viendo como "+pilaUsuario(VISTA);
+    document.documentElement.style.setProperty("--alto-franja", $("franjaVista").offsetHeight+"px");
+  }
   ver($("btnCambiarVista"), !!(SES && SES.rol==="GERENTE" && !on));
 }
 function ponerVista(n){
