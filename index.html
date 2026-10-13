@@ -259,6 +259,11 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 /* En oscuro los verdes, ámbar y gris son claros: texto oscuro para que se lea */
 [data-theme="dark"] .vm .sv-split span.cl,[data-theme="dark"] .vm .sv-pill{color:#0d0f14}
 .vm .sv-who-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.vm .sv-det{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.vm .sv-det summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-2);list-style:none;min-height:32px;display:flex;align-items:center}
+.vm .sv-det summary::before{content:"▸";margin-right:6px;transition:transform .15s}
+.vm .sv-det[open] summary::before{transform:rotate(90deg)}
+.vm .sv-dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .vm .sv-who-row:first-of-type{border-top:0}
 .vm .sv-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
 .vm .sv-who-row .name{font-weight:700;font-size:14px;width:70px}
@@ -722,7 +727,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.2", VERSION_FECHA = "13 oct 2026";
+const VERSION = "4.3", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1931,11 +1936,12 @@ let SEG_TAB = "hoy";
 /* ══════════ Seguimiento y Gerencia (mockup-seguimiento-vento.html) ══════════
    Definiciones (prompt-seguimiento-final):
    · Prospecto = cliente único cotizado en el mes (un cliente viejo que recotiza no cuenta).
-   · Ventas (HMYP, vía Apps Script v5): gestión = cotización del mes hecha al menos 1 día
-     antes de la venta · reactivación = cotización de un mes anterior con contacto en los
-     30 días previos · natural = sin cotización, cotizada el mismo día o reactivación sin
-     contacto reciente.
-   · Conversión = ventas de gestión / prospectos. Cuota del asesor = objetivo / 2.
+   · Ventas (HMYP, vía Apps Script): gestión = cotización del mes hecha al menos 1 día
+     antes de la venta · mismo día = cotizó y compró el mismo día · reactivación =
+     cotización de un mes anterior con contacto en los 30 días previos · sin cotización =
+     sin folio, cotizada después de la venta o cotización vieja sin contacto reciente
+     (indicador de disciplina en el uso del cotizador).
+   · Efectividad = (gestión + mismo día) / prospectos. Cuota del asesor = objetivo / 2.
    · Objetivo del mes: el mismo del dashboard de ventas (su API).               */
 const DESCANSO = {"KEVIN SALAS":3, "OSVALDO MORA":1};   // día de descanso (0 domingo … 6 sábado)
 const DASH_API = {url:"https://script.google.com/macros/s/AKfycbzHAJVvLmhXPyCMuWgregbk2E_-19eUmbaFl8Bi_HxykG3Vv-D3Puovjay1NSEMyndpjw/exec", clave:"chalco16025"};
@@ -1993,20 +1999,22 @@ const ventasMes = (mesPedido, k) => ((VENTAS[mesPedido]||{}).ventas||[]).filter(
 
 /* ── clasificación ── */
 function claseVenta(v){
-  if(!v.folio || !v.fechaCot) return "natural";
-  if(diaN(v.fechaCot) >= diaN(v.fecha)) return "natural";          // cotizada el mismo día (o después)
+  if(!v.folio || !v.fechaCot) return "sin";
+  if(diaN(v.fechaCot) > diaN(v.fecha)) return "sin";                // la cotización se hizo después de la venta
+  if(diaN(v.fechaCot) === diaN(v.fecha)) return "mismodia";
   if(mesDe(v.fechaCot) === mesDe(v.fecha)) return "gestion";
-  return v.contacto30 ? "reactivacion" : "natural";
+  return v.contacto30 ? "reactivacion" : "sin";
 }
+const CLASES = [["gestion","Seguimiento","var(--sv-verde)"],["mismodia","Mismo día","var(--sv-azul)"],["reactivacion","Reactivación","var(--sv-morado)"],["sin","Sin cotización","var(--sv-gris)"]];
 const mismoDiaVenta = v => !!(v.folio && v.fechaCot && diaN(v.fechaCot)===diaN(v.fecha));
-/* Ventas que le cuentan a un asesor: gestión y reactivación por quien cotizó;
-   naturales por quien facturó. vend null = agencia. */
+/* Ventas que le cuentan a un asesor: las que tienen cotización por quien cotizó;
+   las sin cotización por quien facturó. vend null = agencia. */
 function ventasDeAsesor(lista, vend, clase){
   return lista.filter(v=>{
     const c = claseVenta(v);
     if(clase && c!==clase) return false;
-    if(!vend) return !(c!=="natural" && v.vendedorCot && gerentesSet().has(nom(v.vendedorCot)));   // agencia: sin cotizaciones de gerentes
-    if(c!=="natural" && v.vendedorCot) return nom(v.vendedorCot)===nom(vend);
+    if(!vend) return !(c!=="sin" && v.vendedorCot && gerentesSet().has(nom(v.vendedorCot)));   // agencia: sin cotizaciones de gerentes
+    if(c!=="sin" && v.vendedorCot) return nom(v.vendedorCot)===nom(vend);
     return primerN(v.vendedor)===primerN(vend);
   });
 }
@@ -2044,9 +2052,11 @@ function diasHabilesRestantes(vend){
   for(let d=h.getDate(); d<=fin; d++){ const w=new Date(h.getFullYear(),h.getMonth(),d).getDay(); if(w===0 || w===desc) continue; n++; }
   return n;
 }
+/** Efectividad: g = ventas de gestión + cierres del mismo día (gs y m por separado). */
 function conversionDe(vend, lista, k){
-  const p = prospectos(lista,k).length, g = ventasDeAsesor(ventasMes(mesActual(),k), vend, "gestion").length;
-  return {p, g, pct: p ? g/p : 0};
+  const vs = ventasMes(mesActual(),k), p = prospectos(lista,k).length;
+  const gs = ventasDeAsesor(vs, vend, "gestion").length, m = ventasDeAsesor(vs, vend, "mismodia").length, g = gs+m;
+  return {p, g, gs, m, pct: p ? g/p : 0};
 }
 function calcFalta(vend, lista){
   const k = mesActual(), ant = mesAnt(k);
@@ -2054,7 +2064,7 @@ function calcFalta(vend, lista){
   const vs = facturadasPor(ventasMes(k,k), vend), llevo = vs.reduce((s,x)=>s+(x.precio||0)/1.16, 0);
   let tk = vs.length ? llevo/vs.length : 0, tkAnt = false;
   if(!tk){ const va=facturadasPor(ventasMes(k,ant), vend); tk = va.length ? va.reduce((s,x)=>s+(x.precio||0)/1.16,0)/va.length : 0; tkAnt = true; }
-  /* Conversión para el cálculo: la propia si lleva 3 o más ventas de gestión en el
+  /* Efectividad para el cálculo: la propia si lleva 3 o más ventas cotizadas en el
      mes; si no, la de la agencia del mes (o del mes anterior si aún no hay). */
   const cv = conversionDe(vend, lista, k);
   let conv = null, fuenteConv = "";
@@ -2068,10 +2078,10 @@ function calcFalta(vend, lista){
   const dias = diasHabilesRestantes(vend);
   return {cuota, llevo, tk, tkAnt, conv, convAnt, fuenteConv, cv, faltan, motos, prosp, dias, porDia: prosp!=null && dias ? Math.ceil(prosp/dias) : null};
 }
-/** {p, g} de la agencia en un mes: del Apps Script v6, o calculado aquí si es el gerente. */
+/** {p, g} de la agencia en un mes (g = gestión + mismo día): del Apps Script v7, o calculado aquí si es el gerente. */
 function convAgencia(k){
   const a = ((VENTAS[mesActual()]||{}).agencia||{})[k];
-  if(a) return {p:a.prospectos, g:a.gestion};
+  if(a) return {p:a.prospectos, g:a.gestion+(a.mismo||0)};
   if(SES && SES.rol==="GERENTE"){
     const ger = gerentesSet();
     return conversionDe(null, CLIENTES.filter(c=>!ger.has(nom(c.vendedor))), k);
@@ -2086,7 +2096,7 @@ function htmlConversion(vend, lista, titulo, quien){
     const p = Math.round(c.pct*1000)/10, x = c.g ? Math.round(c.p/c.g) : null;
     return `<div class="sv-conv"><div class="sv-ring" style="--p:${Math.min(p,100)}"><div>${Math.round(c.pct*100)}%</div></div>
       <div><div style="font-size:15px;font-weight:700">${c.g} venta${c.g===1?"":"s"} de ${c.p} prospectos</div>
-      <div class="sv-muted" style="margin-top:4px">${vend?"Solo ventas que salieron de una cotización tuya":"Ventas de gestión de cotizaciones del equipo"}</div></div></div>
+      <div class="sv-muted" style="margin-top:4px">${vend?"Ventas que salieron de una cotización tuya":"Ventas que salieron de cotizaciones del equipo"}</div></div></div>
       ${x?`<div class="sv-phrase">${quien} <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}`;
   };
   const ant = mesAnt(k), ca = vend || (SES && SES.rol==="GERENTE") ? conversionDe(vend, lista, ant) : null;
@@ -2094,8 +2104,23 @@ function htmlConversion(vend, lista, titulo, quien){
     : `<div class="sv-phrase" style="margin-top:0">Aún sin ventas de ${vend?"tus cotizaciones":"cotizaciones del equipo"} en ${mesNombre(k)} · <b>${cv.p}</b> prospectos</div>`;
   const comp = ca ? `<div class="sv-muted" style="margin-top:10px">${tc(mesNombre(ant))}: ${ca.g
       ? `<b style="color:var(--ink)">${Math.round(ca.pct*100)}%</b> · 1 de cada ${Math.round(ca.p/ca.g)} (${ca.g} de ${ca.p})`
-      : `sin ventas de gestión (${ca.p} prospectos)`}</div>` : "";
-  return `<div class="sv-card"><div class="sv-sec">${titulo}</div>${cuerpo}${comp}</div>`;
+      : `sin ventas cotizadas (${ca.p} prospectos)`}</div>` : "";
+  return `<div class="sv-card"><div class="sv-sec">${titulo}</div>${cuerpo}${comp}${htmlDetalleClases(vend, cv, ventasMes(k,k))}</div>`;
+}
+/** "Ver detalle": la efectividad separada y de dónde salieron todas las ventas del mes. */
+function htmlDetalleClases(vend, cv, ventas){
+  const vs = ventasDeAsesor(ventas, vend), n = {}; CLASES.forEach(([c])=>n[c]=0); vs.forEach(v=>n[claseVenta(v)]++);
+  const tot = vs.length, pc = x => cv.p ? Math.round(x/cv.p*100)+"%" : "–";
+  const fila = (c, txt, extra) => { const [,nom2,col] = CLASES.find(x=>x[0]===c);
+    return `<tr><td><i class="sv-dotc" style="background:${col}"></i>${nom2}<div class="sv-muted">${txt}</div></td><td>${n[c]}</td><td>${extra}</td></tr>`; };
+  const disc = tot ? Math.round(n.sin/tot*100) : 0;
+  return `<details class="sv-det"><summary>Ver detalle</summary>
+    <table class="sv-table"><tr><th>Tipo</th><th>Ventas</th><th>%</th></tr>
+      ${fila("gestion","Cotizó y compró otro día del mes", pc(cv.gs))}
+      ${fila("mismodia","Cotizó y compró el mismo día", pc(cv.m))}
+      ${fila("reactivacion","Cotización de otro mes, recuperada con contacto", "")}
+      ${fila("sin","Sin folio en la app (o cotización vieja sin seguimiento)", tot?disc+"%*":"")}</table>
+    <div class="sv-muted" style="margin-top:8px">% = sobre los prospectos · *sobre las ventas. Efectividad = (seguimiento + mismo día) ÷ prospectos. «Sin cotización» mide la disciplina: entre más bajo, mejor se usa el cotizador${tot&&disc>=40?` · <b style="color:var(--sv-rojo)">${disc}% es alto</b>`:""}.</div></details>`;
 }
 function htmlCalc(vend, lista, titulo, objTxt){
   const r = calcFalta(vend, lista);
@@ -2420,40 +2445,66 @@ function htmlGerHoy(reales){
   });
   const k = mesActual(), prosp = prospectos(reales, k).length;
   const vencidos = reales.filter(c=>pendienteDelMes(c) && diaN(c.prox)<hoyN()).length;
-  return `${alertas.join("")}
+  return `${htmlCotHoy(reales, ases, colores)}${alertas.join("")}
     <div class="sv-card"><div class="sv-sec">Seguimientos de hoy · ${new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short"})}</div>
       <div class="sv-big">${totA} <small>de ${totP} atendidos</small></div><div style="margin-top:10px">${filas.join("")}</div></div>
     <div class="sv-row2"><div class="sv-mini"><div class="n">${prosp}</div><div class="t">Prospectos del mes</div></div>
       <div class="sv-mini"><div class="n" style="color:${vencidos?"var(--sv-rojo)":"inherit"}">${vencidos}</div><div class="t">Vencidos sin atender</div></div></div>`;
 }
+/** Cotizaciones nuevas de hoy por asesor (contra la meta diaria) y ventas de hoy. */
+function htmlCotHoy(reales, ases, colores){
+  const ahora = new Date(), min = d => d.getHours()*60+d.getMinutes();
+  const lunes = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate()-((ahora.getDay()+6)%7));
+  const deA = n => reales.filter(c=>nom(c.vendedor)===nom(n));
+  const hoyDe = l => l.filter(c=>diaN(c.fecha)===hoyN());
+  let tot = 0, ayer = 0;
+  const filas = ases.map((n,i)=>{
+    const l = deA(n), h = hoyDe(l).length, sem = l.filter(c=>diaN(c.fecha)>=diaN(lunes)).length, mes = l.filter(c=>mesDe(c.fecha)===mesActual()).length;
+    tot += h; ayer += l.filter(c=>diaN(c.fecha)===hoyN()-1 && min(new Date(c.fecha))<=min(ahora)).length;
+    const p = Math.min(100, Math.round(h/COT_META_DIA*100)), col = h>=COT_META_DIA ? colores[i%colores.length] : "var(--sv-ambar)";
+    return `<div class="sv-who-row"><div class="sv-av" style="background:${colores[i%colores.length]}">${esc(pila(n).charAt(0))}</div>
+      <span class="name">${esc(pila(n))}<div class="sv-muted" style="font-size:11px;font-weight:600">Sem ${sem} · Mes ${mes}</div></span>
+      <div class="sv-prog"><span style="width:${p}%;background:${col}"></span></div><span class="num">${h}/${COT_META_DIA}</span></div>`;
+  });
+  const dif = tot-ayer;
+  const vh = ventasMes(mesActual(), mesActual()).filter(v=>diaN(v.fecha)===hoyN());
+  const md = vh.filter(v=>claseVenta(v)==="mismodia").length, sc = vh.filter(v=>claseVenta(v)==="sin").length;
+  return `<div class="sv-card"><div class="sv-sec">Cotizaciones nuevas de hoy</div>
+    <div class="sv-big">${tot} <small>meta ${COT_META_DIA*ases.length} · ayer a esta hora ${ayer}${dif?` (<span style="color:${dif>0?"var(--sv-verde)":"var(--sv-rojo)"}">${dif>0?"+":""}${dif}</span>)`:""}</small></div>
+    <div style="margin-top:10px">${filas.join("")}</div>
+    <div class="sv-muted" style="margin-top:8px">Ventas de hoy: <b style="color:var(--ink)">${vh.length}</b>${vh.length?` · ${md} cotizada${md===1?"":"s"} el mismo día · ${sc} sin cotización`:""}</div></div>`;
+}
 function htmlGerMes(reales, mesSel, motivos){
   const V = VENTAS[mesSel]||{}, ventas = (V.ventas||[]).filter(v=>v.mes===mesSel);
   if(V.error) return `<div class="sv-aviso">${esc(V.error)}</div>${htmlMotivos(motivos)}`;
-  const cl = {gestion:0, reactivacion:0, natural:0}; ventas.forEach(v=>cl[claseVenta(v)]++);
+  const cl = {}; CLASES.forEach(([c])=>cl[c]=0); ventas.forEach(v=>cl[claseVenta(v)]++);
   const tot = ventas.length || 1, pc = x => Math.round(x/tot*100);
-  const prosp = prospectos(reales, mesSel).length, convAg = prosp ? cl.gestion/prosp : 0;
+  const prosp = prospectos(reales, mesSel).length, efect = cl.gestion+cl.mismodia, convAg = prosp ? efect/prosp : 0;
   const ases = asesores();
   const filas = ases.map(n=>{
     const suyos = reales.filter(c=>nom(c.vendedor)===nom(n));
     const p = prospectos(suyos, mesSel).length;
-    const g = ventasDeAsesor(ventas, n, "gestion").length, r = ventasDeAsesor(ventas, n, "reactivacion").length, na = ventasDeAsesor(ventas, n, "natural").length;
-    const conv = p ? g/p : 0, totA = g+r+na;
-    return {n, p, g, r, na, conv, totA};
+    const q = c => ventasDeAsesor(ventas, n, c).length;
+    const g = q("gestion"), md = q("mismodia"), r = q("reactivacion"), na = q("sin");
+    const conv = p ? (g+md)/p : 0, totA = g+md+r+na;
+    return {n, p, g, md, r, na, conv, totA};
   });
-  const avisos = filas.filter(f=>f.totA && f.na/f.totA>=.4).map(f=>`${esc(pila(f.n))}: ${Math.round(f.na/f.totA*100)}% de sus ventas fueron naturales (${f.na} de ${f.totA}). Revisar si está generando o solo tomando pedidos.`);
+  const avisos = filas.filter(f=>f.totA && f.na/f.totA>=.4).map(f=>`${esc(pila(f.n))}: ${Math.round(f.na/f.totA*100)}% de sus ventas fueron sin cotización (${f.na} de ${f.totA}). Revisar que cotice en la app antes de facturar.`);
   const esActual = mesSel===mesActual();
-  const x = cl.gestion ? Math.round(prosp/cl.gestion) : null;
+  const x = efect ? Math.round(prosp/efect) : null;
   return `
     <div class="sv-card"><div class="sv-sec">Ventas del mes · ¿de dónde vienen?</div>
       <div class="sv-big">${ventas.length} <small>motos</small></div>
-      <div class="sv-split">${cl.gestion?`<span class="cl" style="width:${pc(cl.gestion)}%;background:var(--sv-verde)">Gestión ${cl.gestion}</span>`:""}${cl.reactivacion?`<span style="width:${pc(cl.reactivacion)}%;background:var(--sv-morado)">Reac. ${cl.reactivacion}</span>`:""}${cl.natural?`<span class="cl" style="width:${pc(cl.natural)}%;background:var(--sv-gris)">Natur. ${cl.natural}</span>`:""}</div>
-      <div class="sv-muted"><b style="color:var(--ink)">${pc(cl.gestion+cl.reactivacion)}%</b> salió del trabajo de los asesores (${pc(cl.gestion)}% del mes + ${pc(cl.reactivacion)}% reactivación) · <b style="color:var(--ink)">${pc(cl.natural)}%</b> llegó sola</div></div>
-    ${esActual ? htmlConversion(null, reales, "Conversión de la agencia", "La agencia vende")
-      : `<div class="sv-card"><div class="sv-sec">Conversión de la agencia</div><div class="sv-conv"><div class="sv-ring" style="--p:${Math.min(convAg*100,100)}"><div>${Math.round(convAg*100)}%</div></div>
-        <div><div style="font-size:15px;font-weight:700">${cl.gestion} ventas de gestión de ${prosp} prospectos</div></div></div>${x?`<div class="sv-phrase">La agencia vende <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}</div>`}
+      <div class="sv-split">${CLASES.filter(([c])=>cl[c]).map(([c,,col])=>`<span class="cl" style="width:${pc(cl[c])}%;background:${col}">${cl[c]}</span>`).join("")}</div>
+      <div class="sv-muted"><b style="color:var(--ink)">${pc(ventas.length-cl.sin)}%</b> salió de una cotización · <b style="color:${pc(cl.sin)>=40?"var(--sv-rojo)":"var(--ink)"}">${pc(cl.sin)}%</b> sin cotización</div>
+      <details class="sv-det"><summary>Ver detalle</summary><table class="sv-table">${CLASES.map(([c,txt,col])=>`<tr><td><i class="sv-dotc" style="background:${col}"></i>${txt}</td><td>${cl[c]}</td><td>${pc(cl[c])}%</td></tr>`).join("")}</table>
+        <div class="sv-muted" style="margin-top:8px">«Sin cotización» = vendida sin folio en la app (o con cotización vieja sin seguimiento). Es el indicador de disciplina en el uso del cotizador.</div></details></div>
+    ${esActual ? htmlConversion(null, reales, "Efectividad de la agencia", "La agencia vende")
+      : `<div class="sv-card"><div class="sv-sec">Efectividad de la agencia</div><div class="sv-conv"><div class="sv-ring" style="--p:${Math.min(convAg*100,100)}"><div>${Math.round(convAg*100)}%</div></div>
+        <div><div style="font-size:15px;font-weight:700">${efect} ventas cotizadas de ${prosp} prospectos</div><div class="sv-muted" style="margin-top:4px">${cl.gestion} de seguimiento + ${cl.mismodia} del mismo día</div></div></div>${x?`<div class="sv-phrase">La agencia vende <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}</div>`}
     <div class="sv-card"><div class="sv-sec">Por asesor</div>
-      <table class="sv-table"><tr><th>Asesor</th><th>Prosp.</th><th>Gest.</th><th>Reac.</th><th>Nat.</th><th>Conv.</th></tr>
-      ${filas.map(f=>`<tr><td>${esc(pila(f.n))}</td><td>${f.p}</td><td>${f.g}</td><td>${f.r}</td><td>${f.na}</td><td><span class="sv-pill" style="background:${f.conv>=convAg?"var(--sv-verde)":"var(--sv-ambar)"}">${Math.round(f.conv*100)}%</span></td></tr>`).join("")}</table>
+      <table class="sv-table"><tr><th>Asesor</th><th>Prosp.</th><th>Seg.</th><th>M. día</th><th>Reac.</th><th>Sin cot.</th><th>Efect.</th></tr>
+      ${filas.map(f=>`<tr><td>${esc(pila(f.n))}</td><td>${f.p}</td><td>${f.g}</td><td>${f.md}</td><td>${f.r}</td><td>${f.na}</td><td><span class="sv-pill" style="background:${f.conv>=convAg?"var(--sv-verde)":"var(--sv-ambar)"}">${Math.round(f.conv*100)}%</span></td></tr>`).join("")}</table>
       ${avisos.length?`<div class="sv-muted" style="margin-top:10px">${avisos.join("<br>")}</div>`:""}</div>
     ${htmlMotivos(motivos)}
     ${esActual ? htmlCalc(null, reales, "¿Cuánto le falta a la agencia?", "Objetivo") : ""}`;
@@ -2469,10 +2520,10 @@ function htmlGerHerramientas(mesSel){
     <div class="sv-card"><div class="sv-sec">Buscar cotización</div>
       <div class="sv-search">⌕<input id="gerBusca" type="search" placeholder="Nombre del cliente o WhatsApp…" autocomplete="off"></div>
       <div id="gerBuscaRes" class="sv-res-busca"><div class="sv-muted">Escribe al menos 3 letras.</div></div></div>
-    <div class="sv-card"><div class="sv-sec">Revisar · ventas cotizadas el mismo día</div>
+    <div class="sv-card"><div class="sv-sec">Ventas cotizadas el mismo día</div>
       ${V.error ? `<div class="sv-muted">${esc(V.error)}</div>` : revisar.length
         ? `<table class="sv-table"><tr><th>Cliente</th><th>Factura</th><th>Folio</th></tr>${revisar.map(v=>`<tr><td>${esc(v.cliente)}<div class="sv-muted">${fechaCorta(v.fecha)} · ${esc(tc(v.vendedor))}</div></td><td>${esc(v.factura)}</td><td>${esc(v.folio)}</td></tr>`).join("")}</table>
-          <div class="sv-muted" style="margin-top:8px">Cuentan como venta natural: la cotización se hizo el mismo día de la venta.</div>`
+          <div class="sv-muted" style="margin-top:8px">Cuentan como cierre el mismo día: la cotización se hizo el mismo día de la venta.</div>`
         : `<div class="sv-muted">Ninguna venta del mes se cotizó el mismo día.</div>`}</div>`;
 }
 function buscarCotizacion(q){
