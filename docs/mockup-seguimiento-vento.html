@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup Seguimiento Vento</title>
+<style>
+:root{
+  --bg:#F6EFE3;--card:#FFFDF8;--chip:#EADFCB;--line:#E2D7C3;--ink:#1B1A17;--ink-2:#5E584D;
+  --rojo:#E3262E;--azul:#2563EB;--verde:#119C5B;--ambar:#F59E0B;--morado:#7C3AED;--cian:#0891B2;--gris:#9A9183;
+  --shadow:0 10px 24px -12px rgba(60,40,10,.35);
+}
+:root[data-theme="dark"]{
+  --bg:#0D1322;--card:#151E33;--chip:#1D2741;--line:#232D45;--ink:#F2F4F8;--ink-2:#9AA4BA;
+  --rojo:#F0434A;--azul:#3B82F6;--verde:#1DB874;--ambar:#F7B12F;--morado:#8B5CF6;--cian:#14A8C9;--gris:#6B7488;
+  --shadow:0 12px 28px -14px rgba(0,0,0,.8);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1322;--card:#151E33;--chip:#1D2741;--line:#232D45;--ink:#F2F4F8;--ink-2:#9AA4BA;
+  --rojo:#F0434A;--azul:#3B82F6;--verde:#1DB874;--ambar:#F7B12F;--morado:#8B5CF6;--cian:#14A8C9;--gris:#6B7488;
+  --shadow:0 12px 28px -14px rgba(0,0,0,.8);}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:24px 16px 40px}
+.top{max-width:1240px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:22px;font-weight:800}
+.top p{color:var(--ink-2);font-size:14px;margin-top:4px}
+.tbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;cursor:pointer}
+.screens{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:22px;align-items:start}
+.label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 4px 8px}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:30px;padding:16px;box-shadow:var(--shadow);outline:8px solid var(--card)}
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{width:38px;height:38px;border-radius:12px;background:var(--rojo);color:#fff;display:grid;place-items:center;font-weight:900}
+.hdr small{display:block;font-size:10px;letter-spacing:.06em;color:var(--ink-2);font-weight:700;text-transform:uppercase}
+.hdr b{font-size:16px}
+.hdr .who{margin-left:auto;background:var(--chip);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:12px}
+.sec{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
+.big{font-size:40px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.big small{font-size:15px;font-weight:700;color:var(--ink-2);letter-spacing:0}
+.muted{color:var(--ink-2);font-size:13px}
+.bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:12px 0 10px;background:var(--chip)}
+.bar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.lg{display:flex;align-items:center;gap:8px;font-size:13px}
+.lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.lg b{margin-left:auto;font-size:16px}
+.tile{border-radius:22px;padding:16px;color:#fff;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.tile::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14)}
+.tile .t{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.tile .n{font-size:44px;font-weight:900;line-height:1.05;letter-spacing:-.03em}
+.tile .s{font-size:13px;opacity:.95}
+.tile .cta{display:inline-block;margin-top:10px;background:rgba(255,255,255,.22);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px}
+.mini .n{font-size:26px;font-weight:900}
+.mini .t{font-size:12px;color:var(--ink-2);font-weight:600}
+.conv{display:flex;align-items:center;gap:16px}
+.ring{--p:10;width:96px;height:96px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--c,var(--verde)) calc(var(--p)*1%),var(--chip) 0)}
+.ring div{width:72px;height:72px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:900;font-size:20px}
+.phrase{margin-top:12px;background:var(--chip);border-radius:14px;padding:10px 12px;font-size:14px}
+.phrase b{font-size:16px}
+.calc .line{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.calc .line:last-of-type{border-bottom:0}
+.calc .line b{font-size:18px}
+.calc .res{margin-top:10px;background:var(--azul);color:#fff;border-radius:16px;padding:12px 14px}
+.calc .res .n{font-size:30px;font-weight:900}
+.prog{height:10px;border-radius:999px;background:var(--chip);overflow:hidden;margin:8px 0}
+.prog span{display:block;height:100%;background:var(--verde);border-radius:999px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);text-align:right;padding:6px 4px;font-weight:700}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px 4px;text-align:right;border-top:1px solid var(--line);font-weight:600}
+.pill{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#fff}
+.split{display:flex;height:28px;border-radius:12px;overflow:hidden;margin:10px 0;font-size:12px;font-weight:800;color:#fff}
+.split span{display:grid;place-items:center}
+.who-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.who-row:first-of-type{border-top:0}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.who-row .name{font-weight:700;font-size:14px;width:70px}
+.who-row .prog{flex:1;margin:0}
+.who-row .num{font-weight:900;font-size:16px;width:46px;text-align:right}
+.alert{background:color-mix(in srgb,var(--rojo) 12%,var(--card));border:1px solid color-mix(in srgb,var(--rojo) 35%,var(--line));color:var(--ink);border-radius:16px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.note{max-width:1240px;margin:24px auto 0;color:var(--ink-2);font-size:13px;text-align:center}
+.tabs{display:flex;gap:6px;background:var(--chip);border-radius:14px;padding:4px;margin-bottom:12px}
+.tabs span{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.tabs span.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;color:var(--ink-2);font-size:14px;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chips span{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.chips span.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cl{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:8px}
+.cl .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.cl .nm{font-weight:700;font-size:14px}
+.cl .sub{font-size:12px;color:var(--ink-2)}
+.cl .st{margin-left:auto;font-size:11px;font-weight:800;border-radius:999px;padding:3px 8px;color:#fff;white-space:nowrap}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.act{border-radius:14px;padding:12px;font-size:13px;font-weight:800;color:#fff;text-align:center}
+.act.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--ink-2)}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:12px}
+.tl div{position:relative;font-size:13px;padding:5px 0}
+.tl div::before{content:"";position:absolute;left:-18px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--azul)}
+.tl small{color:var(--ink-2)}
+.viewas{display:flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border-radius:14px;padding:9px 12px;font-size:13px;margin-bottom:12px}
+.viewas span{margin-left:auto;background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800}
+</style>
+</head>
+<body>
+<div class="top">
+  <div><h1>Mockup · Seguimiento y Gerencia</h1><p>Datos de ejemplo. Vista del asesor, de gerencia y la calculadora de “¿Cuánto me falta?”.</p></div>
+  <button class="tbtn" onclick="var r=document.documentElement;var d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark'">Cambiar modo claro / oscuro</button>
+</div>
+
+<div class="screens">
+
+  <!-- ============ ASESOR ============ -->
+  <div>
+    <div class="label">1 · Asesor — inicio (aquí, Jesús viendo como Kevin)</div>
+    <div class="phone">
+      <div class="hdr"><div><small>Agencia 16025</small><b>Seguimiento</b></div><span class="who">Kevin</span></div>
+      <div class="viewas">👁&nbsp; Jesús viendo como <b>Kevin</b><span>Volver a mi vista</span></div>
+
+      <div class="tile" style="background:var(--rojo)">
+        <div class="t">Por atender hoy</div>
+        <div class="n">7</div>
+        <div class="s">4 tocan hoy · <b>3 vencidos</b> de días anteriores</div>
+        <span class="cta">Empezar →</span>
+      </div>
+
+      <div class="card">
+        <div class="sec">Mi portafolio · octubre</div>
+        <div class="big">48 <small>clientes</small></div>
+        <div class="bar">
+          <span style="width:14.6%;background:var(--rojo)"></span>
+          <span style="width:45.8%;background:var(--azul)"></span>
+          <span style="width:10.4%;background:var(--ambar)"></span>
+          <span style="width:10.4%;background:var(--verde)"></span>
+          <span style="width:18.8%;background:var(--gris)"></span>
+        </div>
+        <div class="legend">
+          <div class="lg"><i style="background:var(--rojo)"></i>Por atender hoy<b>7</b></div>
+          <div class="lg"><i style="background:var(--azul)"></i>En seguimiento<b>22</b></div>
+          <div class="lg"><i style="background:var(--ambar)"></i>Sin contactar<b>5</b></div>
+          <div class="lg"><i style="background:var(--verde)"></i>Vendidos<b>5</b></div>
+          <div class="lg"><i style="background:var(--gris)"></i>Perdidos<b>9</b></div>
+          <div class="lg" style="color:var(--ink-2)">Contactados hoy<b style="color:var(--ink)">2</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec">Mi conversión del mes</div>
+        <div class="conv">
+          <div class="ring" style="--p:10.4"><div>10%</div></div>
+          <div>
+            <div style="font-size:15px;font-weight:700">5 ventas de 48 prospectos</div>
+            <div class="muted" style="margin-top:4px">Solo ventas que salieron de una cotización tuya</div>
+          </div>
+        </div>
+        <div class="phrase">Vendes <b>1 moto</b> por cada <b>10 prospectos</b></div>
+      </div>
+
+      <div class="card calc">
+        <div class="sec">¿Cuánto me falta?</div>
+        <div class="muted">Mi cuota $450,000 · llevo $310,000</div>
+        <div class="prog"><span style="width:69%"></span></div>
+        <div class="line"><span>Me faltan</span><b>$140,000</b></div>
+        <div class="line"><span>Mi ticket promedio</span><b>$28,000</b></div>
+        <div class="line"><span>Motos por vender</span><b>5</b></div>
+        <div class="res">
+          <div style="font-size:13px;opacity:.9">Necesito cotizar</div>
+          <div class="n">50 prospectos</div>
+          <div style="font-size:13px">≈ 3 por día en los 16 días hábiles que quedan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GERENCIA ============ -->
+  <div>
+    <div class="label">2 · Gerencia — hoy y el mes</div>
+    <div class="phone">
+      <div class="hdr"><div><small>Agencia 16025</small><b>Gerencia</b></div><span class="who" style="background:var(--ink);color:var(--bg)">Cambiar vista</span></div>
+
+      <div class="alert"><b>Osvaldo</b> lleva 2 de 6 seguimientos de hoy y tiene 4 vencidos.</div>
+
+      <div class="card">
+        <div class="sec">Seguimientos de hoy · 13 oct</div>
+        <div class="big">6 <small>de 13 atendidos</small></div>
+        <div style="margin-top:10px">
+          <div class="who-row"><div class="av" style="background:var(--azul)">K</div><span class="name">Kevin</span><div class="prog"><span style="width:57%;background:var(--azul)"></span></div><span class="num">4/7</span></div>
+          <div class="who-row"><div class="av" style="background:var(--morado)">O</div><span class="name">Osvaldo</span><div class="prog"><span style="width:33%;background:var(--ambar)"></span></div><span class="num">2/6</span></div>
+        </div>
+      </div>
+
+      <div class="row2" style="margin-bottom:12px">
+        <div class="mini"><div class="n">95</div><div class="t">Prospectos del mes</div></div>
+        <div class="mini"><div class="n" style="color:var(--rojo)">7</div><div class="t">Vencidos sin atender</div></div>
+      </div>
+
+      <div class="card">
+        <div class="sec">Ventas del mes · ¿de dónde vienen?</div>
+        <div class="big">18 <small>motos</small></div>
+        <div class="split">
+          <span style="width:50%;background:var(--verde)">Gestión 9</span>
+          <span style="width:17%;background:var(--morado)">Reac. 3</span>
+          <span style="width:33%;background:var(--gris)">Natur. 6</span>
+        </div>
+        <div class="muted"><b style="color:var(--ink)">67%</b> salió del trabajo de los asesores (50% del mes + 17% reactivación) · <b style="color:var(--ink)">33%</b> llegó sola</div>
+      </div>
+
+      <div class="card">
+        <div class="sec">Conversión de la agencia</div>
+        <div class="conv">
+          <div class="ring" style="--p:9.5"><div>9%</div></div>
+          <div>
+            <div style="font-size:15px;font-weight:700">9 ventas de gestión de 95 prospectos</div>
+          </div>
+        </div>
+        <div class="phrase">La agencia vende <b>1 moto</b> por cada <b>11 prospectos</b></div>
+      </div>
+
+      <div class="card">
+        <div class="sec">Por asesor</div>
+        <table>
+          <tr><th>Asesor</th><th>Prosp.</th><th>Gest.</th><th>Reac.</th><th>Nat.</th><th>Conv.</th></tr>
+          <tr><td>Kevin</td><td>48</td><td>5</td><td>1</td><td>4</td><td><span class="pill" style="background:var(--verde)">10%</span></td></tr>
+          <tr><td>Osvaldo</td><td>47</td><td>4</td><td>2</td><td>2</td><td><span class="pill" style="background:var(--ambar)">9%</span></td></tr>
+        </table>
+        <div class="muted" style="margin-top:10px">Kevin: 40% de sus ventas fueron naturales (4 de 10). Revisar si está generando o solo tomando pedidos.</div>
+      </div>
+
+      <div class="card calc">
+        <div class="sec">¿Cuánto le falta a la agencia?</div>
+        <div class="muted">Objetivo $900,000 sin IVA · llevamos $620,000</div>
+        <div class="prog"><span style="width:69%"></span></div>
+        <div class="line"><span>Faltan</span><b>$280,000</b></div>
+        <div class="line"><span>Ticket promedio</span><b>$28,000</b></div>
+        <div class="line"><span>Motos por vender</span><b>10</b></div>
+        <div class="res">
+          <div style="font-size:13px;opacity:.9">Hay que cotizar</div>
+          <div class="n">90 prospectos</div>
+          <div style="font-size:13px">≈ 6 por día entre los dos asesores (16 días hábiles)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MIS CLIENTES ============ -->
+  <div>
+    <div class="label">3 · Asesor — Mis clientes (todo el portafolio)</div>
+    <div class="phone">
+      <div class="hdr"><div><small>Agencia 16025</small><b>Seguimiento</b></div><span class="who">Kevin</span></div>
+      <div class="tabs"><span>Hoy</span><span class="on">Mis clientes</span><span>Reactivación</span></div>
+      <div class="search">⌕&nbsp; Buscar por nombre o WhatsApp…</div>
+      <div class="chips"><span class="on">Todos 112</span><span>Sin contactar 5</span><span>En seguimiento 41</span><span>Vendidos 14</span><span>Perdidos 38</span><span>Archivo 14</span></div>
+      <div class="chips"><span>Este mes</span><span>3 meses</span><span class="on">Todo</span></div>
+      <div class="cl"><i class="dot" style="background:var(--rojo)"></i><div><div class="nm">María López</div><div class="sub">Rocketman 250 · contado · toca hoy</div></div><span class="st" style="background:var(--rojo)">Hoy</span></div>
+      <div class="cl"><i class="dot" style="background:var(--azul)"></i><div><div class="nm">Juan Pérez</div><div class="sub">Tornado 250 · VentoCredit · próx. 16 oct</div></div><span class="st" style="background:var(--azul)">Seguimiento</span></div>
+      <div class="cl"><i class="dot" style="background:var(--ambar)"></i><div><div class="nm">Luis Ramírez</div><div class="sub">Workman 150 · cotizado ayer</div></div><span class="st" style="background:var(--ambar)">Sin contactar</span></div>
+      <div class="cl"><i class="dot" style="background:var(--gris)"></i><div><div class="nm">Ana Torres</div><div class="sub">Xpress 150 · crédito rechazado · sep</div></div><span class="st" style="background:var(--gris)">Perdido</span></div>
+      <div class="cl"><i class="dot" style="background:var(--verde)"></i><div><div class="nm">Pedro Sánchez</div><div class="sub">Nitrox 250 · vendido 8 oct</div></div><span class="st" style="background:var(--verde)">Vendido</span></div>
+      <div class="muted" style="text-align:center;margin-top:6px">Toca un cliente para abrir su ficha</div>
+    </div>
+  </div>
+
+  <!-- ============ FICHA ============ -->
+  <div>
+    <div class="label">4 · Asesor — Ficha del cliente</div>
+    <div class="phone">
+      <div class="hdr"><div><small>← Mis clientes</small><b>Juan Pérez</b></div><span class="who" style="background:var(--azul);color:#fff">Seguimiento</span></div>
+      <div class="card">
+        <div class="sec">Datos</div>
+        <div class="kv"><span>WhatsApp</span><b>55 1234 5678</b></div>
+        <div class="kv"><span>Modelo cotizado</span><b>Tornado 250 2027</b></div>
+        <div class="kv"><span>Forma de pago</span><b>VentoCredit · 52 sem</b></div>
+        <div class="kv"><span>Origen</span><b>Facebook</b></div>
+        <div class="kv"><span>Folio</span><b>…-2610-0042 ⧉</b></div>
+      </div>
+      <div class="acts" style="margin-bottom:12px">
+        <div class="act" style="background:var(--verde)">WhatsApp</div>
+        <div class="act" style="background:var(--azul)">Registrar contacto</div>
+        <div class="act" style="background:var(--morado)">Ya vino a la agencia</div>
+        <div class="act" style="background:var(--cian)">Recotizar</div>
+        <div class="act ghost">Reagendar</div>
+        <div class="act ghost">Marcar perdido</div>
+      </div>
+      <div class="card">
+        <div class="sec">Historial</div>
+        <div class="tl">
+          <div><b>Cotización enviada</b><br><small>2 oct · Tornado 250 · VentoCredit</small></div>
+          <div><b>WhatsApp · respondió</b><br><small>3 oct · “lo platico con mi esposa”</small></div>
+          <div><b>Recordatorio de promo</b><br><small>5 oct · sin respuesta</small></div>
+          <div><b>Próximo contacto</b><br><small>16 oct · día 15 de la cadencia</small></div>
+        </div>
+      </div>
+      <div class="muted" style="text-align:center">En un perdido aparece “Reactivar”; en vendido, “Vendido · por confirmar folio”.</div>
+    </div>
+  </div>
+
+</div>
+<p class="note">Mockup ilustrativo con datos inventados. Colores y tarjetas según diseño-vento.md.</p>
+</body>
+</html>

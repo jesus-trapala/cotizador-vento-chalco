@@ -195,12 +195,116 @@ body.en-app{background:var(--bg)}
 /* Cambiar vista (solo gerente) */
 .cambiar-vista{background:none;border:none;padding:0;color:var(--accent);font-size:13.5px;font-weight:600;text-decoration:underline;cursor:pointer;min-height:44px}
 .franja-vista{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
-  background:var(--warn);color:#1a1300;padding:6px 12px;font-size:14px;font-weight:600;text-align:center}
-.franja-vista button{background:#1a1300;color:#fff;border:none;border-radius:999px;min-height:36px;padding:6px 14px;font-weight:700;font-size:13px;cursor:pointer}
+  background:var(--text);color:var(--bg);padding:6px 12px;font-size:14px;font-weight:600;text-align:center}
+.franja-vista button{background:var(--bg);color:var(--text);border:none;border-radius:999px;min-height:36px;padding:6px 14px;font-weight:800;font-size:13px;cursor:pointer}
 /* En "ver como", los encabezados fijos bajan para no quedar debajo de la franja */
 body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .lista-vista{display:grid;gap:10px;margin-top:8px}
 .lista-vista button{min-height:52px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;text-align:left;padding:10px 16px}
+/* ══════════ Seguimiento y Gerencia · mockup-seguimiento-vento.html ══════════
+   Mismas clases del mockup con prefijo sv- (la app ya usa .tile, .card y .pill
+   en otras pantallas) y con los colores de la app (diseño unificado).      */
+.vm{--sv-rojo:var(--bad);--sv-azul:var(--accent);--sv-verde:var(--ok);--sv-ambar:var(--warn);--sv-morado:var(--m-vc);--sv-cian:var(--m-asesores);
+  --sv-gris:var(--muted);--chip:var(--suave);--line:var(--border);--ink:var(--text);--ink-2:var(--muted);--shadow:var(--sombra-mos)}
+.vm .sv-sec{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
+.vm .sv-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:12px}
+.vm .sv-big{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.vm .sv-big small{font-family:Inter,system-ui,sans-serif;font-size:15px;font-weight:700;color:var(--ink-2);letter-spacing:0}
+.vm .sv-muted{color:var(--ink-2);font-size:13px}
+.vm .sv-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:12px 0 10px;background:var(--chip)}
+.vm .sv-bar span{display:block;height:100%}
+.vm .sv-bar.toca{height:44px;margin:-3px 0 -5px;background:none;overflow:visible;border-radius:0}
+.vm .sv-bar.toca button{display:block;height:44px;border:0;padding:15px 0;background:none;cursor:pointer;min-width:6px}
+.vm .sv-bar.toca button span{display:block;height:14px}
+.vm .sv-bar.toca button:first-child span{border-radius:999px 0 0 999px}
+.vm .sv-bar.toca button:last-child span{border-radius:0 999px 999px 0}
+.vm .sv-bar.toca button:only-child span{border-radius:999px}
+.vm .sv-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.vm .sv-lg{display:flex;align-items:center;gap:8px;font-size:13px;background:none;border:0;color:var(--ink);padding:0;text-align:left;min-height:44px;cursor:pointer;font-family:inherit}
+.vm .sv-legend{row-gap:0}
+.vm .sv-lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.vm .sv-lg b{margin-left:auto;font-size:16px;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vm .sv-tile{border-radius:22px;padding:16px;color:#fff;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.vm .sv-tile::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.14);pointer-events:none}
+.vm .sv-tile .t{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.vm .sv-tile .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:44px;font-weight:600;line-height:1.05;letter-spacing:-.03em}
+.vm .sv-tile .s{font-size:13px;opacity:.95}
+.vm .sv-tile .cta{display:inline-flex;align-items:center;margin-top:10px;background:rgba(255,255,255,.22);border:0;color:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;min-height:36px;cursor:pointer;position:relative;z-index:1}
+.vm .sv-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.vm .sv-mini{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px}
+.vm .sv-mini .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:26px;font-weight:600}
+.vm .sv-mini .t{font-size:12px;color:var(--ink-2);font-weight:600}
+.vm .sv-conv{display:flex;align-items:center;gap:16px}
+.vm .sv-ring{--p:10;width:96px;height:96px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--c,var(--sv-verde)) calc(var(--p)*1%),var(--chip) 0)}
+.vm .sv-ring div{width:72px;height:72px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:700;font-size:20px;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vm .sv-phrase{margin-top:12px;background:var(--chip);border-radius:14px;padding:10px 12px;font-size:14px}
+.vm .sv-phrase b{font-size:16px}
+.vm .sv-calc .line{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.vm .sv-calc .line:last-of-type{border-bottom:0}
+.vm .sv-calc .line b{font-size:18px;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vm .sv-calc .res{margin-top:10px;background:var(--sv-azul);color:#fff;border-radius:16px;padding:12px 14px}
+.vm .sv-calc .res .n{font-size:30px;font-weight:700}
+.vm .sv-calc .res.ok{background:var(--sv-verde)}
+.vm .sv-prog{height:10px;border-radius:999px;background:var(--chip);overflow:hidden;margin:8px 0}
+.vm .sv-prog span{display:block;height:100%;background:var(--sv-verde);border-radius:999px}
+.vm .sv-table{width:100%;border-collapse:collapse;font-size:13px}
+.vm .sv-table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);text-align:right;padding:6px 4px;font-weight:700}
+.vm .sv-table th:first-child,.vm .sv-table td:first-child{text-align:left}
+.vm .sv-table td{padding:8px 4px;text-align:right;border-top:1px solid var(--line);font-weight:600;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vm .sv-table td:first-child{font-family:inherit}
+.vm .sv-pill{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;color:#fff;font-family:Inter,system-ui,sans-serif}
+.vm .sv-split{display:flex;height:28px;border-radius:12px;overflow:hidden;margin:10px 0;font-size:12px;font-weight:800;color:#fff;background:var(--chip)}
+.vm .sv-split span{display:grid;place-items:center;white-space:nowrap;overflow:hidden}
+/* En oscuro los verdes, ámbar y gris son claros: texto oscuro para que se lea */
+[data-theme="dark"] .vm .sv-split span.cl,[data-theme="dark"] .vm .sv-pill{color:#0d0f14}
+.vm .sv-who-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.vm .sv-who-row:first-of-type{border-top:0}
+.vm .sv-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.vm .sv-who-row .name{font-weight:700;font-size:14px;width:70px}
+.vm .sv-who-row .sv-prog{flex:1;margin:0}
+.vm .sv-who-row .num{font-weight:600;font-size:16px;width:46px;text-align:right;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vm .sv-alert{background:color-mix(in srgb,var(--sv-rojo) 12%,var(--card));border:1px solid color-mix(in srgb,var(--sv-rojo) 35%,var(--line));color:var(--ink);border-radius:16px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.vm .sv-tabs{display:flex;gap:6px;background:var(--chip);border-radius:14px;padding:4px;margin-bottom:12px}
+.vm .sv-tabs button{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:13px;font-weight:700;color:var(--ink-2);background:none;border:0;min-height:40px;cursor:pointer;font-family:inherit}
+.vm .sv-tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.vm .sv-tabs .mono{font-weight:600;font-size:12px;margin-left:2px}
+.vm .sv-tabs button{white-space:nowrap;padding:8px 2px}
+.vm .sv-search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 12px;color:var(--ink-2);font-size:14px;margin-bottom:10px}
+.vm .sv-search input{border:0!important;background:transparent!important;flex:1;min-height:44px;padding:0;outline:none;color:var(--ink)}
+.vm .sv-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.vm .sv-chips button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--ink-2);min-height:34px;cursor:pointer;font-family:inherit}
+.vm .sv-chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vm .sv-cl{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:8px;width:100%;text-align:left;color:var(--ink);cursor:pointer;font-family:inherit;min-height:56px}
+.vm .sv-cl .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.vm .sv-cl .nm{font-weight:700;font-size:14px}
+.vm .sv-cl .sub{font-size:12px;color:var(--ink-2);font-weight:500}
+.vm .sv-cl .st{margin-left:auto;font-size:11px;font-weight:800;border-radius:999px;padding:3px 8px;color:#fff;white-space:nowrap;flex:none}
+.vm .sv-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 12px}
+.vm .sv-act{border-radius:14px;padding:12px;font-size:13px;font-weight:800;color:#fff;text-align:center;border:0;min-height:48px;cursor:pointer;font-family:inherit}
+.vm .sv-act.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.vm .sv-kv{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.vm .sv-kv:last-child{border-bottom:0}
+.vm .sv-kv span{color:var(--ink-2)}
+.vm .sv-kv b{text-align:right}
+.vm .sv-copiar{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:4px 8px;font-size:12px;font-weight:700;cursor:pointer;margin-left:6px;min-height:32px}
+.vm .sv-tl{border-left:2px solid var(--line);margin-left:6px;padding-left:12px}
+.vm .sv-tl div{position:relative;font-size:13px;padding:5px 0}
+.vm .sv-tl div::before{content:"";position:absolute;left:-18px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--c,var(--sv-azul))}
+.vm .sv-tl small{color:var(--ink-2)}
+.vm .sv-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.vm .sv-hdr small{display:block;font-size:10px;letter-spacing:.06em;color:var(--ink-2);font-weight:700;text-transform:uppercase}
+.vm .sv-hdr b{font-size:16px}
+.vm .sv-hdr .who{margin-left:auto;background:var(--chip);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;border:0;color:var(--ink)}
+.vm .sv-volver{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;padding:0;min-height:36px;cursor:pointer}
+.vm .sv-bloque>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;font-size:13px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:22px 0 10px;min-height:32px}
+.vm .sv-bloque>h2::after{content:"▾";font-size:14px;transition:transform .15s}
+.vm .sv-bloque.cerrado>h2::after{transform:rotate(-90deg)}
+.vm .sv-bloque.cerrado>.sv-cuerpo{display:none}
+.vm .sv-aviso{background:var(--chip);border-radius:14px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.vm .sv-lista-h{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:18px 0 10px}
+.vm .sv-res-busca .sv-kv{gap:6px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .tile{border-radius:18px;padding:18px;color:#fff;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;box-shadow:0 8px 18px -10px rgba(0,0,0,.45)}
 .tile.ancho{grid-column:1/-1;min-height:120px}
@@ -423,20 +527,19 @@ body{background:var(--bg);color:var(--text)}
     <a class="vh-marca" href="#inicio">Vento Chalco<span>· Seguimiento</span></a>
     <div class="vh-acc"><a class="vh-portal" href="#inicio">← Inicio</a><button type="button" class="vh-tema btn-tema" title="Cambiar modo claro / oscuro" aria-label="Cambiar modo claro / oscuro"></button></div>
   </div></div>
-  <div class="app-main">
-    <div class="subtabs" id="segTabs">
-      <button data-t="hoy" class="on">Pendientes de hoy <span class="mono" id="cHoy"></span></button>
-      <button data-t="todos">Todos mis clientes</button>
-      <button data-t="react">Reactivación del mes <span class="mono" id="cReact"></span></button>
+  <div class="app-main vm">
+    <div class="sv-tabs" id="segTabs">
+      <button data-t="hoy" class="on">Hoy <span class="mono" id="cHoy"></span></button>
+      <button data-t="todos">Mis clientes</button>
+      <button data-t="react">Reactivación <span class="mono" id="cReact"></span></button>
     </div>
     <div class="filtros" id="segFiltros">
-      <input id="segBuscar" type="search" placeholder="Buscar nombre o teléfono…" class="oculto">
-      <select id="segEstatus" class="oculto"></select>
       <select id="segVendedor" class="oculto"></select>
       <button class="btn btn-sec btn-chico" id="segRecargar" title="Volver a leer la hoja">↻ Actualizar</button>
       <button class="btn btn-sec btn-chico oculto" id="segCambiarVista" title="Ver Seguimiento como un asesor">Cambiar vista</button>
       <button class="btn btn-sec btn-chico" data-ir="cotizar">Ir al Cotizador</button>
     </div>
+    <div id="segPanel"></div>
     <div id="segLista"><div class="vacio">Cargando clientes…</div></div>
     <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
@@ -448,8 +551,8 @@ body{background:var(--bg);color:var(--text)}
     <a class="vh-marca" href="#inicio">Vento Chalco<span>· Gerencia</span></a>
     <div class="vh-acc"><a class="vh-portal" href="#inicio">← Inicio</a><button type="button" class="vh-tema btn-tema" title="Cambiar modo claro / oscuro" aria-label="Cambiar modo claro / oscuro"></button></div>
   </div></div>
-  <div class="app-main">
-    <div class="filtros"><input type="month" id="gerMes" style="max-width:200px"><button class="btn btn-sec btn-chico" id="gerRecargar">↻ Actualizar</button><button class="btn btn-sec btn-chico" data-ir="seguimiento">Ir a Seguimiento</button></div>
+  <div class="app-main vm">
+    <div class="filtros"><input type="month" id="gerMes" style="max-width:200px"><button class="btn btn-sec btn-chico" id="gerRecargar">↻ Actualizar</button><button class="btn btn-sec btn-chico" id="gerCambiarVista">Cambiar vista</button><button class="btn btn-sec btn-chico" data-ir="seguimiento">Ir a Seguimiento</button></div>
     <div id="gerCuerpo"><div class="vacio">Cargando…</div></div>
     <footer class="leyenda"><span class="ver-app"></span> · © 2026 Jesús Trapala · Todos los derechos reservados · Herramienta de uso interno para Agencia Vento Chalco. Prohibida su reproducción, distribución o uso en otras agencias sin autorización escrita del autor.</footer>
   </div>
@@ -614,7 +717,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "3.10", VERSION_FECHA = "13 oct 2026";
+const VERSION = "4.0", VERSION_FECHA = "13 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1671,6 +1774,7 @@ function ruta(){
   if(v==="vSeg") pintarSeg();
   if(v==="vGer") cargarGerencia(false);
   if(v==="vInicio" || v==="vSeg") cargarClientes(false);
+  if(v==="vSeg") cargarDatosSeg(false);
   if(v==="vLogin") setTimeout(()=>{ if($("lgUsuario").value) $("lgPin").focus(); },50);
 }
 
@@ -1819,38 +1923,543 @@ function tarjeta(c){
 }
 
 let SEG_TAB = "hoy";
+/* ══════════ Seguimiento y Gerencia (mockup-seguimiento-vento.html) ══════════
+   Definiciones (prompt-seguimiento-final):
+   · Prospecto = cliente único cotizado en el mes (un cliente viejo que recotiza no cuenta).
+   · Ventas (HMYP, vía Apps Script v5): gestión = cotización del mes hecha al menos 1 día
+     antes de la venta · reactivación = cotización de un mes anterior con contacto en los
+     30 días previos · natural = sin cotización, cotizada el mismo día o reactivación sin
+     contacto reciente.
+   · Conversión = ventas de gestión / prospectos. Cuota del asesor = objetivo / 2.
+   · Objetivo del mes: el mismo del dashboard de ventas (su API).               */
+const DESCANSO = {"KEVIN SALAS":3, "OSVALDO MORA":1};   // día de descanso (0 domingo … 6 sábado)
+const DASH_API = {url:"https://script.google.com/macros/s/AKfycbzHAJVvLmhXPyCMuWgregbk2E_-19eUmbaFl8Bi_HxykG3Vv-D3Puovjay1NSEMyndpjw/exec", clave:"chalco16025"};
+const MESES_NOM = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+const VENTAS = {};               // por mes pedido: {t, ventas, error}
+let OBJ = null;                  // objetivo del mes sin IVA
+let SEG_FILTRO = {estado:"todos", periodo:"todo"};
+let SEG_FICHA = null, SEG_FICHA_DE = "todos";
+const HIST = {};                 // historial por fila: {t, contactos, cotizaciones, error}
+
+const primerN = s => String(s||"").trim().toUpperCase().split(/\s+/)[0]||"";
+const mesDe = v => { const d=new Date(v); return isNaN(d) ? "" : d.getFullYear()+"-"+p2(d.getMonth()+1); };
+const mesAnt = k => { const [a,m]=k.split("-").map(Number); const d=new Date(a,m-2,1); return d.getFullYear()+"-"+p2(d.getMonth()+1); };
+const mesNombre = k => { const [a,m]=k.split("-").map(Number); return new Date(a,m-1,1).toLocaleDateString("es-MX",{month:"long"}); };
+const pesos = n => "$"+Math.round(Number(n)||0).toLocaleString("es-MX");
+const gerentesSet = () => new Set((CFG?CFG.usuarios:[]).filter(u=>u.rol==="GERENTE").map(u=>nom(u.n)));
+const asesores = () => (CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE").map(u=>u.n);
+
+/* ── datos de ventas y objetivo ── */
+async function cargarVentas(mes, forzar){
+  mes = mes || mesActual();
+  const v = VENTAS[mes];
+  if(!forzar && v && Date.now()-v.t < 300000) return v;
+  try{
+    const j = await api("ventas",{mes});
+    VENTAS[mes] = {t:Date.now(), ventas:j.ventas||[], error:"", faltan:j.faltan||[]};
+  }catch(e){
+    VENTAS[mes] = {t:Date.now(), ventas:[], error: /desconocida/i.test(e.message)
+      ? "Para ver ventas, conversión y cuánto falta hay que pegar el Apps Script v5." : e.message};
+  }
+  return VENTAS[mes];
+}
+async function cargarObjetivo(){
+  const k = mesActual();
+  try{ const g=JSON.parse(localStorage.getItem("vch_objetivo")||"null"); if(g && g.mes===k){ OBJ=g.v; if(Date.now()-g.t<6*3600e3) return; } }catch(e){}
+  try{
+    const q = s => `${DASH_API.url}?${s}&clave=${encodeURIComponent(DASH_API.clave)}`;
+    const j = await (await fetch(q("accion=meses"))).json();
+    const d = new Date(), NOM = MESES_NOM[d.getMonth()], A = String(d.getFullYear());
+    const sin = s => String(s).toUpperCase().replace(/\s+/g,"");
+    const hoja = (j.meses||[]).find(n=>sin(n).includes(NOM) && sin(n).includes(A));
+    if(!hoja) return;
+    const j2 = await (await fetch(q("accion=datos&mes="+encodeURIComponent(hoja)))).json();
+    if(typeof j2.objetivo==="number" && j2.objetivo>0){
+      OBJ = j2.objetivo;
+      try{ localStorage.setItem("vch_objetivo", JSON.stringify({mes:k, v:OBJ, t:Date.now()})); }catch(e){}
+    }
+  }catch(e){}
+}
+async function cargarDatosSeg(forzar){
+  await Promise.all([cargarVentas(mesActual(), forzar), cargarObjetivo()]);
+  pintarTodo();
+}
+const ventasMes = (mesPedido, k) => ((VENTAS[mesPedido]||{}).ventas||[]).filter(v=>v.mes===k);
+
+/* ── clasificación ── */
+function claseVenta(v){
+  if(!v.folio || !v.fechaCot) return "natural";
+  if(diaN(v.fechaCot) >= diaN(v.fecha)) return "natural";          // cotizada el mismo día (o después)
+  if(mesDe(v.fechaCot) === mesDe(v.fecha)) return "gestion";
+  return v.contacto30 ? "reactivacion" : "natural";
+}
+const mismoDiaVenta = v => !!(v.folio && v.fechaCot && diaN(v.fechaCot)===diaN(v.fecha));
+/* Ventas que le cuentan a un asesor: gestión y reactivación por quien cotizó;
+   naturales por quien facturó. vend null = agencia. */
+function ventasDeAsesor(lista, vend, clase){
+  return lista.filter(v=>{
+    const c = claseVenta(v);
+    if(clase && c!==clase) return false;
+    if(!vend) return true;
+    if(c!=="natural" && v.vendedorCot) return nom(v.vendedorCot)===nom(vend);
+    return primerN(v.vendedor)===primerN(vend);
+  });
+}
+const facturadasPor = (lista, vend) => vend ? lista.filter(v=>primerN(v.vendedor)===primerN(vend)) : lista;
+
+/* ── prospectos, estados, días ── */
+function prospectos(lista, k){
+  const viejos = new Set(CLIENTES.filter(c=>c.fecha && mesDe(c.fecha)<k).map(c=>c.tel).filter(Boolean));
+  const vistos = new Set(), out = [];
+  lista.filter(c=>!c.prueba && c.fecha && mesDe(c.fecha)===k)
+    .sort((a,b)=>new Date(a.fecha)-new Date(b.fecha))
+    .forEach(c=>{ const t=c.tel||("f"+c.fila); if(viejos.has(c.tel)||vistos.has(t)) return; vistos.add(t); out.push(c); });
+  return out;
+}
+function estadoCli(c){
+  if(c.estatus==="VENDIDO") return "vendido";
+  if(c.estatus==="PERDIDO") return "perdido";
+  const act = Math.max(diaN(c.base||c.fecha)||0, diaN(c.ultimo)||0);
+  if(act && hoyN()-act > 92) return "archivo";
+  if(EN_CADENCIA.includes(c.estatus) && !(c.intentos>0)) return "sin";
+  return "seg";
+}
+const EST_CLI = {
+  hoy:{t:"Por atender hoy", c:"var(--sv-rojo)", e:"Hoy"},
+  seg:{t:"En seguimiento", c:"var(--sv-azul)", e:"Seguimiento"},
+  sin:{t:"Sin contactar", c:"var(--sv-ambar)", e:"Sin contactar"},
+  vendido:{t:"Vendidos", c:"var(--sv-verde)", e:"Vendido"},
+  perdido:{t:"Perdidos", c:"var(--sv-gris)", e:"Perdido"},
+  archivo:{t:"Archivo", c:"var(--sv-gris)", e:"Archivo"}
+};
+function diasHabilesRestantes(vend){
+  const h = new Date(), fin = new Date(h.getFullYear(), h.getMonth()+1, 0).getDate();
+  const desc = vend ? DESCANSO[nom(vend)] : undefined;
+  let n = 0;
+  for(let d=h.getDate(); d<=fin; d++){ const w=new Date(h.getFullYear(),h.getMonth(),d).getDay(); if(w===0 || w===desc) continue; n++; }
+  return n;
+}
+function conversionDe(vend, lista, k){
+  const p = prospectos(lista,k).length, g = ventasDeAsesor(ventasMes(mesActual(),k), vend, "gestion").length;
+  return {p, g, pct: p ? g/p : 0};
+}
+function calcFalta(vend, lista){
+  const k = mesActual(), ant = mesAnt(k);
+  const cuota = OBJ ? (vend ? OBJ/2 : OBJ) : null;
+  const vs = facturadasPor(ventasMes(k,k), vend), llevo = vs.reduce((s,x)=>s+(x.precio||0)/1.16, 0);
+  let tk = vs.length ? llevo/vs.length : 0, tkAnt = false;
+  if(!tk){ const va=facturadasPor(ventasMes(k,ant), vend); tk = va.length ? va.reduce((s,x)=>s+(x.precio||0)/1.16,0)/va.length : 0; tkAnt = true; }
+  const cv = conversionDe(vend, lista, k);
+  let conv = cv.g>=3 ? cv.pct : null, convAnt = false;
+  if(conv==null){ const ca=conversionDe(vend, lista, ant); conv = ca.g ? ca.pct : null; convAnt = true; }
+  const faltan = cuota!=null ? Math.max(cuota-llevo,0) : null;
+  const motos = faltan!=null && tk ? Math.ceil(faltan/tk) : null;
+  const prosp = motos!=null && conv ? Math.ceil(motos/conv) : null;
+  const dias = diasHabilesRestantes(vend);
+  return {cuota, llevo, tk, tkAnt, conv, convAnt, cv, faltan, motos, prosp, dias, porDia: prosp!=null && dias ? Math.ceil(prosp/dias) : null};
+}
+
+/* ── piezas visuales ── */
+function htmlConversion(vend, lista, titulo, quien){
+  const k = mesActual(), cv = conversionDe(vend, lista, k);
+  const ring = c => {
+    const p = Math.round(c.pct*1000)/10, x = c.g ? Math.round(c.p/c.g) : null;
+    return `<div class="sv-conv"><div class="sv-ring" style="--p:${Math.min(p,100)}"><div>${Math.round(c.pct*100)}%</div></div>
+      <div><div style="font-size:15px;font-weight:700">${c.g} venta${c.g===1?"":"s"} de ${c.p} prospectos</div>
+      <div class="sv-muted" style="margin-top:4px">${vend?"Solo ventas que salieron de una cotización tuya":"Ventas de gestión de cotizaciones del equipo"}</div></div></div>
+      ${x?`<div class="sv-phrase">${quien} <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}`;
+  };
+  let cuerpo;
+  if(cv.g >= 3) cuerpo = ring(cv);
+  else {
+    const ant = mesAnt(k), ca = conversionDe(vend, lista, ant);
+    cuerpo = `<div class="sv-phrase" style="margin-top:0">${vend?"Tu":"La"} conversión de ${mesNombre(k)} se está calculando. Sigue cotizando y vendiendo para ver ${vend?"tu":"el"} resultado.</div>
+      <div class="sv-sec" style="margin-top:14px">${tc(mesNombre(ant))} (mes anterior)</div>${ring(ca)}`;
+  }
+  return `<div class="sv-card"><div class="sv-sec">${titulo}</div>${cuerpo}</div>`;
+}
+function htmlCalc(vend, lista, titulo, objTxt){
+  const r = calcFalta(vend, lista);
+  if(r.cuota==null) return `<div class="sv-card sv-calc"><div class="sv-sec">${titulo}</div><div class="sv-muted">Sin el objetivo del mes todavía (se lee del dashboard de ventas).</div></div>`;
+  const pct = Math.min(100, Math.round(r.llevo/r.cuota*100));
+  const cumplida = r.llevo >= r.cuota;
+  return `<div class="sv-card sv-calc"><div class="sv-sec">${titulo}</div>
+    <div class="sv-muted">${objTxt} ${pesos(r.cuota)}${vend?"":" sin IVA"} · ${vend?"llevo":"llevamos"} ${pesos(r.llevo)}</div>
+    <div class="sv-prog"><span style="width:${pct}%"></span></div>
+    ${cumplida ? `<div class="res ok"><div class="n">¡Cuota cumplida!</div><div style="font-size:13px">${vend?"Llevas":"Llevamos"} ${pesos(r.llevo)} de ${pesos(r.cuota)}. Todo lo que sigas vendiendo suma de más.</div></div>` : `
+    <div class="line"><span>${vend?"Me faltan":"Faltan"}</span><b>${pesos(r.faltan)}</b></div>
+    <div class="line"><span>${vend?"Mi ticket promedio":"Ticket promedio"}${r.tkAnt?" (mes anterior)":""}</span><b>${r.tk?pesos(r.tk):"—"}</b></div>
+    <div class="line"><span>Motos por vender</span><b>${r.motos??"—"}</b></div>
+    <div class="res"><div style="font-size:13px;opacity:.9">${vend?"Necesito cotizar":"Hay que cotizar"}</div>
+      <div class="n">${r.prosp!=null ? r.prosp+" prospectos" : "—"}</div>
+      <div style="font-size:13px">${r.prosp!=null ? `≈ ${r.porDia} por día ${vend?"en los ":"entre los dos asesores ("}${r.dias} días hábiles${vend?" que quedan":")"}` : "Falta la conversión para calcularlo"}${r.convAnt && r.prosp!=null?" · con la conversión del mes anterior":""}</div></div>`}
+  </div>`;
+}
+
+/* ── Seguimiento ── */
+function segAlcance(){
+  const u = yo(), g = u.rol==="GERENTE";
+  const fv = g ? $("segVendedor").value : "";
+  const vend = g ? (fv || null) : u.nombre;
+  const ger = gerentesSet();
+  let lista = misClientes();
+  if(g) lista = fv ? lista.filter(c=>c.vendedor===fv) : lista;
+  else lista = lista.filter(c=>nom(c.vendedor)===nom(u.nombre));   // el servidor ya filtra; esto es por si acaso
+  const metr = g && !fv ? lista.filter(c=>!ger.has(nom(c.vendedor))) : lista;   // métricas sin cotizaciones de gerentes
+  return {u, g, vend, lista, metr};
+}
+function filaCli(c){
+  const pend = esPendiente(c), e = estadoCli(c);
+  const st = pend ? {c:"var(--sv-rojo)", e: diaN(c.prox)<hoyN() ? "Vencido" : "Hoy"} : EST_CLI[e];
+  const etiqueta = c.estatus==="VENDIDO" && !c.factura ? "Vendido · por confirmar" : st.e;
+  const sig = pend ? (diaN(c.prox)<hoyN() ? `vencido ${hoyN()-diaN(c.prox)} d` : "toca hoy")
+    : c.estatus==="VENDIDO" ? "vendido "+fechaCorta(c.fecha_venta||c.ultimo)
+    : c.estatus==="PERDIDO" ? (c.motivo||"perdido")+" · "+fechaCorta(c.ultimo||c.base)
+    : c.prox ? "próx. "+fechaCorta(c.prox) : c.estatus==="SIN RESPUESTA" ? "reactivación" : "cotizado "+fechaCorta(c.base||c.fecha);
+  return `<button type="button" class="sv-cl" data-ficha="${c.fila}"><i class="dot" style="background:${st.c}"></i>
+    <div style="min-width:0"><div class="nm">${esc(tc(c.nombre+" "+c.apellidos))}</div>
+    <div class="sub">${esc(modeloCorto(c))} · ${esc(tc(c.forma_pago))} · ${esc(sig)}${segAlcance().g&&!esVista()?" · "+esc(pila(c.vendedor)):""}</div></div>
+    <span class="st" style="background:${st.c}">${esc(etiqueta)}</span></button>`;
+}
+function pintarSegHoy(A){
+  const k = mesActual(), hoy = A.lista.filter(esPendiente);
+  const venc = hoy.filter(c=>diaN(c.prox)<hoyN()).length;
+  const port = prospectos(A.metr, k);
+  const cuenta = {hoy:0, seg:0, sin:0, vendido:0, perdido:0};
+  port.forEach(c=>{ const e = esPendiente(c) ? "hoy" : estadoCli(c); cuenta[e==="archivo"?"seg":e]++; });
+  const contactadosHoy = A.lista.filter(c=>diaN(c.ultimo)===hoyN()).length;
+  const tot = port.length || 1, V = VENTAS[k]||{};
+  const quien = A.vend ? "Vendes" : "La agencia vende";
+  return `
+    <div class="sv-tile" style="background:var(--sv-rojo)">
+      <div class="t">Por atender hoy</div><div class="n">${hoy.length}</div>
+      <div class="s">${hoy.length-venc} tocan hoy · <b>${venc} vencidos</b> de días anteriores</div>
+      <button type="button" class="cta" id="svEmpezar">Empezar →</button>
+    </div>
+    <div class="sv-card">
+      <div class="sv-sec">${A.vend?"Mi portafolio":"Portafolio del equipo"} · ${mesNombre(k)}</div>
+      <div class="sv-big">${port.length} <small>clientes</small></div>
+      <div class="sv-bar toca">${["hoy","seg","sin","vendido","perdido"].map(e=>cuenta[e]?`<button type="button" data-seg-filtro="${e}" title="${EST_CLI[e].t}" style="width:${cuenta[e]/tot*100}%"><span style="background:${EST_CLI[e].c}"></span></button>`:"").join("")}</div>
+      <div class="sv-legend">
+        ${["hoy","seg","sin","vendido","perdido"].map(e=>`<button type="button" class="sv-lg" data-seg-filtro="${e}"><i style="background:${EST_CLI[e].c}"></i>${EST_CLI[e].t}<b>${cuenta[e]}</b></button>`).join("")}
+        <div class="sv-lg" style="color:var(--ink-2);cursor:default">Contactados hoy<b style="color:var(--ink)">${contactadosHoy}</b></div>
+      </div>
+    </div>
+    ${V.error?`<div class="sv-aviso">${esc(V.error)}</div>`:""}
+    ${htmlConversion(A.vend, A.metr, A.vend?"Mi conversión del mes":"Conversión del equipo", quien)}
+    ${htmlCalc(A.vend, A.metr, A.vend?"¿Cuánto me falta?":"¿Cuánto le falta a la agencia?", A.vend?"Mi cuota":"Objetivo")}
+    <div class="sv-lista-h" id="svListaHoy">Pendientes de hoy · ${hoy.length}</div>`;
+}
+function filtroPeriodo(c){
+  const d = diaN(c.base||c.fecha)||0;
+  if(SEG_FILTRO.periodo==="mes") return mesDe(c.base||c.fecha)===mesActual();
+  if(SEG_FILTRO.periodo==="3m") return hoyN()-d <= 92;
+  return true;
+}
+function pintarSegClientes(A){
+  const q = $("segBuscar") ? $("segBuscar").value : "";
+  const dig = soloDig(q), t = q.trim().toUpperCase();
+  const enPer = A.lista.filter(filtroPeriodo);
+  const cnt = {todos:enPer.length, sin:0, seg:0, vendido:0, perdido:0, archivo:0};
+  enPer.forEach(c=>cnt[estadoCli(c)]++);
+  const lista = enPer.filter(c=> (SEG_FILTRO.estado==="todos" || (SEG_FILTRO.estado==="hoy" ? esPendiente(c) : estadoCli(c)===SEG_FILTRO.estado))
+      && (!t || (dig.length>=3 && String(c.tel).includes(dig)) || (c.nombre+" "+c.apellidos).toUpperCase().includes(t)))
+    .sort((a,b)=>(esPendiente(b)-esPendiente(a)) || new Date(b.base||b.fecha)-new Date(a.base||a.fecha));
+  const chip = (k,txt) => `<button type="button" data-chip-e="${k}" class="${SEG_FILTRO.estado===k?"on":""}">${txt}</button>`;
+  return `
+    <div class="sv-search">⌕<input id="segBuscar" type="search" placeholder="Buscar por nombre o WhatsApp…" value="${esc(q)}" autocomplete="off"></div>
+    <div class="sv-chips">${chip("todos","Todos "+cnt.todos)}${SEG_FILTRO.estado==="hoy"?chip("hoy","Por atender hoy"):""}${chip("sin","Sin contactar "+cnt.sin)}${chip("seg","En seguimiento "+cnt.seg)}${chip("vendido","Vendidos "+cnt.vendido)}${chip("perdido","Perdidos "+cnt.perdido)}${chip("archivo","Archivo "+cnt.archivo)}</div>
+    <div class="sv-chips">${[["mes","Este mes"],["3m","3 meses"],["todo","Todo"]].map(([k,x])=>`<button type="button" data-chip-p="${k}" class="${SEG_FILTRO.periodo===k?"on":""}">${x}</button>`).join("")}</div>
+    ${lista.length ? lista.map(filaCli).join("") + `<div class="sv-muted" style="text-align:center;margin-top:6px">Toca un cliente para abrir su ficha</div>`
+      : `<div class="vacio">No hay clientes con ese filtro.</div>`}`;
+}
+function universoReact(lista){
+  const k = mesActual();
+  return lista.filter(c=>c.fecha && mesDe(c.fecha)<k && ["seg","sin"].includes(estadoCli(c)));
+}
+function pintarSegReact(A){
+  const k = mesActual(), uni = universoReact(A.lista);
+  const porAtender = uni.filter(c=>esPendiente(c)||esReact(c));
+  const recup = ventasDeAsesor(ventasMes(k,k), A.vend, "reactivacion").length;
+  const totalN = uni.length + recup;
+  const archivo = A.lista.filter(c=>estadoCli(c)==="archivo").length;
+  const orden = uni.slice().sort((a,b)=>((esPendiente(b)||esReact(b)) - (esPendiente(a)||esReact(a))) || diaN(a.ultimo||a.base)-diaN(b.ultimo||b.base));
+  return `
+    <div class="sv-card">
+      <div class="sv-sec">Reactivación · clientes de meses anteriores</div>
+      <div style="font-size:15px">${A.vend?"Tienes":"Hay"} <b>${uni.length}</b> clientes por reactivar · <b>${porAtender.length}</b> por atender · ${A.vend?"recuperaste":"se recuperaron"} <b>${recup}</b></div>
+      ${recup?`<div class="sv-phrase">${A.vend?"Recuperaste":"Se recuperaron"} <b>${recup}</b> de <b>${totalN}</b> clientes · 1 de cada <b>${Math.round(totalN/recup)}</b></div>`:""}
+    </div>
+    ${orden.length ? orden.map(filaCli).join("") : `<div class="vacio">Nadie por reactivar.</div>`}
+    <button type="button" class="sv-volver" id="svVerArchivo" style="display:block;margin:12px auto 0">Ver archivo (${archivo}) →</button>
+    <div class="sv-muted" style="text-align:center">Archivo: más de 3 meses sin actividad. Si registras un contacto, regresa a Reactivación.</div>`;
+}
+
+/* ── Ficha del cliente ── */
+function pintarFicha(c){
+  const h = HIST[c.fila];
+  const e = estadoCli(c), pend = esPendiente(c);
+  const est = pend ? {c:"var(--sv-rojo)", e:"Hoy"} : EST_CLI[e];
+  const etiqueta = c.estatus==="VENDIDO" ? (c.factura ? "Vendido" : "Vendido · por confirmar folio") : est.e;
+  const vendido = c.estatus==="VENDIDO", perdido = c.estatus==="PERDIDO";
+  const evs = [];
+  if(h && !h.error){
+    h.cotizaciones.forEach(x=>evs.push({f:x.fecha, t:"Cotización enviada", s:`${fechaCorta(x.fecha)} · ${esc(x.modelo||"")} · ${esc(tc(x.forma||""))}${x.total?" · "+money(x.total):""}`, c:"var(--sv-cian)"}));
+    h.contactos.forEach(x=>evs.push({f:x.fecha, t:esc(x.resultado||x.mensaje||"Contacto"), s:`${fechaCorta(x.fecha)} · ${esc(pilaUsuario(x.usuario))}${x.nota?" · “"+esc(x.nota)+"”":""}`, c:/PERDID/i.test(x.estatus)?"var(--sv-gris)":/VENDIDO/i.test(x.estatus)?"var(--sv-verde)":"var(--sv-azul)"}));
+    evs.sort((a,b)=>new Date(a.f)-new Date(b.f));
+  }
+  const prox = c.prox ? `<div style="--c:var(--sv-ambar)"><b>Próximo contacto</b><br><small>${fechaCorta(c.prox)}${c.paso?" · día "+c.paso+" de la cadencia":""}</small></div>` : "";
+  const histHTML = !h ? `<div class="sv-muted">Cargando historial…</div>`
+    : h.error ? `<div class="sv-muted">${esc(h.error)}</div>${c.historial?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.historial)}</div>`:""}${c.notas?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.notas)}</div>`:""}<div class="sv-tl" style="margin-top:8px">${prox}</div>`
+    : `<div class="sv-tl">${evs.map(x=>`<div style="--c:${x.c}"><b>${x.t}</b><br><small>${x.s}</small></div>`).join("")||`<div><small>Sin movimientos registrados.</small></div>`}${prox}</div>`;
+  return `
+    <div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">← ${SEG_FICHA_DE==="react"?"Reactivación":SEG_FICHA_DE==="hoy"?"Hoy":"Mis clientes"}</button><b style="display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b></div>
+      <span class="who" style="background:${est.c};color:#fff">${esc(etiqueta)}</span></div>
+    <div class="sv-card">
+      <div class="sv-sec">Datos</div>
+      <div class="sv-kv"><span>WhatsApp</span><b class="mono">${esc(telFmt(c.tel))}</b></div>
+      <div class="sv-kv"><span>Modelo cotizado</span><b>${esc(modeloCorto(c))}</b></div>
+      <div class="sv-kv"><span>Forma de pago</span><b>${esc(tc(c.forma_pago))}${c.plazo_semanas?" · "+esc(c.plazo_semanas)+" sem":c.plazo_msi?" · "+esc(c.plazo_msi)+" MSI":""}</b></div>
+      <div class="sv-kv"><span>Origen</span><b>${esc(tc(c.origen||"—"))}</b></div>
+      ${yo().rol==="GERENTE"?`<div class="sv-kv"><span>Vendedor</span><b>${esc(tc(c.vendedor))}</b></div>`:""}
+      <div class="sv-kv"><span>Folio</span><b class="mono">${esc(c.folio)}<button type="button" class="sv-copiar" data-copiar="${esc(c.folio)}">Copiar</button></b></div>
+      ${c.factura?`<div class="sv-kv"><span>Factura</span><b class="mono">${esc(c.factura)} · ${fechaCorta(c.fecha_venta)}</b></div>`:""}
+    </div>
+    <div class="sv-acts">
+      <button type="button" class="sv-act" style="background:var(--sv-verde)" data-fa="wa">WhatsApp</button>
+      <button type="button" class="sv-act" style="background:var(--sv-azul)" data-fa="registrar">Registrar contacto</button>
+      ${vendido?"":`<button type="button" class="sv-act" style="background:var(--sv-morado)" data-fa="vino">Ya vino a la agencia</button>`}
+      <button type="button" class="sv-act" style="background:var(--sv-cian)" data-fa="recotizar">Recotizar</button>
+      ${vendido||perdido?"":`<button type="button" class="sv-act ghost" data-fa="reagendar">Reagendar</button>`}
+      ${perdido||c.estatus==="SIN RESPUESTA"?`<button type="button" class="sv-act ghost" data-fa="reactivar">Reactivar</button>`:vendido?"":`<button type="button" class="sv-act ghost" data-fa="perdido">Marcar perdido</button>`}
+    </div>
+    <div class="sv-card"><div class="sv-sec">Historial</div>${histHTML}</div>
+    <div class="sv-muted" style="text-align:center">${perdido?"Para volver a darle seguimiento toca «Reactivar».":vendido&&!c.factura?"Vendido · cuenta en métricas cuando su folio aparece en la hoja de ventas.":"Los clientes nunca se borran."}</div>`;
+}
+async function cargarHistorial(c, forzar){
+  if(!forzar && HIST[c.fila] && Date.now()-HIST[c.fila].t<60000) return;
+  try{ const j=await api("historial",{fila:c.fila, folio:c.folio}); HIST[c.fila]={t:Date.now(), contactos:j.contactos||[], cotizaciones:j.cotizaciones||[]}; }
+  catch(e){ HIST[c.fila]={t:Date.now(), error: /desconocida/i.test(e.message) ? "El historial completo aparece al pegar el Apps Script v5." : e.message}; }
+  if(SEG_FICHA===c.fila && vistaActual()==="vSeg") pintarSeg();
+}
+function abrirFicha(fila){
+  const c = CLIENTES.find(x=>String(x.fila)===String(fila)); if(!c) return;
+  SEG_FICHA_DE = SEG_TAB; SEG_FICHA = c.fila;
+  pintarSeg(); window.scrollTo(0,0);
+  cargarHistorial(c, true);
+}
+function cerrarFicha(){ SEG_FICHA = null; pintarSeg(); window.scrollTo(0,0); }
+function prepararMSG(c){ const k=claveSugerida(c); MSG={c, clave:k, sugerida:k, ficha:fichaCliente(c)}; }
+function accionFicha(a, c){
+  if(a==="wa") return abrirMensaje(c);
+  if(a==="registrar"){ prepararMSG(c); return pintarResultado(false); }
+  if(a==="perdido"){ prepararMSG(c); return pintarResultado(true); }
+  if(a==="vino"){
+    prepararMSG(c); MSG.clave="VISITA";
+    abrirSheet(`<div class="cab-s"><div><h3>${esc(pila(c.nombre))} vino a la agencia</h3><div class="muted" style="font-size:13px">¿Cómo terminó la visita?</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+      <label for="msNota">Nota (opcional)</label><input id="msNota" placeholder="Ej. viene el sábado con el enganche">
+      <div class="grid-res"><button data-res="VINO_COMPRO" class="bien">Compró</button><button data-res="VINO_REGRESA">Regresará</button><button data-res="VINO_NO" class="peligro">No le interesa</button></div>`);
+    $("sheetCont").querySelectorAll("[data-res]").forEach(b=>b.onclick=()=>guardarResultado(b.dataset.res,""));
+    return;
+  }
+  if(a==="recotizar") return recotizar(c);
+  if(a==="reagendar"){
+    const m=new Date(); const min=m.getFullYear()+"-"+p2(m.getMonth()+1)+"-"+p2(m.getDate());
+    abrirSheet(`<div class="cab-s"><div><h3>Reagendar a ${esc(pila(c.nombre))}</h3><div class="muted" style="font-size:13px">Elige el día del próximo contacto</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+      <label for="reFecha">Próximo contacto</label><input id="reFecha" type="date" min="${min}" value="${min}">
+      <label for="reNota">Nota (opcional)</label><input id="reNota" placeholder="Ej. cobra el día 15">
+      <div class="pila" style="margin-top:12px"><button class="btn btn-acc" id="reGuardar">Guardar</button></div>`);
+    $("reGuardar").onclick=()=>accionServidor("reagendar",{fila:c.fila, folio:c.folio, fecha:$("reFecha").value, nota:$("reNota").value}, $("reGuardar"));
+    return;
+  }
+  if(a==="reactivar"){
+    abrirSheet(`<div class="cab-s"><div><h3>Reactivar a ${esc(pila(c.nombre))}</h3><div class="muted" style="font-size:13px">Vuelve a la cadencia de seguimiento desde hoy.</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+      <label for="raNota">Nota (opcional)</label><input id="raNota" placeholder="Ej. ya le aprobaron el crédito en otra financiera">
+      <div class="pila" style="margin-top:12px"><button class="btn btn-acc" id="raGuardar">Reactivar</button></div>`);
+    $("raGuardar").onclick=()=>accionServidor("reactivar",{fila:c.fila, folio:c.folio, nota:$("raNota").value}, $("raGuardar"));
+  }
+}
+async function accionServidor(accion, datos, boton){
+  if(boton) boton.disabled=true;
+  try{
+    const j = await api(accion, datos);
+    const i = CLIENTES.findIndex(x=>x.fila===datos.fila); if(i>=0 && j.cliente) CLIENTES[i]=j.cliente;
+    delete HIST[datos.fila];
+    cerrarSheet();
+    toast(accion==="reagendar" ? "Reagendado para el "+fechaCorta(j.cliente&&j.cliente.prox) : "Reactivado · siguiente contacto el "+fechaCorta(j.cliente&&j.cliente.prox));
+    pintarTodo();
+    const c = CLIENTES.find(x=>x.fila===datos.fila); if(c) cargarHistorial(c, true);
+  }catch(e){
+    toast(/desconocida/i.test(e.message) ? "Para esto hay que pegar el Apps Script v5." : e.message, true);
+    if(boton) boton.disabled=false;
+  }
+}
+function recotizar(c){
+  location.hash = "#cotizar";
+  setTimeout(()=>{
+    const pon = (id, v) => { const el=$(id); if(!el || v==null || v==="") return; el.value=v; el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new Event("change",{bubbles:true})); };
+    pon("fNombre", tc(c.nombre)); pon("fApellidos", tc(c.apellidos)); pon("fTel", c.tel);
+    if($("fContacto") && [...$("fContacto").options].some(o=>o.value===c.origen)) pon("fContacto", c.origen);
+    pon("fModelo", c.codigo);
+    if($("fPago") && [...$("fPago").options].some(o=>o.value===c.forma_pago)) pon("fPago", c.forma_pago);
+    if(yo().rol==="GERENTE" && !esVista() && $("fVendedor") && [...$("fVendedor").options].some(o=>o.value===c.vendedor)) pon("fVendedor", c.vendedor);
+    if(typeof render==="function") render();
+    toast("Datos de "+pila(c.nombre)+" cargados. Revisa precio y forma de pago.");
+  }, 150);
+}
+
+/* ── pintar Seguimiento ── */
 function pintarSeg(){
   if(!SES || !INIT_HECHO) return;
-  const g = yo().rol==="GERENTE";
   pintarVista();
-  ver($("segBuscar"), SEG_TAB==="todos"); ver($("segEstatus"), SEG_TAB==="todos"); ver($("segVendedor"), g);
-  if(!$("segEstatus").options.length)
-    $("segEstatus").innerHTML='<option value="">Todos los estatus</option>'+Object.keys(EST_TXT).map(k=>`<option value="${k}">${EST_TXT[k]}</option>`).join("");
-  if(g){
+  const A = segAlcance();
+  ver($("segVendedor"), A.g);
+  if(A.g){
     const vs=[...new Set(CLIENTES.map(c=>String(c.vendedor||"").trim()).filter(Boolean))].sort();
     const s=$("segVendedor"), antes=s.value;
     s.innerHTML='<option value="">Todo el equipo</option>'+vs.map(v=>`<option value="${esc(v)}">${esc(tc(v))}</option>`).join("");
     s.value=vs.includes(antes)?antes:"";
   }
+  const hoy = A.lista.filter(esPendiente).sort((a,b)=>diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
+  $("cHoy").textContent = CLI_LEIDOS ? hoy.length : "";
+  $("cReact").textContent = CLI_LEIDOS ? universoReact(A.lista).length : "";
   document.querySelectorAll("#segTabs button").forEach(b=>b.classList.toggle("on", b.dataset.t===SEG_TAB));
-  const fv=$("segVendedor").value;
-  const base=misClientes().filter(c=>!g||!fv||c.vendedor===fv);
-  const hoy=base.filter(esPendiente).sort((a,b)=>diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
-  const react=base.filter(esReact).sort((a,b)=>diaN(a.ultimo||a.base)-diaN(b.ultimo||b.base));
-  $("cHoy").textContent = CLI_LEIDOS ? "· "+hoy.length : "";
-  $("cReact").textContent = CLI_LEIDOS ? "· "+react.length : "";
-  if(!CLI_LEIDOS){ $("segLista").innerHTML='<div class="vacio">Cargando clientes…</div>'; return; }
-  let lista, vacio;
-  if(SEG_TAB==="hoy"){ lista=hoy; vacio="Sin pendientes por hoy. Buen trabajo."; }
-  else if(SEG_TAB==="react"){ lista=react; vacio="Nadie por reactivar este mes."; }
-  else {
-    const q=soloDig($("segBuscar").value), t=$("segBuscar").value.trim().toUpperCase(), e=$("segEstatus").value;
-    lista=base.filter(c=>(!e||c.estatus===e) &&
-      (!t || (q.length>=3 && c.tel.includes(q)) || (c.nombre+" "+c.apellidos).toUpperCase().includes(t)))
-      .sort((a,b)=>new Date(b.base||b.fecha)-new Date(a.base||a.fecha));
-    vacio="No hay clientes con ese filtro.";
+  const ficha = SEG_FICHA!=null ? CLIENTES.find(x=>x.fila===SEG_FICHA) : null;
+  ver($("segTabs"), !ficha); ver($("segFiltros"), !ficha);
+  if(!CLI_LEIDOS){ $("segPanel").innerHTML=""; $("segLista").innerHTML='<div class="vacio">Cargando clientes…</div>'; return; }
+  if(ficha){ $("segPanel").innerHTML = pintarFicha(ficha); $("segLista").innerHTML=""; return; }
+  SEG_FICHA = null;
+  if(SEG_TAB==="hoy"){
+    $("segPanel").innerHTML = pintarSegHoy(A);
+    $("segLista").innerHTML = hoy.length ? hoy.map(tarjeta).join("") : `<div class="vacio">Sin pendientes por hoy. Buen trabajo.</div>`;
+  }else if(SEG_TAB==="react"){
+    $("segPanel").innerHTML = pintarSegReact(A); $("segLista").innerHTML="";
+  }else{
+    const foco = document.activeElement && document.activeElement.id==="segBuscar", pos = foco ? document.activeElement.selectionStart : 0;
+    $("segPanel").innerHTML = pintarSegClientes(A); $("segLista").innerHTML="";
+    if(foco){ const b=$("segBuscar"); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} }
   }
-  $("segLista").innerHTML = lista.length ? lista.map(tarjeta).join("") : `<div class="vacio">${vacio}</div>`;
+}
+/* eventos de Seguimiento (delegados, se instalan una vez) */
+function instalarEventosSeg(){
+  const v = $("vSeg");
+  v.addEventListener("click", e=>{
+    const t = e.target;
+    const f = t.closest("[data-ficha]"); if(f){ abrirFicha(f.dataset.ficha); return; }
+    if(t.closest(".cli") && !t.closest("button")){ const b=t.closest(".cli").querySelector("[data-wa]"); if(b) abrirFicha(b.dataset.wa); return; }
+    const sf = t.closest("[data-seg-filtro]"); if(sf){ SEG_FILTRO={estado:sf.dataset.segFiltro, periodo:"mes"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
+    const ce = t.closest("[data-chip-e]"); if(ce){ SEG_FILTRO.estado=ce.dataset.chipE; pintarSeg(); return; }
+    const cp = t.closest("[data-chip-p]"); if(cp){ SEG_FILTRO.periodo=cp.dataset.chipP; pintarSeg(); return; }
+    if(t.closest("#svEmpezar")){ const h=$("svListaHoy"); if(h) h.scrollIntoView({behavior:"smooth"}); return; }
+    if(t.closest("#svVerArchivo")){ SEG_FILTRO={estado:"archivo", periodo:"todo"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
+    if(t.closest("#svFichaVolver")){ cerrarFicha(); return; }
+    const cop = t.closest("[data-copiar]"); if(cop){ copiarTexto(cop.dataset.copiar); return; }
+    const fa = t.closest("[data-fa]"); if(fa){ const c=CLIENTES.find(x=>x.fila===SEG_FICHA); if(c) accionFicha(fa.dataset.fa, c); }
+  });
+  v.addEventListener("input", e=>{ if(e.target.id==="segBuscar") pintarSeg(); });
+}
+async function copiarTexto(txt){
+  try{ await navigator.clipboard.writeText(txt); toast("Folio copiado: "+txt); }
+  catch(e){ const i=document.createElement("textarea"); i.value=txt; document.body.appendChild(i); i.select(); try{ document.execCommand("copy"); toast("Folio copiado: "+txt); }catch(x){ toast(txt); } i.remove(); }
+}
+
+/* ── Gerencia: bloques del mockup ── */
+function gerCerrados(){ try{ return JSON.parse(localStorage.getItem("vch_ger_cerrados")||"{}"); }catch(e){ return {}; } }
+function bloque(id, titulo, html){
+  return `<section class="sv-bloque${gerCerrados()[id]?" cerrado":""}" data-bloque="${id}"><h2>${titulo}</h2><div class="sv-cuerpo">${html}</div></section>`;
+}
+function htmlGerHoy(reales){
+  const hoyEs = $("gerMes").value===mesActual();
+  if(!hoyEs) return `<div class="sv-muted">«Hoy» solo se ve con el mes en curso.</div>`;
+  const ases = asesores(), colores = ["var(--sv-azul)","var(--sv-morado)","var(--sv-cian)","var(--sv-ambar)"];
+  let totP=0, totA=0; const filas=[], alertas=[];
+  ases.forEach((n,i)=>{
+    const suyos = reales.filter(c=>nom(c.vendedor)===nom(n));
+    const pend = suyos.filter(esPendiente), venc = pend.filter(c=>diaN(c.prox)<hoyN()).length;
+    const at = suyos.filter(c=>diaN(c.ultimo)===hoyN()).length, total = pend.length+at;
+    totP+=total; totA+=at;
+    const p = total ? Math.round(at/total*100) : 100;
+    filas.push(`<div class="sv-who-row"><div class="sv-av" style="background:${colores[i%colores.length]}">${esc(pila(n).charAt(0))}</div><span class="name">${esc(pila(n))}</span>
+      <div class="sv-prog"><span style="width:${p}%;background:${p>=50?colores[i%colores.length]:"var(--sv-ambar)"}"></span></div><span class="num">${at}/${total}</span></div>`);
+    if(venc>0 || (total && at/total<.5 && new Date().getHours()>=13))
+      alertas.push(`<div class="sv-alert"><b>${esc(pila(n))}</b> lleva ${at} de ${total} seguimientos de hoy${venc?` y tiene ${venc} vencido${venc===1?"":"s"}`:""}.</div>`);
+  });
+  const k = mesActual(), prosp = prospectos(reales, k).length;
+  const vencidos = reales.filter(c=>esPendiente(c) && diaN(c.prox)<hoyN()).length;
+  return `${alertas.join("")}
+    <div class="sv-card"><div class="sv-sec">Seguimientos de hoy · ${new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short"})}</div>
+      <div class="sv-big">${totA} <small>de ${totP} atendidos</small></div><div style="margin-top:10px">${filas.join("")}</div></div>
+    <div class="sv-row2"><div class="sv-mini"><div class="n">${prosp}</div><div class="t">Prospectos del mes</div></div>
+      <div class="sv-mini"><div class="n" style="color:${vencidos?"var(--sv-rojo)":"inherit"}">${vencidos}</div><div class="t">Vencidos sin atender</div></div></div>`;
+}
+function htmlGerMes(reales, mesSel, motivos){
+  const V = VENTAS[mesSel]||{}, ventas = (V.ventas||[]).filter(v=>v.mes===mesSel);
+  if(V.error) return `<div class="sv-aviso">${esc(V.error)}</div>${htmlMotivos(motivos)}`;
+  const cl = {gestion:0, reactivacion:0, natural:0}; ventas.forEach(v=>cl[claseVenta(v)]++);
+  const tot = ventas.length || 1, pc = x => Math.round(x/tot*100);
+  const prosp = prospectos(reales, mesSel).length, convAg = prosp ? cl.gestion/prosp : 0;
+  const ases = asesores();
+  const filas = ases.map(n=>{
+    const suyos = reales.filter(c=>nom(c.vendedor)===nom(n));
+    const p = prospectos(suyos, mesSel).length;
+    const g = ventasDeAsesor(ventas, n, "gestion").length, r = ventasDeAsesor(ventas, n, "reactivacion").length, na = ventasDeAsesor(ventas, n, "natural").length;
+    const conv = p ? g/p : 0, totA = g+r+na;
+    return {n, p, g, r, na, conv, totA};
+  });
+  const avisos = filas.filter(f=>f.totA && f.na/f.totA>=.4).map(f=>`${esc(pila(f.n))}: ${Math.round(f.na/f.totA*100)}% de sus ventas fueron naturales (${f.na} de ${f.totA}). Revisar si está generando o solo tomando pedidos.`);
+  const esActual = mesSel===mesActual();
+  const x = cl.gestion ? Math.round(prosp/cl.gestion) : null;
+  return `
+    <div class="sv-card"><div class="sv-sec">Ventas del mes · ¿de dónde vienen?</div>
+      <div class="sv-big">${ventas.length} <small>motos</small></div>
+      <div class="sv-split">${cl.gestion?`<span class="cl" style="width:${pc(cl.gestion)}%;background:var(--sv-verde)">Gestión ${cl.gestion}</span>`:""}${cl.reactivacion?`<span style="width:${pc(cl.reactivacion)}%;background:var(--sv-morado)">Reac. ${cl.reactivacion}</span>`:""}${cl.natural?`<span class="cl" style="width:${pc(cl.natural)}%;background:var(--sv-gris)">Natur. ${cl.natural}</span>`:""}</div>
+      <div class="sv-muted"><b style="color:var(--ink)">${pc(cl.gestion+cl.reactivacion)}%</b> salió del trabajo de los asesores (${pc(cl.gestion)}% del mes + ${pc(cl.reactivacion)}% reactivación) · <b style="color:var(--ink)">${pc(cl.natural)}%</b> llegó sola</div></div>
+    ${esActual ? htmlConversion(null, reales, "Conversión de la agencia", "La agencia vende")
+      : `<div class="sv-card"><div class="sv-sec">Conversión de la agencia</div><div class="sv-conv"><div class="sv-ring" style="--p:${Math.min(convAg*100,100)}"><div>${Math.round(convAg*100)}%</div></div>
+        <div><div style="font-size:15px;font-weight:700">${cl.gestion} ventas de gestión de ${prosp} prospectos</div></div></div>${x?`<div class="sv-phrase">La agencia vende <b>1 moto</b> por cada <b>${x} prospectos</b></div>`:""}</div>`}
+    <div class="sv-card"><div class="sv-sec">Por asesor</div>
+      <table class="sv-table"><tr><th>Asesor</th><th>Prosp.</th><th>Gest.</th><th>Reac.</th><th>Nat.</th><th>Conv.</th></tr>
+      ${filas.map(f=>`<tr><td>${esc(pila(f.n))}</td><td>${f.p}</td><td>${f.g}</td><td>${f.r}</td><td>${f.na}</td><td><span class="sv-pill" style="background:${f.conv>=convAg?"var(--sv-verde)":"var(--sv-ambar)"}">${Math.round(f.conv*100)}%</span></td></tr>`).join("")}</table>
+      ${avisos.length?`<div class="sv-muted" style="margin-top:10px">${avisos.join("<br>")}</div>`:""}</div>
+    ${htmlMotivos(motivos)}
+    ${esActual ? htmlCalc(null, reales, "¿Cuánto le falta a la agencia?", "Objetivo") : ""}`;
+}
+function htmlMotivos(motivos){
+  const ent = Object.entries(motivos).sort((x,y)=>y[1]-x[1]);
+  return `<div class="sv-card"><div class="sv-sec">Motivos de pérdida del mes</div>${ent.length
+    ? `<table class="sv-table">${ent.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("")}</table>` : `<div class="sv-muted">Sin clientes perdidos este mes.</div>`}</div>`;
+}
+function htmlGerHerramientas(mesSel){
+  const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
+  return `
+    <div class="sv-card"><div class="sv-sec">Buscar cotización</div>
+      <div class="sv-search">⌕<input id="gerBusca" type="search" placeholder="Nombre del cliente o WhatsApp…" autocomplete="off"></div>
+      <div id="gerBuscaRes" class="sv-res-busca"><div class="sv-muted">Escribe al menos 3 letras.</div></div></div>
+    <div class="sv-card"><div class="sv-sec">Revisar · ventas cotizadas el mismo día</div>
+      ${V.error ? `<div class="sv-muted">${esc(V.error)}</div>` : revisar.length
+        ? `<table class="sv-table"><tr><th>Cliente</th><th>Factura</th><th>Folio</th></tr>${revisar.map(v=>`<tr><td>${esc(v.cliente)}<div class="sv-muted">${fechaCorta(v.fecha)} · ${esc(tc(v.vendedor))}</div></td><td>${esc(v.factura)}</td><td>${esc(v.folio)}</td></tr>`).join("")}</table>
+          <div class="sv-muted" style="margin-top:8px">Cuentan como venta natural: la cotización se hizo el mismo día de la venta.</div>`
+        : `<div class="sv-muted">Ninguna venta del mes se cotizó el mismo día.</div>`}</div>`;
+}
+function buscarCotizacion(q){
+  const t = q.trim().toUpperCase(), dig = soloDig(q);
+  if(t.length<3 && dig.length<3) return `<div class="sv-muted">Escribe al menos 3 letras.</div>`;
+  const r = CLIENTES.filter(c=>(c.nombre+" "+c.apellidos).toUpperCase().includes(t) || (dig.length>=3 && String(c.tel).includes(dig))).slice(0,12);
+  return r.length ? r.map(c=>`<div class="sv-kv"><span>${esc(tc(c.nombre+" "+c.apellidos))}<br><small>${esc(modeloCorto(c))} · ${esc(pila(c.vendedor))} · ${fechaCorta(c.fecha)}</small></span>
+      <b class="mono" style="white-space:nowrap">${esc(c.folio)}<button type="button" class="sv-copiar" data-copiar="${esc(c.folio)}">Copiar folio</button></b></div>`).join("")
+    : `<div class="sv-muted">Sin coincidencias.</div>`;
+}
+function instalarEventosGer(){
+  const v = $("vGer");
+  v.addEventListener("click", e=>{
+    const h = e.target.closest(".sv-bloque>h2");
+    if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
+    const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+  });
+  v.addEventListener("input", e=>{ if(e.target.id==="gerBusca") $("gerBuscaRes").innerHTML = buscarCotizacion(e.target.value); });
 }
 
 /* ═══════════ mensajes (plantillas de CONFIGURACION) ═══════════ */
@@ -1954,7 +2563,7 @@ function pintarResultado(perdido){
     <input id="msNota" placeholder="Ej. pasa el sábado con su esposa" value="${esc(nota)}">
     <div class="grid-res">${perdido
       ? motivos.map(m=>`<button data-motivo="${esc(m)}">${esc(m)}</button>`).join("")+`<button data-volver>← Regresar</button>`
-      : R.map(r=>`<button data-res="${r.k}" class="${r.k==="PERDIDO"?"peligro":r.k==="COMPRO"||r.k==="APARTO"?"bien":""}">${esc(r.txt)}${r.k==="PERDIDO"?" (motivo)":""}</button>`).join("")}</div>`);
+      : R.filter(r=>!r.visita).map(r=>`<button data-res="${r.k}" class="${r.k==="PERDIDO"?"peligro":r.k==="COMPRO"||r.k==="APARTO"?"bien":""}">${esc(r.txt)}${r.k==="PERDIDO"?" (motivo)":""}</button>`).join("")}</div>`);
   $("sheetCont").querySelectorAll("[data-res]").forEach(b=>b.onclick=()=>{
     if(b.dataset.res==="PERDIDO") pintarResultado(true); else guardarResultado(b.dataset.res,"");
   });
@@ -1988,6 +2597,7 @@ async function cargarGerencia(forzar){
     // Si la lista de clientes no llegó, se intenta una vez más antes de rendirse
     if(!CLI_LEIDOS){ $("gerCuerpo").innerHTML='<div class="vacio">Cargando… (segundo intento)</div>'; await cargarClientes(true); }
     TABLERO = await api("tablero",{mes});
+    await Promise.all([cargarVentas(mes, !!forzar), cargarObjetivo()]);
   }catch(e){ toast(e.message,true); if(!TABLERO) TABLERO={mes, error:e.message, porConfirmar:[], sinCotizacion:[]}; }
   pintarGerencia();
 }
@@ -2126,26 +2736,15 @@ function pintarGerencia(){
   const T=TABLERO, uc=T.ultimoCruce;
   const maxE=Math.max(1,n);
 
-  $("gerCuerpo").innerHTML = `
-    <div class="kpis">
-      <div class="card kpi"><div class="v">${n}</div><div class="k">Clientes nuevos del mes</div></div>
-      <div class="card kpi"><div class="v">${vendidas}</div><div class="k">De ellos, vendidos</div></div>
-      <div class="card kpi"><div class="v">${pct(vendidas,n)}</div><div class="k">Conversión</div></div>
-      <div class="card kpi"><div class="v">${atrasados.length}</div><div class="k">Atrasados +48 h (hoy)</div></div>
-    </div>
+  const mesSel = $("gerMes").value;
+  const detalleHTML = `
     ${seccionCotizaciones(delMes, reales, vendActivos, a, m)}
     <h2 class="sec">Embudo del mes</h2>
     <div class="card embudo">${embudo.map(([k,v])=>`<div class="fila-e"><div>${k}</div><div class="barra"><i style="width:${Math.round(v*100/maxE)}%"></i></div><div class="num" style="text-align:right">${v} <span class="muted">${k==="Cotizaciones"?"":pct(v,n)}</span></div></div>`).join("")}
       <div class="muted" style="font-size:11.5px;margin-top:6px">Clientes cuyo primer contacto fue en el mes. Cada etapa cuenta a quien llegó a ella o más lejos. Sin pruebas ni cotizaciones de gerentes.</div></div>
-    <h2 class="sec">Semáforo de seguimiento</h2>
-    <div class="card tabla-w"><table class="tabla"><thead><tr><th>Vendedor</th><th>Más de 48 h sin contacto</th></tr></thead><tbody>
-      ${vend.map(v=>{ const l=atrasados.filter(c=>c.vendedor===v); return `<tr><td>${esc(tc(v))}</td><td>${semaforo(l.length)}${l.length?`<div class="muted" style="font-size:12px;margin-top:4px">${l.slice(0,6).map(c=>esc(tc(c.nombre+" "+c.apellidos))).join(", ")}${l.length>6?"…":""}</div>`:""}</td></tr>`; }).join("")}
-    </tbody></table></div>
-    <h2 class="sec">Conversión por vendedor</h2>${tablaGrupo("Vendedor", grupo("vendedor"))}
     <h2 class="sec">Conversión por origen de contacto</h2>${tablaGrupo("Origen", grupo("origen"))}
-    <h2 class="sec">Motivos de pérdida del mes</h2>
-    <div class="card tabla-w"><table class="tabla"><tbody>${Object.keys(motivos).length?Object.entries(motivos).sort((x,y)=>y[1]-x[1]).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v}</td></tr>`).join(""):`<tr><td class="muted">Sin clientes perdidos este mes</td></tr>`}</tbody></table></div>
-
+`;
+  const cruceHTML = `
     <h2 class="sec">Cruce con ventas facturadas</h2>
     <div class="card">
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
@@ -2172,6 +2771,11 @@ function pintarGerencia(){
       ${otro.map(c=>`<tr><td>${esc(tc(c.nombre+" "+c.apellidos))}</td><td>${esc(pila(c.vendedor))}</td><td>${esc(tc(c.vendedor_facturo))}</td><td class="mono">${esc(c.factura)}</td></tr>`).join("")}</tbody></table></div>`:""}
     ${(T.sinCotizacion||[]).length?`<h2 class="sec">Ventas sin cotización previa</h2><div class="card tabla-w"><table class="tabla"><thead><tr><th>Fecha</th><th>Cliente</th><th>Modelo</th><th>Forma de pago</th><th>Vendedor</th></tr></thead><tbody>
       ${T.sinCotizacion.map(v=>`<tr><td>${fechaCorta(v.fecha)}</td><td>${esc(v.cliente)}</td><td>${esc(v.modelo)}</td><td>${v.forma?esc(tc(v.forma)):'<span class="muted">—</span>'}</td><td>${esc(tc(v.vendedor))}</td></tr>`).join("")}</tbody></table></div>`:""}`;
+  $("gerCuerpo").innerHTML =
+    bloque("hoy", "1 · Hoy", htmlGerHoy(reales)) +
+    bloque("mes", "2 · El mes", htmlGerMes(reales, mesSel, motivos)) +
+    bloque("herr", "3 · Herramientas", htmlGerHerramientas(mesSel) + cruceHTML) +
+    bloque("det", "4 · Detalle", detalleHTML);
 }
 async function accionGerencia(accion, datos, boton){
   if(boton) boton.disabled=true;
@@ -2238,6 +2842,7 @@ async function arrancar(){
   $("lgUsuario").addEventListener("change",()=>$("lgPin").focus());
   $("btnCambiarVista").onclick=elegirVista;
   $("segCambiarVista").onclick=elegirVista;
+  $("gerCambiarVista").onclick=elegirVista;
   $("fvSalir").onclick=()=>ponerVista(null);
   pintarVista();
   $("btnSalir").onclick=()=>{ if(confirm("¿Salir? Se pedirá el PIN otra vez.")) cerrarSesion(); };
@@ -2247,11 +2852,11 @@ async function arrancar(){
     if(e.target.closest("[data-cerrar]")) cerrarSheet();
   });
   $("sheet").addEventListener("click",e=>{ if(e.target.id==="sheet") cerrarSheet(); });
-  $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; pintarSeg(); });
-  $("segBuscar").addEventListener("input",pintarSeg);
-  $("segEstatus").addEventListener("change",pintarSeg);
+  $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; SEG_FICHA=null;
+    if(SEG_TAB==="todos") SEG_FILTRO={estado:"todos", periodo:SEG_FILTRO.periodo||"todo"}; pintarSeg(); });
   $("segVendedor").addEventListener("change",pintarSeg);
-  $("segRecargar").onclick=()=>cargarClientes(true);
+  $("segRecargar").onclick=()=>{ cargarClientes(true); cargarDatosSeg(true); };
+  instalarEventosSeg(); instalarEventosGer();
   $("segLista").addEventListener("click",e=>{
     const b=e.target.closest("[data-wa]"); if(!b) return;
     const c=CLIENTES.find(x=>String(x.fila)===b.dataset.wa); if(c) abrirMensaje(c);
