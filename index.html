@@ -728,7 +728,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.4", VERSION_FECHA = "17 oct 2026";
+const VERSION = "4.5", VERSION_FECHA = "17 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -2564,7 +2564,7 @@ function htmlImportarCampana(){
       ${R.importados==null && R.nuevos ? `<button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:12px" id="campImportar"${I.cargando?" disabled":""}>${I.cargando?"Importando…":"Importar "+R.nuevos+" clientes"}</button>` : ""}`
     : `<button type="button" class="sv-act" style="background:var(--sv-azul);width:100%" id="campResumen"${I.cargando?" disabled":""}>${I.cargando?"Leyendo…":"Ver resumen"}</button>`}`;
   return `<div class="sv-card"><div class="sv-sec">Importar campaña</div>
-    <div class="sv-muted" style="margin-bottom:10px">Copia la pestaña de campaña a la cartera de cada asesor. Primero ves el resumen; nada se guarda hasta que confirmas.</div>
+    <div class="sv-muted" style="margin-bottom:10px">Copia la pestaña de campaña a la cartera de cada asesor. El avance se ve en «Campañas». Primero ves el resumen; nada se guarda hasta que confirmas.</div>
     ${I.error?`<div class="sv-aviso">${esc(I.error)}</div>`:""}${cuerpo}</div>`;
 }
 async function accionCampana(conf){
@@ -2577,6 +2577,52 @@ async function accionCampana(conf){
     if(conf){ toast(j.importados+" clientes importados a la cartera."); CLI_LEIDOS = 0; cargarClientes(true); cargarConfig(); }
   }catch(e){ CAMP_IMP.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v8." : e.message; }
   CAMP_IMP.cargando = false; pintarGerencia();
+}
+/* ── Gerencia › Campañas: avance por campaña, ola y asesor ── */
+let GER_CAMP_OLA = {};   // campaña → ola elegida ("" = todas)
+const CASCOS_TOPE = 15, CASCOS_FIN = new Date(2026, 9, 18, 23, 59, 59);
+const vinoAgencia = c => /^Vino a la agencia/i.test(c.resultado||"") || ["APARTADO","VENDIDO"].includes(c.estatus);
+function htmlCampanas(){
+  const todos = CLIENTES.filter(c=>c.campana && !c.prueba);
+  if(!todos.length) return `<div class="sv-muted">Aún no hay campañas importadas. Se importan en «Herramientas».</div>`;
+  const ases = asesores();
+  const camps = [...new Set(todos.map(c=>c.campana))].sort();
+  return camps.map(k=>{
+    const deC = todos.filter(c=>c.campana===k);
+    const olas = [...new Set(deC.map(olaN).filter(Boolean))].sort();
+    const ola = GER_CAMP_OLA[k] || 0;
+    const lista = ola ? deC.filter(c=>olaN(c)===ola) : deC;
+    const M = [
+      ["Clientes", c=>true],
+      ["Contactados", c=>c.intentos>0],
+      ["Contestaron", c=>(c.etapa||0)>=2],
+      ["Vinieron", vinoAgencia],
+      ["Cotizados", c=>c.cotizado],
+      ["Trámite de crédito", c=>c.estatus==="TRAMITE CREDITO"],
+      ["Apartados", c=>c.estatus==="APARTADO"],
+      ["Vendidos", c=>c.estatus==="VENDIDO"],
+      ["Perdidos", c=>c.estatus==="PERDIDO"],
+      ["Sin respuesta", c=>c.estatus==="SIN RESPUESTA"],
+      ["Por atender hoy", esPendiente]
+    ];
+    const col = l => M.map(([,f])=>l.filter(f).length);
+    const tot = col(lista), porA = ases.map(n=>col(lista.filter(c=>nom(c.vendedor)===nom(n))));
+    const filas = M.map(([t],i)=>`<tr${i===7?' style="color:var(--sv-verde)"':''}><td>${t}</td><td>${tot[i]}${i&&tot[0]?` <span class="sv-muted" style="font-size:11px">${Math.round(tot[i]/tot[0]*100)}%</span>`:""}</td>${porA.map(a=>`<td>${a[i]}</td>`).join("")}</tr>`).join("");
+    const motivos = {}; lista.filter(c=>c.estatus==="PERDIDO").forEach(c=>{ const m=c.motivo||"Sin motivo"; motivos[m]=(motivos[m]||0)+1; });
+    const mot = Object.entries(motivos).sort((a,b)=>b[1]-a[1]);
+    let cascos = "";
+    if(/BUEN FIN/.test(k)){
+      const n = deC.filter(c=>olaN(c)===1 && c.estatus==="VENDIDO" && new Date(c.fecha_venta||c.ultimo) <= CASCOS_FIN).length;
+      cascos = `<div class="sv-mini" style="margin-bottom:12px"><div class="n">${n} <small style="font-size:14px;color:var(--ink-2)">de ${CASCOS_TOPE}</small></div><div class="t">Cascos entregados · Ola 1 que compró el 17 o 18 de octubre</div>
+        <div class="sv-prog"><span style="width:${Math.min(100,Math.round(n/CASCOS_TOPE*100))}%;background:${n>=CASCOS_TOPE?"var(--sv-rojo)":"var(--sv-verde)"}"></span></div></div>`;
+    }
+    return `<div class="sv-card"><div class="sv-sec">${esc(etiquetaCamp({campana:k}).replace(/ · Ola.*/,""))} · ${deC.length} clientes</div>
+      ${cascos}
+      ${olas.length>1?`<div class="sv-chips"><button type="button" data-camp-ola="${esc(k)}|0" class="${!ola?"on":""}">Todas</button>${olas.map(o=>`<button type="button" data-camp-ola="${esc(k)}|${o}" class="${ola===o?"on":""}">Ola ${o} · ${deC.filter(c=>olaN(c)===o).length}</button>`).join("")}</div>`:""}
+      <table class="sv-table"><tr><th></th><th>Total</th>${ases.map(n=>`<th>${esc(pila(n))}</th>`).join("")}</tr>${filas}</table>
+      ${mot.length?`<details class="sv-det"><summary>Perdidos por motivo · ${tot[8]}</summary><table class="sv-table">${mot.map(([m,n])=>`<tr><td>${esc(m)}</td><td>${n}</td></tr>`).join("")}</table></details>`:""}
+      <div class="sv-muted" style="margin-top:8px">Contactados, contestaron y cotizados cuentan a quien llegó ahí aunque después avanzara; trámite, apartados, vendidos, perdidos y sin respuesta son su estatus de hoy. «Vinieron»: registrados con «Ya vino a la agencia», apartados o vendidos.</div></div>`;
+  }).join("");
 }
 function htmlGerHerramientas(mesSel){
   const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
@@ -2604,6 +2650,8 @@ function instalarEventosGer(){
     const h = e.target.closest(".sv-bloque>h2");
     if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
     const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+    const co = e.target.closest("[data-camp-ola]");
+    if(co){ const [k,o] = co.dataset.campOla.split("|"); GER_CAMP_OLA[k] = Number(o); pintarGerencia(); return; }
     if(e.target.closest("#campRevisar") || e.target.closest("#campResumen")) accionCampana(false);
     if(e.target.closest("#campImportar")){
       const R = CAMP_IMP.res;
@@ -2943,8 +2991,9 @@ function pintarGerencia(){
   $("gerCuerpo").innerHTML =
     bloque("hoy", "1 · Hoy", htmlGerHoy(reales)) +
     bloque("mes", "2 · El mes", htmlGerMes(reales, mesSel, motivos)) +
-    bloque("herr", "3 · Herramientas", htmlGerHerramientas(mesSel) + cruceHTML) +
-    bloque("det", "4 · Detalle", detalleHTML);
+    bloque("camp", "3 · Campañas", htmlCampanas()) +
+    bloque("herr", "4 · Herramientas", htmlGerHerramientas(mesSel) + cruceHTML) +
+    bloque("det", "5 · Detalle", detalleHTML);
 }
 async function accionGerencia(accion, datos, boton){
   if(boton) boton.disabled=true;
