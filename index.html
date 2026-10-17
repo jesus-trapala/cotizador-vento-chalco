@@ -728,7 +728,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.5", VERSION_FECHA = "17 oct 2026";
+const VERSION = "4.6", VERSION_FECHA = "17 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -2679,7 +2679,7 @@ function varsDe(c){
     poliza: c.forma_pago==="VENTO CREDIT" ? (A.POLIZA_VENTOCREDIT||"") : c.forma_pago==="MAXIKASH" ? "" : (A.POLIZA_CONTADO||""),
     requisitos:listaY(requisitosDe(c.forma_pago).map(minus)),
     tiempo_entrega:String(c.tiempo_entrega||"").toLowerCase(), vigencia:c.vigencia?fecha(new Date(c.vigencia)):"",
-    modelo_interes:(c.modelo_interes?"La "+c.modelo_interes:"La moto")+" que viste",
+    modelo_interes:(c.modelo_interes?"La "+c.modelo_interes:"La moto")+" que viste", ubicacion:ubicacionAgencia(),
     ventaja_sin_comision:A.VENTAJA_SIN_COMISION||"", ventaja_entrega:A.VENTAJA_ENTREGA||"", ventaja_pago_mixto:A.VENTAJA_PAGO_MIXTO||""
   };
   const t=tipoPago(c.forma_pago);
@@ -2687,6 +2687,9 @@ function varsDe(c){
                  : t==="msi" ? `${v.plazo_msi} meses sin intereses de ${v.mensualidad}` : `precio de contado de ${v.total}`;
   return v;
 }
+/* Ubicación de la agencia (Google Maps). Se puede cambiar en CONFIGURACION › ARGUMENTOS › UBICACION_AGENCIA. */
+const UBICACION_DEF = "https://maps.app.goo.gl/zfqXZmrwkcEh75pu6";
+const ubicacionAgencia = () => String(((CFG&&CFG.argumentos)||{}).UBICACION_AGENCIA||"").trim() || UBICACION_DEF;
 const llenar = (t,v) => String(t||"").replace(/\{(\w+)\}/g,(m,k)=>k in v ? v[k] : m);
 const plantillaVigente = p => !!p && (!p.vigente || new Date(p.vigente) >= new Date());
 /** Plantilla de su campaña/segmento (si ya venció, la de reemplazo). null si no es de campaña. */
@@ -2743,6 +2746,7 @@ function pintarComponer(){
     ${campSinCot(c)?"":`<div class="sugerido">${MSG.ficha ? "Ficha técnica: "+esc(decodeURIComponent(MSG.ficha.split("/").pop())) : "Sin ficha técnica para "+esc(baseCodigo(c.codigo)||"este modelo")}</div>`}
     <label for="msTexto">Texto</label>
     <textarea id="msTexto">${esc(texto)}</textarea>
+    <button type="button" class="btn btn-sec btn-chico" id="msUbic" style="margin:6px 0 4px">📍 Agregar ubicación de la agencia</button>
     <div class="pila">
       ${conFicha
         ? `<button class="btn btn-wa" id="msAbrir">1 · Enviar mensaje por WhatsApp</button>
@@ -2753,6 +2757,9 @@ function pintarComponer(){
       <button class="btn btn-sec" id="msSolo">${conFicha?"Registrar resultado":"Ya lo contacté · solo registrar"}</button>
     </div>`);
   $("msClave").onchange=e=>{ MSG.clave=e.target.value; pintarComponer(); };
+  const marcaUbic = () => { const ya = $("msTexto").value.includes(ubicacionAgencia()); $("msUbic").textContent = ya ? "📍 Ubicación agregada ✓" : "📍 Agregar ubicación de la agencia"; $("msUbic").disabled = ya; };
+  $("msUbic").onclick=()=>{ const t=$("msTexto"); if(!t.value.includes(ubicacionAgencia())) t.value = t.value.replace(/\s+$/,"") + "\n\n📍 Aquí estamos: " + ubicacionAgencia(); marcaUbic(); };
+  $("msTexto").addEventListener("input", marcaUbic); marcaUbic();
   $("msAbrir").onclick=()=>{
     window.open(`https://wa.me/52${c.tel}?text=${encodeURIComponent($("msTexto").value)}`,"_blank");
     if(!conFicha){ pintarResultado(); return; }
