@@ -284,6 +284,7 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .vm .sv-cl .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .vm .sv-cl .nm{font-weight:700;font-size:14px}
 .vm .sv-cl .sub{font-size:12px;color:var(--ink-2);font-weight:500}
+.vm .sv-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.02em;vertical-align:1px;background:var(--chip);color:var(--sv-morado);border:1px solid var(--line);white-space:nowrap}
 .vm .sv-cl .st{margin-left:auto;font-size:11px;font-weight:800;border-radius:999px;padding:3px 8px;color:#fff;white-space:nowrap;flex:none}
 /* Renglón con botón de WhatsApp: el área grande abre la ficha */
 .vm .sv-cl.con-wa{padding:0 6px 0 0;cursor:default}
@@ -727,7 +728,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.3", VERSION_FECHA = "13 oct 2026";
+const VERSION = "4.4", VERSION_FECHA = "17 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1898,6 +1899,19 @@ function pintarTodo(){
   if(v==="vGer") pintarGerencia();
 }
 
+/* ── Campañas (Apps Script v8): clientes de cartera con etiqueta ── */
+const campSinCot = c => !!c.campana && !c.cotizado;            // de campaña y aún sin cotización
+const olaN = c => parseInt(c.ola,10)||0, segN = c => parseInt(c.segmento,10)||0;
+const esBF = c => /BUEN FIN/.test(c.campana||""), esRVC = c => /RECHAZADOS/.test(c.campana||"");
+function etiquetaCamp(c){
+  if(!c.campana) return "";
+  if(esBF(c)) return "Buen Fin"+(olaN(c)?" · Ola "+olaN(c):"");
+  if(esRVC(c)) return "Rechazados VC";
+  return tc(c.campana);
+}
+const tagCamp = c => c.campana ? `<span class="sv-tag">${esc(etiquetaCamp(c))}</span>` : "";
+/** Fecha con la que cuenta como prospecto: la de su cotización si es de campaña. */
+const fechaProsp = c => c.campana ? (c.cotizado ? c.base : null) : c.fecha;
 function modeloCorto(c){
   const m = c.modelo || (MODELOS.find(x=>x.c===c.codigo)||{}).m || c.codigo || "";
   return String(m).replace(/\s+20\d\d(\s+ABS)?$/i,(x,abs)=>abs?" ABS":"").trim();
@@ -1948,7 +1962,7 @@ const DASH_API = {url:"https://script.google.com/macros/s/AKfycbzHAJVvLmhXPyCMuW
 const MESES_NOM = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const VENTAS = {};               // por mes pedido: {t, ventas, error}
 let OBJ = null;                  // objetivo del mes sin IVA
-let SEG_FILTRO = {estado:"todos", periodo:"todo"};
+let SEG_FILTRO = {estado:"todos", periodo:"todo", camp:""};
 let SEG_FICHA = null, SEG_FICHA_DE = "todos";
 const HIST = {};                 // historial por fila: {t, contactos, cotizaciones, error}
 
@@ -2022,10 +2036,10 @@ const facturadasPor = (lista, vend) => vend ? lista.filter(v=>primerN(v.vendedor
 
 /* ── prospectos, estados, días ── */
 function prospectos(lista, k){
-  const viejos = new Set(CLIENTES.filter(c=>c.fecha && mesDe(c.fecha)<k).map(c=>c.tel).filter(Boolean));
+  const viejos = new Set(CLIENTES.filter(c=>fechaProsp(c) && mesDe(fechaProsp(c))<k).map(c=>c.tel).filter(Boolean));
   const vistos = new Set(), out = [];
-  lista.filter(c=>!c.prueba && c.fecha && mesDe(c.fecha)===k)
-    .sort((a,b)=>new Date(a.fecha)-new Date(b.fecha))
+  lista.filter(c=>!c.prueba && fechaProsp(c) && mesDe(fechaProsp(c))===k)
+    .sort((a,b)=>new Date(fechaProsp(a))-new Date(fechaProsp(b)))
     .forEach(c=>{ const t=c.tel||("f"+c.fila); if(viejos.has(c.tel)||vistos.has(t)) return; vistos.add(t); out.push(c); });
   return out;
 }
@@ -2159,10 +2173,10 @@ function filaCli(c, conWa){
   const sig = pend ? (diaN(c.prox)<hoyN() ? `vencido ${hoyN()-diaN(c.prox)} d` : "toca hoy")
     : c.estatus==="VENDIDO" ? "vendido "+fechaCorta(c.fecha_venta||c.ultimo)
     : c.estatus==="PERDIDO" ? (c.motivo||"perdido")+" · "+fechaCorta(c.ultimo||c.base)
-    : c.prox ? "próx. "+fechaCorta(c.prox) : c.estatus==="SIN RESPUESTA" ? "reactivación" : "cotizado "+fechaCorta(c.base||c.fecha);
+    : c.prox ? "próx. "+fechaCorta(c.prox) : c.estatus==="SIN RESPUESTA" ? "reactivación" : campSinCot(c) ? "sin fecha" : "cotizado "+fechaCorta(c.base||c.fecha);
   const datos = `<i class="dot" style="background:${st.c}"></i>
-    <div style="min-width:0"><div class="nm">${esc(tc(c.nombre+" "+c.apellidos))}</div>
-    <div class="sub">${esc(modeloCorto(c))} · ${esc(tc(c.forma_pago))} · ${esc(sig)}${segAlcance().g&&!esVista()?" · "+esc(pila(c.vendedor)):""}</div></div>
+    <div style="min-width:0"><div class="nm">${esc(tc(c.nombre+" "+c.apellidos))}${tagCamp(c)}</div>
+    <div class="sub">${campSinCot(c) ? esc(c.modelo_interes?modeloCorto({codigo:c.modelo_interes}):"Sin cotización") : esc(modeloCorto(c))+" · "+esc(tc(c.forma_pago))} · ${esc(sig)}${segAlcance().g&&!esVista()?" · "+esc(pila(c.vendedor)):""}</div></div>
     <span class="st" style="background:${st.c}">${esc(etiqueta)}</span>`;
   if(!conWa) return `<button type="button" class="sv-cl" data-ficha="${c.fila}">${datos}</button>`;
   return `<div class="sv-cl con-wa"><button type="button" class="sv-cl-abre" data-ficha="${c.fila}">${datos}</button>
@@ -2170,7 +2184,7 @@ function filaCli(c, conWa){
 }
 const ICO_WA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 /** Cliente "del mes": cotizado este mes o que recotizó este mes. */
-const delMes = c => mesDe(c.fecha)===mesActual() || mesDe(c.base||c.fecha)===mesActual();
+const delMes = c => campSinCot(c) || mesDe(c.fecha)===mesActual() || mesDe(c.base||c.fecha)===mesActual();
 const pendienteDelMes = c => esPendiente(c) && delMes(c);
 function pintarSegHoy(A){
   const k = mesActual(), hoy = A.lista.filter(pendienteDelMes);
@@ -2210,7 +2224,9 @@ function filtroPeriodo(c){
 function pintarSegClientes(A){
   const q = $("segBuscar") ? $("segBuscar").value : "";
   const dig = soloDig(q), t = q.trim().toUpperCase();
-  const enPer = A.lista.filter(filtroPeriodo);
+  const camps = [...new Set(A.lista.map(c=>c.campana).filter(Boolean))].sort();
+  if(SEG_FILTRO.camp && !camps.includes(SEG_FILTRO.camp)) SEG_FILTRO.camp = "";
+  const enPer = A.lista.filter(c=>filtroPeriodo(c) && (!SEG_FILTRO.camp || c.campana===SEG_FILTRO.camp));
   const cnt = {todos:enPer.length, sin:0, seg:0, vendido:0, perdido:0, archivo:0};
   enPer.forEach(c=>cnt[estadoCli(c)]++);
   cnt.hoy = enPer.filter(esPendiente).length;
@@ -2222,12 +2238,13 @@ function pintarSegClientes(A){
     <div class="sv-search">⌕<input id="segBuscar" type="search" placeholder="Buscar por nombre o WhatsApp…" value="${esc(q)}" autocomplete="off"></div>
     <div class="sv-chips">${chip("todos","Todos "+cnt.todos)}${chip("hoy","Por atender "+cnt.hoy)}${chip("sin","Sin contactar "+cnt.sin)}${chip("seg","En seguimiento "+cnt.seg)}${chip("vendido","Vendidos "+cnt.vendido)}${chip("perdido","Perdidos "+cnt.perdido)}${chip("archivo","Archivo "+cnt.archivo)}</div>
     <div class="sv-chips">${[["mes","Este mes"],["3m","3 meses"],["todo","Todo"]].map(([k,x])=>`<button type="button" data-chip-p="${k}" class="${SEG_FILTRO.periodo===k?"on":""}">${x}</button>`).join("")}</div>
+    ${camps.length?`<div class="sv-chips"><button type="button" data-chip-c="" class="${!SEG_FILTRO.camp?"on":""}">Todas</button>${camps.map(k=>`<button type="button" data-chip-c="${esc(k)}" class="${SEG_FILTRO.camp===k?"on":""}">${esc(etiquetaCamp({campana:k}))} ${A.lista.filter(c=>c.campana===k).length}</button>`).join("")}</div>`:""}
     ${lista.length ? lista.map(c=>filaCli(c,true)).join("") + `<div class="sv-muted" style="text-align:center;margin-top:6px">Toca un cliente para abrir su ficha</div>`
       : `<div class="vacio">No hay clientes con ese filtro.</div>`}`;
 }
 function universoReact(lista){
   const k = mesActual();
-  return lista.filter(c=>c.fecha && mesDe(c.fecha)<k && ["seg","sin"].includes(estadoCli(c)));
+  return lista.filter(c=>!campSinCot(c) && c.fecha && mesDe(c.fecha)<k && ["seg","sin"].includes(estadoCli(c)));
 }
 function pintarSegReact(A){
   const k = mesActual(), uni = universoReact(A.lista);
@@ -2270,8 +2287,11 @@ function pintarFicha(c){
     <div class="sv-card">
       <div class="sv-sec">Datos</div>
       <div class="sv-kv"><span>WhatsApp</span><b class="mono">${esc(telFmt(c.tel))}</b></div>
-      <div class="sv-kv"><span>Modelo cotizado</span><b>${esc(modeloCorto(c))}</b></div>
-      <div class="sv-kv"><span>Forma de pago</span><b>${esc(tc(c.forma_pago))}${c.plazo_semanas?" · "+esc(c.plazo_semanas)+" sem":c.plazo_msi?" · "+esc(c.plazo_msi)+" MSI":""}</b></div>
+      ${c.campana?`<div class="sv-kv"><span>Campaña</span><b>${esc(etiquetaCamp(c))}${c.segmento?" · "+esc(String(c.segmento).replace(/^\d+\s*·\s*/,"")):""}</b></div>`:""}
+      ${c.modelo_interes?`<div class="sv-kv"><span>Modelo de interés</span><b>${esc(c.modelo_interes)}</b></div>`:""}
+      ${campSinCot(c)?"":`<div class="sv-kv"><span>Modelo cotizado</span><b>${esc(modeloCorto(c))}</b></div>`}
+      ${c.campana&&c.observaciones?`<div class="sv-kv"><span>Antecedente</span><b style="font-weight:600;text-align:right">${esc(tc(c.observaciones))}</b></div>`:""}
+      <div class="sv-kv"${campSinCot(c)?' style="display:none"':''}><span>Forma de pago</span><b>${esc(tc(c.forma_pago))}${c.plazo_semanas?" · "+esc(c.plazo_semanas)+" sem":c.plazo_msi?" · "+esc(c.plazo_msi)+" MSI":""}</b></div>
       <div class="sv-kv"><span>Origen</span><b>${esc(tc(c.origen||"—"))}</b></div>
       ${yo().rol==="GERENTE"?`<div class="sv-kv"><span>Vendedor</span><b>${esc(tc(c.vendedor))}</b></div>`:""}
       <div class="sv-kv"><span>Folio</span><b class="mono">${esc(c.folio)}<button type="button" class="sv-copiar" data-copiar="${esc(c.folio)}">Copiar</button></b></div>
@@ -2281,7 +2301,7 @@ function pintarFicha(c){
       <button type="button" class="sv-act" style="background:var(--sv-verde)" data-fa="wa">WhatsApp</button>
       <button type="button" class="sv-act" style="background:var(--sv-azul)" data-fa="registrar">Registrar contacto</button>
       ${vendido?"":`<button type="button" class="sv-act" style="background:var(--sv-morado)" data-fa="vino">Ya vino a la agencia</button>`}
-      <button type="button" class="sv-act" style="background:var(--sv-cian)" data-fa="recotizar">Recotizar</button>
+      <button type="button" class="sv-act" style="background:var(--sv-cian)" data-fa="recotizar">${campSinCot(c)?"Cotizar":"Recotizar"}</button>
       ${vendido||perdido?"":`<button type="button" class="sv-act ghost" data-fa="reagendar">Reagendar</button>`}
       ${perdido||c.estatus==="SIN RESPUESTA"?`<button type="button" class="sv-act ghost" data-fa="reactivar">Reactivar</button>`:vendido?"":`<button type="button" class="sv-act ghost" data-fa="perdido">Marcar perdido</button>`}
     </div>
@@ -2354,8 +2374,15 @@ function recotizar(c){
   setTimeout(()=>{
     const pon = (id, v) => { const el=$(id); if(!el || v==null || v==="") return; el.value=v; el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new Event("change",{bubbles:true})); };
     pon("fNombre", tc(c.nombre)); pon("fApellidos", tc(c.apellidos)); pon("fTel", c.tel);
+    if($("fContacto") && c.origen && ![...$("fContacto").options].some(o=>o.value===c.origen)) $("fContacto").add(new Option(tc(c.origen), c.origen));
     if($("fContacto") && [...$("fContacto").options].some(o=>o.value===c.origen)) pon("fContacto", c.origen);
-    pon("fModelo", c.codigo);
+    let cod = c.codigo;
+    if(!cod && c.modelo_interes){   // modelo de interés de la campaña: el año más reciente de ese modelo
+      const b = String(c.modelo_interes).toUpperCase().replace(/[.\s]/g,"");
+      const ops = MODELOS.filter(x=>baseCodigo(x.c)===b).map(x=>x.c).sort();
+      if(ops.length) cod = ops[ops.length-1];
+    }
+    pon("fModelo", cod);
     if($("fPago") && [...$("fPago").options].some(o=>o.value===c.forma_pago)) pon("fPago", c.forma_pago);
     if(yo().rol==="GERENTE" && !esVista() && $("fVendedor") && [...$("fVendedor").options].some(o=>o.value===c.vendedor)) pon("fVendedor", c.vendedor);
     if(typeof render==="function") render();
@@ -2375,7 +2402,10 @@ function pintarSeg(){
     s.innerHTML='<option value="">Todo el equipo</option>'+vs.map(v=>`<option value="${esc(v)}">${esc(tc(v))}</option>`).join("");
     s.value=vs.includes(antes)?antes:"";
   }
-  const hoy = A.lista.filter(pendienteDelMes).sort((a,b)=>diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
+  const ola1 = c => campSinCot(c) && esBF(c) && olaN(c)===1 ? 0 : 1;
+  const hoy = A.lista.filter(pendienteDelMes).sort((a,b)=>ola1(a)-ola1(b)
+    || (ola1(a)===0 ? segN(b)-segN(a) || String(a.folio).localeCompare(String(b.folio)) : 0)
+    || diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
   $("cHoy").textContent = CLI_LEIDOS ? hoy.length : "";
   $("cReact").textContent = CLI_LEIDOS ? universoReact(A.lista).length : "";
   document.querySelectorAll("#segTabs button").forEach(b=>b.classList.toggle("on", b.dataset.t===SEG_TAB));
@@ -2408,6 +2438,7 @@ function instalarEventosSeg(){
     if(t.closest(".cli") && !t.closest("button")){ const b=t.closest(".cli").querySelector("[data-wa]"); if(b) abrirFicha(b.dataset.wa); return; }
     const sf = t.closest("[data-seg-filtro]"); if(sf){ SEG_FILTRO={estado:sf.dataset.segFiltro, periodo:"mes"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
     const ce = t.closest("[data-chip-e]"); if(ce){ SEG_FILTRO.estado=ce.dataset.chipE; pintarSeg(); return; }
+    const cc = t.closest("[data-chip-c]"); if(cc){ SEG_FILTRO.camp=cc.dataset.chipC; pintarSeg(); return; }
     const cp = t.closest("[data-chip-p]"); if(cp){ SEG_FILTRO.periodo=cp.dataset.chipP; pintarSeg(); return; }
     if(t.closest("#svEmpezar")){ const h=$("svListaHoy"); if(h) h.scrollIntoView({behavior:"smooth"}); return; }
     if(t.closest("#svVerArchivo")){ SEG_FILTRO={estado:"archivo", periodo:"todo"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
@@ -2455,7 +2486,7 @@ function htmlGerHoy(reales){
 function htmlCotHoy(reales, ases, colores){
   const ahora = new Date(), min = d => d.getHours()*60+d.getMinutes();
   const lunes = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate()-((ahora.getDay()+6)%7));
-  const deA = n => reales.filter(c=>nom(c.vendedor)===nom(n));
+  const deA = n => reales.filter(c=>!campSinCot(c) && nom(c.vendedor)===nom(n));
   const hoyDe = l => l.filter(c=>diaN(c.fecha)===hoyN());
   let tot = 0, ayer = 0;
   const filas = ases.map((n,i)=>{
@@ -2514,9 +2545,42 @@ function htmlMotivos(motivos){
   return `<div class="sv-card"><div class="sv-sec">Motivos de pérdida del mes</div>${ent.length
     ? `<table class="sv-table">${ent.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("")}</table>` : `<div class="sv-muted">Sin clientes perdidos este mes.</div>`}</div>`;
 }
+let CAMP_IMP = {hojas:null, hoja:"", res:null, cargando:false, error:""};
+function htmlImportarCampana(){
+  if(esVista() || !SES || SES.rol!=="GERENTE") return "";
+  const I = CAMP_IMP, R = I.res;
+  const lista = (t, xs) => xs && xs.length ? `<details class="sv-det"><summary>${t} · ${xs.length}</summary><div class="sv-muted" style="white-space:pre-line">${xs.map(esc).join("\n")}</div></details>` : "";
+  let cuerpo;
+  if(!I.hojas) cuerpo = `<button type="button" class="sv-act" style="background:var(--sv-azul);width:100%" id="campRevisar"${I.cargando?" disabled":""}>${I.cargando?"Buscando pestañas…":"Elegir campaña"}</button>`;
+  else cuerpo = `<select id="campHoja" style="width:100%;margin-bottom:10px">${I.hojas.map(h=>`<option ${h===I.hoja?"selected":""}>${esc(h)}</option>`).join("")}</select>
+    ${R && R.hoja===I.hoja ? `
+      <div class="sv-big">${R.nuevos} <small>clientes nuevos${R.importados!=null?" · importados ✓":""}</small></div>
+      <div class="sv-muted" style="margin-top:6px">${R.filas} filas · ${R.ya} ya importadas antes · ${R.duplicados.length} ya estaban en la cartera · ${R.sinTel.length} sin teléfono válido${R.sinAsesor.length?" · "+R.sinAsesor.length+" sin asesor":""}</div>
+      <table class="sv-table" style="margin-top:8px">${Object.entries(R.porAsesor||{}).map(([n,k])=>`<tr><td>${esc(pila(n))}</td><td>${k}</td></tr>`).join("")}</table>
+      <table class="sv-table" style="margin-top:8px"><tr><th>Grupo</th><th>Clientes</th><th>Primer mensaje</th></tr>${Object.entries(R.porGrupo||{}).map(([g,k])=>`<tr><td>${esc(g)}</td><td>${k}</td><td>${esc((R.fechas||{})[g]||"")}</td></tr>`).join("")}</table>
+      ${lista("Ya estaban en la cartera (no se importan)", R.duplicados.map(d=>`${d.cliente} · ${d.folio} · ${pila(d.vendedor)} · ${d.estatus}`))}
+      ${lista("Sin teléfono válido (no se importan)", R.sinTel)}
+      ${lista("Sin asesor (no se importan)", R.sinAsesor)}
+      ${R.importados==null && R.nuevos ? `<button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:12px" id="campImportar"${I.cargando?" disabled":""}>${I.cargando?"Importando…":"Importar "+R.nuevos+" clientes"}</button>` : ""}`
+    : `<button type="button" class="sv-act" style="background:var(--sv-azul);width:100%" id="campResumen"${I.cargando?" disabled":""}>${I.cargando?"Leyendo…":"Ver resumen"}</button>`}`;
+  return `<div class="sv-card"><div class="sv-sec">Importar campaña</div>
+    <div class="sv-muted" style="margin-bottom:10px">Copia la pestaña de campaña a la cartera de cada asesor. Primero ves el resumen; nada se guarda hasta que confirmas.</div>
+    ${I.error?`<div class="sv-aviso">${esc(I.error)}</div>`:""}${cuerpo}</div>`;
+}
+async function accionCampana(conf){
+  CAMP_IMP.cargando = true; CAMP_IMP.error = ""; pintarGerencia();
+  try{
+    const j = await api("importarCampana", CAMP_IMP.hojas ? {hoja:CAMP_IMP.hoja, confirmar:!!conf} : {});
+    CAMP_IMP.hojas = j.hojas || CAMP_IMP.hojas || [];
+    if(!CAMP_IMP.hoja) CAMP_IMP.hoja = CAMP_IMP.hojas[0] || "";
+    if(j.hoja) CAMP_IMP.res = j;
+    if(conf){ toast(j.importados+" clientes importados a la cartera."); CLI_LEIDOS = 0; cargarClientes(true); cargarConfig(); }
+  }catch(e){ CAMP_IMP.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v8." : e.message; }
+  CAMP_IMP.cargando = false; pintarGerencia();
+}
 function htmlGerHerramientas(mesSel){
   const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
-  return `
+  return `${htmlImportarCampana()}
     <div class="sv-card"><div class="sv-sec">Buscar cotización</div>
       <div class="sv-search">⌕<input id="gerBusca" type="search" placeholder="Nombre del cliente o WhatsApp…" autocomplete="off"></div>
       <div id="gerBuscaRes" class="sv-res-busca"><div class="sv-muted">Escribe al menos 3 letras.</div></div></div>
@@ -2540,7 +2604,13 @@ function instalarEventosGer(){
     const h = e.target.closest(".sv-bloque>h2");
     if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
     const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+    if(e.target.closest("#campRevisar") || e.target.closest("#campResumen")) accionCampana(false);
+    if(e.target.closest("#campImportar")){
+      const R = CAMP_IMP.res;
+      if(R && confirm("¿Importar "+R.nuevos+" clientes de «"+R.hoja+"» a la cartera de los asesores?")) accionCampana(true);
+    }
   });
+  v.addEventListener("change", e=>{ if(e.target.id==="campHoja"){ CAMP_IMP.hoja = e.target.value; CAMP_IMP.res = null; pintarGerencia(); } });
   v.addEventListener("input", e=>{ if(e.target.id==="gerBusca") $("gerBuscaRes").innerHTML = buscarCotizacion(e.target.value); });
 }
 
@@ -2561,6 +2631,7 @@ function varsDe(c){
     poliza: c.forma_pago==="VENTO CREDIT" ? (A.POLIZA_VENTOCREDIT||"") : c.forma_pago==="MAXIKASH" ? "" : (A.POLIZA_CONTADO||""),
     requisitos:listaY(requisitosDe(c.forma_pago).map(minus)),
     tiempo_entrega:String(c.tiempo_entrega||"").toLowerCase(), vigencia:c.vigencia?fecha(new Date(c.vigencia)):"",
+    modelo_interes:(c.modelo_interes?"La "+c.modelo_interes:"La moto")+" que viste",
     ventaja_sin_comision:A.VENTAJA_SIN_COMISION||"", ventaja_entrega:A.VENTAJA_ENTREGA||"", ventaja_pago_mixto:A.VENTAJA_PAGO_MIXTO||""
   };
   const t=tipoPago(c.forma_pago);
@@ -2569,7 +2640,22 @@ function varsDe(c){
   return v;
 }
 const llenar = (t,v) => String(t||"").replace(/\{(\w+)\}/g,(m,k)=>k in v ? v[k] : m);
+const plantillaVigente = p => !!p && (!p.vigente || new Date(p.vigente) >= new Date());
+/** Plantilla de su campaña/segmento (si ya venció, la de reemplazo). null si no es de campaña. */
+function claveCampana(c){
+  if(!campSinCot(c)) return null;
+  const vig = k => plantillaVigente(plantillas().find(x=>x.clave===k)) ? k : null;
+  if(esBF(c)){
+    if(olaN(c)===1) return vig(segN(c)===2?"BF_OLA1_INTERESADO":"BF_OLA1_CREDITO") || vig("BF_CREDITO_SIN_CASCO") || "LIBRE";
+    if(olaN(c)===2) return vig(segN(c)===3?"BF_OLA2_NO_PASO":"BF_OLA2_COMPRADOR") || "LIBRE";
+    if(olaN(c)===3) return vig("BF_OLA3_ANIVERSARIO") || "LIBRE";
+  }
+  if(esRVC(c)) return vig(c.intentos>0?"RVC_2":"RVC_1") || "LIBRE";
+  return "LIBRE";
+}
 function claveSugerida(c){
+  const kc = claveCampana(c);
+  if(kc) return plantillas().some(p=>p.clave===kc) ? kc : plantillas()[0].clave;
   let k="LIBRE";
   if(c.estatus==="SIN RESPUESTA") k="REACTIVACION";
   else switch(Number(c.paso)){
@@ -2595,18 +2681,18 @@ function pintarComponer(){
   const {c}=MSG;
   /* Del día 3 solo aparece el mensaje que aplica: con ficha, "Ficha técnica";
      sin ficha, "Fotos (sin ficha)". Las dos plantillas siguen en CONFIGURACION. */
-  const ps=plantillas().filter(x=>!(MSG.ficha && x.clave==="FOTOS_UNIDAD") && !(!MSG.ficha && x.clave==="PASO_3"));
+  const ps=plantillas().filter(x=>!(MSG.ficha && x.clave==="FOTOS_UNIDAD") && !(!MSG.ficha && x.clave==="PASO_3") && plantillaVigente(x));
   const p=ps.find(x=>x.clave===MSG.clave)||ps[0];
   MSG.clave=p.clave;
   const texto=llenar(p.texto, varsDe(c));
   const conFicha = MSG.ficha && (MSG.clave==="PASO_3");
   abrirSheet(`<div class="cab-s"><div><h3>${esc(tc(c.nombre+" "+c.apellidos))}</h3>
-      <div class="muted" style="font-size:13px">${esc(telFmt(c.tel))} · ${esc(modeloCorto(c))}</div></div>
+      <div class="muted" style="font-size:13px">${esc(telFmt(c.tel))} · ${campSinCot(c)?esc(etiquetaCamp(c)):esc(modeloCorto(c))}</div></div>
       <button class="cerrar" data-cerrar>${SVG.x}</button></div>
     <label for="msClave">Mensaje · usar otro mensaje</label>
     <select id="msClave">${ps.map(x=>`<option value="${esc(x.clave)}" ${x.clave===MSG.clave?"selected":""}>${esc(x.nombre)}${x.clave===MSG.sugerida?" · sugerido":""}</option>`).join("")}</select>
-    <div class="sugerido">${c.estatus==="SIN RESPUESTA"?"Reactivación del mes":"Le toca el paso del día "+esc(c.paso||"—")} · puedes editar el texto antes de enviarlo</div>
-    <div class="sugerido">${MSG.ficha ? "Ficha técnica: "+esc(decodeURIComponent(MSG.ficha.split("/").pop())) : "Sin ficha técnica para "+esc(baseCodigo(c.codigo)||"este modelo")}</div>
+    <div class="sugerido">${campSinCot(c)?"Campaña "+esc(etiquetaCamp(c))+(c.intentos?" · contacto "+(c.intentos+1):" · primer contacto"):c.estatus==="SIN RESPUESTA"?"Reactivación del mes":"Le toca el paso del día "+esc(c.paso||"—")} · puedes editar el texto antes de enviarlo</div>
+    ${campSinCot(c)?"":`<div class="sugerido">${MSG.ficha ? "Ficha técnica: "+esc(decodeURIComponent(MSG.ficha.split("/").pop())) : "Sin ficha técnica para "+esc(baseCodigo(c.codigo)||"este modelo")}</div>`}
     <label for="msTexto">Texto</label>
     <textarea id="msTexto">${esc(texto)}</textarea>
     <div class="pila">
@@ -2800,7 +2886,8 @@ function pintarGerencia(){
      pero no entran al embudo, la conversión ni el semáforo. */
   const gerentes=new Set((CFG?CFG.usuarios:[]).filter(u=>u.rol==="GERENTE").map(u=>nom(u.n)));
   const reales=CLIENTES.filter(c=>!c.prueba && !gerentes.has(nom(c.vendedor)));
-  const delMes=reales.filter(c=>enMes(c.fecha)), n=delMes.length;
+  const cotizados=reales.filter(c=>!campSinCot(c));   // campaña sin cotización no cuenta como cotizado
+  const delMes=cotizados.filter(c=>enMes(c.fecha)), n=delMes.length;
   const llego = k => delMes.filter(c=>(c.etapa||0)>=k || (k===1 && c.intentos>0)).length;
   const vendidas=delMes.filter(c=>c.estatus==="VENDIDO").length;
   const embudo=[["Cotizaciones",n],["Contactadas",llego(1)],["Interesadas",llego(2)],["Trámite",llego(3)],["Apartadas",llego(4)],["Vendidas",vendidas]];
@@ -2820,7 +2907,7 @@ function pintarGerencia(){
 
   const mesSel = $("gerMes").value;
   const detalleHTML = `
-    ${seccionCotizaciones(delMes, reales, vendActivos, a, m)}
+    ${seccionCotizaciones(delMes, cotizados, vendActivos, a, m)}
     <h2 class="sec">Embudo del mes</h2>
     <div class="card embudo">${embudo.map(([k,v])=>`<div class="fila-e"><div>${k}</div><div class="barra"><i style="width:${Math.round(v*100/maxE)}%"></i></div><div class="num" style="text-align:right">${v} <span class="muted">${k==="Cotizaciones"?"":pct(v,n)}</span></div></div>`).join("")}
       <div class="muted" style="font-size:11.5px;margin-top:6px">Clientes cuyo primer contacto fue en el mes. Cada etapa cuenta a quien llegó a ella o más lejos. Sin pruebas ni cotizaciones de gerentes.</div></div>
