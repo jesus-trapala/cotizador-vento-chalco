@@ -284,6 +284,8 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .vm .sv-cl .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .vm .sv-cl .nm{font-weight:700;font-size:14px}
 .vm .sv-cl .sub{font-size:12px;color:var(--ink-2);font-weight:500}
+.vm .sv-camp-g{display:block;width:100%;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
+.vm .sv-tabs button{font-size:12.5px}
 .vm .sv-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.02em;vertical-align:1px;background:var(--chip);color:var(--sv-morado);border:1px solid var(--line);white-space:nowrap}
 .vm .sv-cl .st{margin-left:auto;font-size:11px;font-weight:800;border-radius:999px;padding:3px 8px;color:#fff;white-space:nowrap;flex:none}
 /* Renglón con botón de WhatsApp: el área grande abre la ficha */
@@ -543,6 +545,7 @@ body{background:var(--bg);color:var(--text)}
       <button data-t="hoy" class="on">Hoy <span class="mono" id="cHoy"></span></button>
       <button data-t="todos">Mis clientes</button>
       <button data-t="react">Reactivación <span class="mono" id="cReact"></span></button>
+      <button data-t="camp" id="tabCamp" class="oculto">Campañas <span class="mono" id="cCamp"></span></button>
     </div>
     <div class="filtros" id="segFiltros">
       <select id="segVendedor" class="oculto"></select>
@@ -728,7 +731,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.6", VERSION_FECHA = "17 oct 2026";
+const VERSION = "4.7", VERSION_FECHA = "19 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1910,8 +1913,24 @@ function etiquetaCamp(c){
   return tc(c.campana);
 }
 const tagCamp = c => c.campana ? `<span class="sv-tag">${esc(etiquetaCamp(c))}</span>` : "";
-/** Fecha con la que cuenta como prospecto: la de su cotización si es de campaña. */
-const fechaProsp = c => c.campana ? (c.cotizado ? c.base : null) : c.fecha;
+/* Un cliente de campaña vive en «Campañas» hasta que se gana la cartera normal ("graduado"):
+   contesta interesado, trámite, aparta, compra, viene a la agencia o se cotiza (Apps Script v9). */
+const EST_GRADUA = ["INTERESADO","TRAMITE CREDITO","APARTADO","VENDIDO"];
+const graduado = c => !!c.campana && !!(c.graduado || c.campana_estado==="GRADUADO" || c.cotizado || EST_GRADUA.includes(c.estatus) || /^Vino a la agencia/i.test(c.resultado||""));
+const enCampana = c => !!c.campana && !graduado(c);
+const cerradoCamp = c => enCampana(c) && c.campana_estado==="CERRADA";
+const sinRespCamp = c => ["EN SEGUIMIENTO","SIN RESPUESTA"].includes(c.estatus) && (!(c.intentos>0) || /^Enviado/i.test(c.resultado||""));
+/** Ola del cliente en CONFIGURACION › OLAS (null si no hay: entonces se considera activa). */
+function olaCfg(c){ const L=(CFG&&CFG.olas)||[]; return L.find(o=>o.campana===c.campana && (o.ola==="" || Number(o.ola)===olaN(c))) || null; }
+function estadoOla(o){ if(!o) return "activa"; const h=new Date(); if(o.inicio && h<new Date(o.inicio)) return "futura"; if(o.fin && h>new Date(o.fin)) return "cerrada"; return "activa"; }
+/** Lo que el asesor ve en «Campañas»: en campaña, no cerrado y su ola vigente hoy. */
+const campVisible = c => enCampana(c) && !cerradoCamp(c) && estadoOla(olaCfg(c))==="activa";
+function grupoCamp(c){
+  const o = olaCfg(c), g = (o&&o.grupo) || (olaN(c) ? "Ola "+olaN(c) : "");
+  return {k:c.campana+"|"+g, t:(esBF(c)?"Buen Fin":etiquetaCamp(c))+(g?" · "+g:""), fin:o&&o.fin};
+}
+/** Fecha con la que cuenta como prospecto: si es de campaña, la de su cotización o la de su graduación. */
+const fechaProsp = c => c.campana ? (c.cotizado ? c.base : graduado(c) ? (c.fecha_graduado||c.ultimo||null) : null) : c.fecha;
 function modeloCorto(c){
   const m = c.modelo || (MODELOS.find(x=>x.c===c.codigo)||{}).m || c.codigo || "";
   return String(m).replace(/\s+20\d\d(\s+ABS)?$/i,(x,abs)=>abs?" ABS":"").trim();
@@ -2163,8 +2182,10 @@ function segAlcance(){
   let lista = misClientes();
   if(g) lista = fv ? lista.filter(c=>c.vendedor===fv) : lista;
   else lista = lista.filter(c=>nom(c.vendedor)===nom(u.nombre));   // el servidor ya filtra; esto es por si acaso
+  const camp = lista.filter(campVisible);                 // «Campañas»
+  lista = lista.filter(c=>!enCampana(c));                 // cartera normal + graduados
   const metr = g && !fv ? lista.filter(c=>!ger.has(nom(c.vendedor))) : lista;   // métricas sin cotizaciones de gerentes
-  return {u, g, vend, lista, metr};
+  return {u, g, vend, lista, metr, camp};
 }
 function filaCli(c, conWa){
   const pend = esPendiente(c), e = estadoCli(c);
@@ -2184,7 +2205,7 @@ function filaCli(c, conWa){
 }
 const ICO_WA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 /** Cliente "del mes": cotizado este mes o que recotizó este mes. */
-const delMes = c => campSinCot(c) || mesDe(c.fecha)===mesActual() || mesDe(c.base||c.fecha)===mesActual();
+const delMes = c => mesDe(c.campana ? (fechaProsp(c)||c.fecha) : c.fecha)===mesActual() || mesDe(c.base||c.fecha)===mesActual();
 const pendienteDelMes = c => esPendiente(c) && delMes(c);
 function pintarSegHoy(A){
   const k = mesActual(), hoy = A.lista.filter(pendienteDelMes);
@@ -2264,6 +2285,35 @@ function pintarSegReact(A){
     <div class="sv-muted" style="text-align:center">Archivo: más de 3 meses sin actividad. Si registras un contacto, regresa a Reactivación.</div>`;
 }
 
+/* ── Campañas: una tarjeta por grupo de olas vigente; adentro, la lista de siempre ── */
+let SEG_CAMP = null, SEG_CFILTRO = "hoy";
+function pintarSegCamp(A){
+  const grupos = {};
+  A.camp.forEach(c=>{ const g=grupoCamp(c); (grupos[g.k] = grupos[g.k] || Object.assign(g,{l:[]})).l.push(c); });
+  const G = Object.values(grupos).sort((a,b)=>a.t.localeCompare(b.t));
+  if(SEG_CAMP && !grupos[SEG_CAMP]) SEG_CAMP = null;
+  const sinC = c => !(c.intentos>0);
+  if(!SEG_CAMP){
+    if(!G.length) return `<div class="vacio">No hay campañas activas por ahora.</div>`;
+    return G.map(g=>{
+      const p = g.l.filter(esPendiente).length, v = g.l.filter(c=>esPendiente(c) && diaN(c.prox)<hoyN()).length;
+      return `<button type="button" class="sv-card sv-camp-g" data-camp-g="${esc(g.k)}">
+        <div class="sv-sec">${esc(g.t)}${g.fin?" · vence "+fechaCorta(g.fin):""}</div>
+        <div class="sv-big">${p} <small>por atender hoy${v?` · ${v} vencido${v===1?"":"s"}`:""}</small></div>
+        <div class="sv-muted" style="margin-top:6px">${g.l.length} clientes en campaña · ${g.l.filter(sinC).length} sin contactar · Ver lista →</div></button>`;
+    }).join("") + `<div class="sv-muted" style="text-align:center">Cuando un cliente contesta con interés, viene a la agencia o se cotiza, pasa a «Mis clientes».</div>`;
+  }
+  const g = grupos[SEG_CAMP];
+  const F = {hoy:esPendiente, sin:sinC, seg:c=>!sinC(c) && c.estatus!=="PERDIDO", perdido:c=>c.estatus==="PERDIDO", todos:()=>true};
+  const f = F[SEG_CFILTRO] || F.todos;
+  const lista = g.l.filter(f).sort((a,b)=>(esPendiente(b)-esPendiente(a)) || diaN(a.prox)-diaN(b.prox) || segN(b)-segN(a) || String(a.folio).localeCompare(String(b.folio)));
+  const chip = (k,t) => `<button type="button" data-cchip="${k}" class="${SEG_CFILTRO===k?"on":""}">${t} ${g.l.filter(F[k]).length}</button>`;
+  return `<div class="sv-hdr"><div><button type="button" class="sv-volver" id="svCampVolver">← Campañas</button><b style="display:block">${esc(g.t)}</b></div>
+      ${g.fin?`<span class="who" style="background:var(--sv-morado);color:#fff">vence ${fechaCorta(g.fin)}</span>`:""}</div>
+    <div class="sv-chips">${chip("hoy","Por atender")}${chip("sin","Sin contactar")}${chip("seg","Contactados")}${chip("perdido","Perdidos")}${chip("todos","Todos")}</div>
+    ${lista.length ? lista.map(c=>filaCli(c,true)).join("") : `<div class="vacio">No hay clientes con ese filtro.</div>`}`;
+}
+
 /* ── Ficha del cliente ── */
 function pintarFicha(c){
   const h = HIST[c.fila];
@@ -2282,7 +2332,7 @@ function pintarFicha(c){
     : h.error ? `<div class="sv-muted">${esc(h.error)}</div>${c.historial?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.historial)}</div>`:""}${c.notas?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.notas)}</div>`:""}<div class="sv-tl" style="margin-top:8px">${prox}</div>`
     : `<div class="sv-tl">${evs.map(x=>`<div style="--c:${x.c}"><b>${x.t}</b><br><small>${x.s}</small></div>`).join("")||`<div><small>Sin movimientos registrados.</small></div>`}${prox}</div>`;
   return `
-    <div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">← ${SEG_FICHA_DE==="react"?"Reactivación":SEG_FICHA_DE==="hoy"?"Hoy":"Mis clientes"}</button><b style="display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b></div>
+    <div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">← ${SEG_FICHA_DE==="react"?"Reactivación":SEG_FICHA_DE==="hoy"?"Hoy":SEG_FICHA_DE==="camp"?"Campañas":"Mis clientes"}</button><b style="display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b></div>
       <span class="who" style="background:${est.c};color:#fff">${esc(etiqueta)}</span></div>
     <div class="sv-card">
       <div class="sv-sec">Datos</div>
@@ -2408,6 +2458,8 @@ function pintarSeg(){
     || diaN(a.prox)-diaN(b.prox)||diaN(a.base)-diaN(b.base));
   $("cHoy").textContent = CLI_LEIDOS ? hoy.length : "";
   $("cReact").textContent = CLI_LEIDOS ? universoReact(A.lista).length : "";
+  $("cCamp").textContent = CLI_LEIDOS ? A.camp.filter(esPendiente).length : "";
+  ver($("tabCamp"), A.camp.length>0 || SEG_TAB==="camp");
   document.querySelectorAll("#segTabs button").forEach(b=>b.classList.toggle("on", b.dataset.t===SEG_TAB));
   const ficha = SEG_FICHA!=null ? CLIENTES.find(x=>x.fila===SEG_FICHA) : null;
   ver($("segTabs"), !ficha); ver($("segFiltros"), !ficha);
@@ -2421,6 +2473,8 @@ function pintarSeg(){
       + (otros ? `<button type="button" class="sv-volver" id="svOtrosPend" style="display:block;margin:10px auto 0">${otros} pendiente${otros===1?"":"s"} de meses anteriores → Mis clientes</button>` : "");
   }else if(SEG_TAB==="react"){
     $("segPanel").innerHTML = pintarSegReact(A); $("segLista").innerHTML="";
+  }else if(SEG_TAB==="camp"){
+    $("segPanel").innerHTML = pintarSegCamp(A); $("segLista").innerHTML="";
   }else{
     const foco = document.activeElement && document.activeElement.id==="segBuscar", pos = foco ? document.activeElement.selectionStart : 0;
     $("segPanel").innerHTML = pintarSegClientes(A); $("segLista").innerHTML="";
@@ -2434,6 +2488,9 @@ function instalarEventosSeg(){
     const t = e.target;
     const w = t.closest("[data-wa-fila]"); if(w){ const c=CLIENTES.find(x=>String(x.fila)===w.dataset.waFila); if(c) abrirMensaje(c); return; }
     if(t.closest("#svOtrosPend")){ SEG_FILTRO={estado:"hoy", periodo:"todo"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
+    const cg = t.closest("[data-camp-g]"); if(cg){ SEG_CAMP=cg.dataset.campG; SEG_CFILTRO="hoy"; pintarSeg(); window.scrollTo(0,0); return; }
+    if(t.closest("#svCampVolver")){ SEG_CAMP=null; pintarSeg(); window.scrollTo(0,0); return; }
+    const cch = t.closest("[data-cchip]"); if(cch){ SEG_CFILTRO=cch.dataset.cchip; pintarSeg(); return; }
     const f = t.closest("[data-ficha]"); if(f){ abrirFicha(f.dataset.ficha); return; }
     if(t.closest(".cli") && !t.closest("button")){ const b=t.closest(".cli").querySelector("[data-wa]"); if(b) abrirFicha(b.dataset.wa); return; }
     const sf = t.closest("[data-seg-filtro]"); if(sf){ SEG_FILTRO={estado:sf.dataset.segFiltro, periodo:"mes"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
@@ -2555,7 +2612,7 @@ function htmlImportarCampana(){
   else cuerpo = `<select id="campHoja" style="width:100%;margin-bottom:10px">${I.hojas.map(h=>`<option ${h===I.hoja?"selected":""}>${esc(h)}</option>`).join("")}</select>
     ${R && R.hoja===I.hoja ? `
       <div class="sv-big">${R.nuevos} <small>clientes nuevos${R.importados!=null?" · importados ✓":""}</small></div>
-      <div class="sv-muted" style="margin-top:6px">${R.filas} filas · ${R.ya} ya importadas antes · ${R.duplicados.length} ya estaban en la cartera · ${R.sinTel.length} sin teléfono válido${R.sinAsesor.length?" · "+R.sinAsesor.length+" sin asesor":""}</div>
+      <div class="sv-muted" style="margin-top:6px">${R.filas} filas · ${R.ya} ya importadas antes${R.reabiertos?" · "+R.reabiertos+" cerrados que se reabren":""} · ${R.duplicados.length} ya estaban en la cartera · ${R.sinTel.length} sin teléfono válido${R.sinAsesor.length?" · "+R.sinAsesor.length+" sin asesor":""}</div>
       <table class="sv-table" style="margin-top:8px">${Object.entries(R.porAsesor||{}).map(([n,k])=>`<tr><td>${esc(pila(n))}</td><td>${k}</td></tr>`).join("")}</table>
       <table class="sv-table" style="margin-top:8px"><tr><th>Grupo</th><th>Clientes</th><th>Primer mensaje</th></tr>${Object.entries(R.porGrupo||{}).map(([g,k])=>`<tr><td>${esc(g)}</td><td>${k}</td><td>${esc((R.fechas||{})[g]||"")}</td></tr>`).join("")}</table>
       ${lista("Ya estaban en la cartera (no se importan)", R.duplicados.map(d=>`${d.cliente} · ${d.folio} · ${pila(d.vendedor)} · ${d.estatus}`))}
@@ -2595,19 +2652,18 @@ function htmlCampanas(){
     const M = [
       ["Clientes", c=>true],
       ["Contactados", c=>c.intentos>0],
-      ["Contestaron", c=>(c.etapa||0)>=2],
+      ["Respondieron", c=>c.intentos>0 && !/^Enviado/i.test(c.resultado||"")],
+      ["Pasaron a Mis clientes", graduado],
       ["Vinieron", vinoAgencia],
       ["Cotizados", c=>c.cotizado],
-      ["Trámite de crédito", c=>c.estatus==="TRAMITE CREDITO"],
-      ["Apartados", c=>c.estatus==="APARTADO"],
       ["Vendidos", c=>c.estatus==="VENDIDO"],
       ["Perdidos", c=>c.estatus==="PERDIDO"],
-      ["Sin respuesta", c=>c.estatus==="SIN RESPUESTA"],
-      ["Por atender hoy", esPendiente]
+      ["Cerrados sin respuesta", cerradoCamp],
+      ["Por atender hoy", c=>campVisible(c) && esPendiente(c)]
     ];
     const col = l => M.map(([,f])=>l.filter(f).length);
     const tot = col(lista), porA = ases.map(n=>col(lista.filter(c=>nom(c.vendedor)===nom(n))));
-    const filas = M.map(([t],i)=>`<tr${i===7?' style="color:var(--sv-verde)"':''}><td>${t}</td><td>${tot[i]}${i&&tot[0]?` <span class="sv-muted" style="font-size:11px">${Math.round(tot[i]/tot[0]*100)}%</span>`:""}</td>${porA.map(a=>`<td>${a[i]}</td>`).join("")}</tr>`).join("");
+    const filas = M.map(([t],i)=>`<tr${i===6?' style="color:var(--sv-verde)"':''}><td>${t}</td><td>${tot[i]}${i&&tot[0]?` <span class="sv-muted" style="font-size:11px">${Math.round(tot[i]/tot[0]*100)}%</span>`:""}</td>${porA.map(a=>`<td>${a[i]}</td>`).join("")}</tr>`).join("");
     const motivos = {}; lista.filter(c=>c.estatus==="PERDIDO").forEach(c=>{ const m=c.motivo||"Sin motivo"; motivos[m]=(motivos[m]||0)+1; });
     const mot = Object.entries(motivos).sort((a,b)=>b[1]-a[1]);
     let cascos = "";
@@ -2620,9 +2676,45 @@ function htmlCampanas(){
       ${cascos}
       ${olas.length>1?`<div class="sv-chips"><button type="button" data-camp-ola="${esc(k)}|0" class="${!ola?"on":""}">Todas</button>${olas.map(o=>`<button type="button" data-camp-ola="${esc(k)}|${o}" class="${ola===o?"on":""}">Ola ${o} · ${deC.filter(c=>olaN(c)===o).length}</button>`).join("")}</div>`:""}
       <table class="sv-table"><tr><th></th><th>Total</th>${ases.map(n=>`<th>${esc(pila(n))}</th>`).join("")}</tr>${filas}</table>
-      ${mot.length?`<details class="sv-det"><summary>Perdidos por motivo · ${tot[8]}</summary><table class="sv-table">${mot.map(([m,n])=>`<tr><td>${esc(m)}</td><td>${n}</td></tr>`).join("")}</table></details>`:""}
-      <div class="sv-muted" style="margin-top:8px">Contactados, contestaron y cotizados cuentan a quien llegó ahí aunque después avanzara; trámite, apartados, vendidos, perdidos y sin respuesta son su estatus de hoy. «Vinieron»: registrados con «Ya vino a la agencia», apartados o vendidos.</div></div>`;
+      ${htmlEstadoOla(k, ola, olas, deC)}
+      ${mot.length?`<details class="sv-det"><summary>Perdidos por motivo · ${tot[7]}</summary><table class="sv-table">${mot.map(([m,n])=>`<tr><td>${esc(m)}</td><td>${n}</td></tr>`).join("")}</table></details>`:""}
+      <div class="sv-muted" style="margin-top:8px">«Pasaron a Mis clientes»: contestaron con interés, trámite, apartado o compra, vinieron a la agencia o se cotizaron; desde ahí cuentan en la conversión del mes. «Cerrados sin respuesta»: su ola terminó y nunca contestaron; no cuentan como perdidos.</div></div>`;
   }).join("");
+}
+let GER_CIERRE = null;   // {k, ola, res, cargando, error}
+/** Estado de la ola elegida, botón «Cerrar ola» y lista de cerrados. */
+function htmlEstadoOla(k, ola, olas, deC){
+  const una = ola || (olas.length<=1 ? (olas[0]||0) : 0);
+  const conf = ((CFG&&CFG.olas)||[]).find(o=>o.campana===k && (o.ola==="" || Number(o.ola)===una));
+  const del = deC.filter(c=>!una || olaN(c)===una);
+  const cerrados = del.filter(cerradoCamp);
+  let h = "";
+  if(una || olas.length<=1){
+    const e = estadoOla(conf);
+    if(conf) h += `<div class="sv-muted" style="margin-top:10px">${una?"Ola "+una:"Campaña"} · ${e==="futura"?"inicia "+fechaCorta(conf.inicio):e==="cerrada"?"terminó "+fechaCorta(conf.fin):"vigente hasta "+fechaCorta(conf.fin)}</div>`;
+    const abiertos = del.filter(c=>enCampana(c) && !cerradoCamp(c) && sinRespCamp(c)).length;
+    const G = GER_CIERRE && GER_CIERRE.k===k && GER_CIERRE.ola===una ? GER_CIERRE : null;
+    if(G && G.res && G.res.cerrados==null){
+      h += `<div class="sv-aviso" style="margin-top:10px">Se cerrarían <b>${G.res.cerrar}</b> clientes que nunca respondieron (${Object.entries(G.res.porAsesor||{}).map(([n,x])=>esc(pila(n))+" "+x).join(" · ")}). No se marcan como perdidos y dejan de verse para los asesores.</div>
+        ${G.res.cerrar?`<button type="button" class="sv-act" style="background:var(--sv-rojo);width:100%;margin-top:8px" id="olaCerrarOk"${G.cargando?" disabled":""}>${G.cargando?"Cerrando…":"Cerrar "+G.res.cerrar+" clientes"}</button>`:""}`;
+    } else if(abiertos){
+      h += `<button type="button" class="sv-act ghost" style="width:100%;margin-top:10px" id="olaCerrarVer" data-k="${esc(k)}" data-ola="${una}"${G&&G.cargando?" disabled":""}>${G&&G.cargando?"Revisando…":"Cerrar "+(una?"ola "+una:"campaña")+" ahora"}</button>`;
+    }
+    if(G && G.error) h += `<div class="sv-aviso" style="margin-top:8px">${esc(G.error)}</div>`;
+  }
+  if(cerrados.length) h += `<details class="sv-det"><summary>Ver cerrados · ${cerrados.length}</summary><div class="sv-muted" style="white-space:pre-line">${cerrados.map(c=>esc(tc(c.nombre+" "+c.apellidos))+" · "+esc(c.folio)+" · "+esc(pila(c.vendedor))).join("\n")}</div>
+    <div class="sv-muted" style="margin-top:6px">Si vienen en una campaña futura, al importarla se reabren en su mismo renglón.</div></details>`;
+  return h;
+}
+async function accionCerrarOla(k, ola, conf){
+  GER_CIERRE = Object.assign(GER_CIERRE && GER_CIERRE.k===k && GER_CIERRE.ola===ola ? GER_CIERRE : {k, ola}, {cargando:true, error:""}); pintarGerencia();
+  try{
+    const j = await api("cerrarOla", {campana:k, ola, confirmar:!!conf});
+    GER_CIERRE.res = j;
+    if(conf){ toast(j.cerrados+" clientes cerrados."); GER_CIERRE = null; CLI_LEIDOS = 0; await cargarClientes(true); }
+  }catch(e){ GER_CIERRE.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v9." : e.message; }
+  if(GER_CIERRE) GER_CIERRE.cargando = false;
+  pintarGerencia();
 }
 function htmlGerHerramientas(mesSel){
   const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
@@ -2650,8 +2742,13 @@ function instalarEventosGer(){
     const h = e.target.closest(".sv-bloque>h2");
     if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
     const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+    const cv = e.target.closest("#olaCerrarVer"); if(cv){ accionCerrarOla(cv.dataset.k, Number(cv.dataset.ola)||0, false); return; }
+    if(e.target.closest("#olaCerrarOk") && GER_CIERRE && GER_CIERRE.res){
+      if(confirm("¿Cerrar "+GER_CIERRE.res.cerrar+" clientes sin respuesta? Dejan de verse para los asesores.")) accionCerrarOla(GER_CIERRE.k, GER_CIERRE.ola, true);
+      return;
+    }
     const co = e.target.closest("[data-camp-ola]");
-    if(co){ const [k,o] = co.dataset.campOla.split("|"); GER_CAMP_OLA[k] = Number(o); pintarGerencia(); return; }
+    if(co){ const [k,o] = co.dataset.campOla.split("|"); GER_CAMP_OLA[k] = Number(o); GER_CIERRE = null; pintarGerencia(); return; }
     if(e.target.closest("#campRevisar") || e.target.closest("#campResumen")) accionCampana(false);
     if(e.target.closest("#campImportar")){
       const R = CAMP_IMP.res;
@@ -2799,11 +2896,11 @@ async function guardarResultado(res, motivo){
   const botones=$("sheetCont").querySelectorAll("button"); botones.forEach(b=>b.disabled=true);
   try{
     const j=await api("registrar",{fila:MSG.c.fila, folio:MSG.c.folio, resultado:res, motivo, nota, clave:MSG.clave});
-    const i=CLIENTES.findIndex(x=>x.fila===MSG.c.fila);
+    const i=CLIENTES.findIndex(x=>x.fila===MSG.c.fila), antes=enCampana(MSG.c);
     if(i>=0) CLIENTES[i]=j.cliente;
     const c=j.cliente;
     cerrarSheet();
-    toast("Guardado · "+(c.prox ? "siguiente contacto el "+fechaCorta(c.prox) : (EST_TXT[c.estatus]||c.estatus)));
+    toast("Guardado · "+(c.prox ? "siguiente contacto el "+fechaCorta(c.prox) : (EST_TXT[c.estatus]||c.estatus))+(antes && !enCampana(c) ? " · pasó a Mis clientes" : ""));
     pintarTodo();
   }catch(e){ toast(e.message,true); botones.forEach(b=>b.disabled=false); }
 }
@@ -2940,7 +3037,7 @@ function pintarGerencia(){
   /* Los gerentes no cuentan para las métricas: sus cotizaciones se guardan,
      pero no entran al embudo, la conversión ni el semáforo. */
   const gerentes=new Set((CFG?CFG.usuarios:[]).filter(u=>u.rol==="GERENTE").map(u=>nom(u.n)));
-  const reales=CLIENTES.filter(c=>!c.prueba && !gerentes.has(nom(c.vendedor)));
+  const reales=CLIENTES.filter(c=>!c.prueba && !gerentes.has(nom(c.vendedor)) && !enCampana(c));   // la campaña se mide en «Campañas»
   const cotizados=reales.filter(c=>!campSinCot(c));   // campaña sin cotización no cuenta como cotizado
   const delMes=cotizados.filter(c=>enMes(c.fecha)), n=delMes.length;
   const llego = k => delMes.filter(c=>(c.etapa||0)>=k || (k===1 && c.intentos>0)).length;
@@ -3077,7 +3174,7 @@ async function arrancar(){
     if(e.target.closest("[data-cerrar]")) cerrarSheet();
   });
   $("sheet").addEventListener("click",e=>{ if(e.target.id==="sheet") cerrarSheet(); });
-  $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; SEG_FICHA=null;
+  $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; SEG_FICHA=null; SEG_CAMP=null;
     if(SEG_TAB==="todos") SEG_FILTRO={estado:"todos", periodo:SEG_FILTRO.periodo||"todo"}; pintarSeg(); });
   $("segVendedor").addEventListener("change",pintarSeg);
   $("segRecargar").onclick=()=>{ cargarClientes(true); cargarDatosSeg(true); };
