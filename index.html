@@ -731,7 +731,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.7", VERSION_FECHA = "19 oct 2026";
+const VERSION = "4.8", VERSION_FECHA = "27 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1879,12 +1879,28 @@ const esReact = c => c.estatus==="SIN RESPUESTA" && (!c.ultimo || mesN(c.ultimo)
 const tipoPago = forma => (PAGOS.find(p=>p.n===forma)||{}).tipo || "contado";
 
 let CLIENTES = [], CLI_LEIDOS = 0, CLI_CARGANDO = null, CLI_ERROR = "";
+/* Lo que este teléfono acaba de guardar. Una lista pedida ANTES de guardar puede llegar
+   DESPUÉS (es grande y tarda en el celular): sin esto, el cliente volvía a salir pendiente. */
+let CLI_LOCAL = {};
+function ponerClienteLocal(c){
+  if(!c) return;
+  const i = CLIENTES.findIndex(x=>x.fila===c.fila); if(i>=0) CLIENTES[i]=c;
+  CLI_LOCAL[c.fila] = {c, t:Date.now()};
+}
 function cargarClientes(forzar){
   if(!SES) return Promise.resolve();
   if(!forzar && CLI_LEIDOS && Date.now()-CLI_LEIDOS<60000){ pintarTodo(); return Promise.resolve(); }
   if(CLI_CARGANDO) return CLI_CARGANDO;
   CLI_CARGANDO = (async()=>{
-    try{ const j=await api("clientes"); CLIENTES=j.clientes||[]; CLI_LEIDOS=Date.now(); CLI_ERROR=""; }
+    const pedida = Date.now();
+    try{
+      const j=await api("clientes"); CLIENTES=j.clientes||[]; CLI_LEIDOS=Date.now(); CLI_ERROR="";
+      Object.keys(CLI_LOCAL).forEach(f=>{
+        const e = CLI_LOCAL[f];
+        if(e.t < pedida - 5000){ delete CLI_LOCAL[f]; return; }   // la lista ya trae ese cambio
+        const i = CLIENTES.findIndex(x=>x.fila===e.c.fila); if(i>=0) CLIENTES[i]=e.c;
+      });
+    }
     catch(e){
       CLI_ERROR=e.message;
       toast(e.message,true);
@@ -2408,7 +2424,7 @@ async function accionServidor(accion, datos, boton){
   if(boton) boton.disabled=true;
   try{
     const j = await api(accion, datos);
-    const i = CLIENTES.findIndex(x=>x.fila===datos.fila); if(i>=0 && j.cliente) CLIENTES[i]=j.cliente;
+    if(j.cliente) ponerClienteLocal(j.cliente);
     delete HIST[datos.fila];
     cerrarSheet();
     toast(accion==="reagendar" ? "Reagendado para el "+fechaCorta(j.cliente&&j.cliente.prox) : "Reactivado · siguiente contacto el "+fechaCorta(j.cliente&&j.cliente.prox));
@@ -2897,7 +2913,7 @@ async function guardarResultado(res, motivo){
   try{
     const j=await api("registrar",{fila:MSG.c.fila, folio:MSG.c.folio, resultado:res, motivo, nota, clave:MSG.clave});
     const i=CLIENTES.findIndex(x=>x.fila===MSG.c.fila), antes=enCampana(MSG.c);
-    if(i>=0) CLIENTES[i]=j.cliente;
+    ponerClienteLocal(j.cliente);
     const c=j.cliente;
     cerrarSheet();
     toast("Guardado · "+(c.prox ? "siguiente contacto el "+fechaCorta(c.prox) : (EST_TXT[c.estatus]||c.estatus))+(antes && !enCampana(c) ? " · pasó a Mis clientes" : ""));
