@@ -731,7 +731,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.8", VERSION_FECHA = "27 oct 2026";
+const VERSION = "4.9", VERSION_FECHA = "27 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -2210,7 +2210,7 @@ function filaCli(c, conWa){
   const sig = pend ? (diaN(c.prox)<hoyN() ? `vencido ${hoyN()-diaN(c.prox)} d` : "toca hoy")
     : c.estatus==="VENDIDO" ? "vendido "+fechaCorta(c.fecha_venta||c.ultimo)
     : c.estatus==="PERDIDO" ? (c.motivo||"perdido")+" · "+fechaCorta(c.ultimo||c.base)
-    : c.prox ? "próx. "+fechaCorta(c.prox) : c.estatus==="SIN RESPUESTA" ? "reactivación" : campSinCot(c) ? "sin fecha" : "cotizado "+fechaCorta(c.base||c.fecha);
+    : c.prox ? "próx. "+fechaCorta(c.prox) : c.estatus==="SIN RESPUESTA" ? "reactivación" : enCampana(c) && c.intentos>0 ? c.intentos+" mensajes sin respuesta" : campSinCot(c) ? "sin fecha" : "cotizado "+fechaCorta(c.base||c.fecha);
   const datos = `<i class="dot" style="background:${st.c}"></i>
     <div style="min-width:0"><div class="nm">${esc(tc(c.nombre+" "+c.apellidos))}${tagCamp(c)}</div>
     <div class="sub">${campSinCot(c) ? esc(c.modelo_interes?modeloCorto({codigo:c.modelo_interes}):"Sin cotización") : esc(modeloCorto(c))+" · "+esc(tc(c.forma_pago))} · ${esc(sig)}${segAlcance().g&&!esVista()?" · "+esc(pila(c.vendedor)):""}</div></div>
