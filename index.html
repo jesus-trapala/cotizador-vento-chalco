@@ -785,7 +785,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "5.2", VERSION_FECHA = "29 oct 2026";
+const VERSION = "5.3", VERSION_FECHA = "29 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -2483,28 +2483,47 @@ const R_RES = [
   ["NO_DESEA","No desea mensajes","mal",0]
 ];
 let RUTA_VISTA = "hoy", RUTA_F = {camp:"", modelo:"", tipo:""}, PORT_F = {estado:"", camp:"", modelo:"", q:""};
-const rEst = c => c.ruta_estado || "";
-const rutaDue = c => ["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO"].includes(rEst(c)) && !!c.prox && diaN(c.prox)<=hoyN() && !c.prueba;
-const rutaAtrasado = c => rutaDue(c) && diaN(c.prox)<hoyN() && (c.ruta_paso!=="WA1" || c.ruta_carril==="SHOWROOM");
+/* Antes de activar la ruta (migración del domingo) las pantallas nuevas trabajan en «modo visual»:
+   el estado sale de los estatus que ya existen y lo que se registra va por las acciones de siempre
+   (registrar, reagendar y llamada), así la migración lo lee tal cual. */
+let RUTA_MIG = false;
+function estadoVisual(c){
+  if(["VENDIDO","PERDIDO"].includes(c.estatus)) return "CERRADO";
+  if(["CONGELADOR","CERRADA"].includes(c.campana_estado||"")) return "CONGELADOR";
+  if(["INTERESADO","TRAMITE CREDITO","APARTADO"].includes(c.estatus) || /^(Contestó|Vino a la agencia|Llamada – contestó|Llamada – agendó)/i.test(c.resultado||"")) return "RESPONDIO";
+  if(c.fecha_llamada) return "CONGELADOR";
+  if((c.intentos||0)>=2) return "POR LLAMAR";
+  if((c.intentos||0)===1) return "WHATSAPP";
+  return "NUEVO";
+}
+const rEst = c => c.ruta_estado || (RUTA_MIG ? "" : estadoVisual(c));
+const rPaso = c => c.ruta_paso || (RUTA_MIG ? "" : ({NUEVO:"WA1", WHATSAPP:"WA2", "POR LLAMAR":"LLAMADA", RESPONDIO:"SEG"})[rEst(c)] || "");
+const rutaDue = c => {
+  if(c.prueba) return false;
+  const e = rEst(c); if(!["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO"].includes(e)) return false;
+  if(!RUTA_MIG) return e==="POR LLAMAR" ? false : esPendiente(c);   // modo visual: lo mismo que hoy; las llamadas van en «Llamadas»
+  return !!c.prox && diaN(c.prox)<=hoyN();
+};
+const rutaAtrasado = c => rutaDue(c) && diaN(c.prox)<hoyN() && (rPaso(c)!=="WA1" || c.ruta_carril==="SHOWROOM");
 function grupoRuta(c){
-  if(c.ruta_carril==="SHOWROOM") return {p:2, k:"SHOWROOM", t:"Showroom"};
+  if(c.ruta_carril==="SHOWROOM" || (!RUTA_MIG && !c.campana && mesDe(c.base||c.fecha)===mesActual())) return {p:2, k:"SHOWROOM", t:"Showroom"};
   if(c.campana==="APROBADOS SIN ENGANCHE" || (esBF(c) && segN(c)===4)) return {p:4, k:"APROBADOS", t:"Aprobados sin enganche"};
   if(!c.campana) return {p:5, k:"PASADAS", t:"Cotizaciones pasadas"};
   if(esRVC(c)) return {p:6, k:"RVC", t:"Rechazados VC"};
   if(esBF(c)) return {p:7, k:"BF", t:"Buen Fin"};
   return {p:8, k:"OTRA", t:tc(c.campana)};
 }
-const prioridadRuta = c => rEst(c)==="RESPONDIO" ? 1 : c.ruta_carril==="SHOWROOM" ? 2 : rutaAtrasado(c) ? 3 : grupoRuta(c).p;
-const costoRuta = c => c.ruta_paso==="LLAMADA" ? 3 : 1;
+const prioridadRuta = c => rEst(c)==="RESPONDIO" ? 1 : grupoRuta(c).k==="SHOWROOM" ? 2 : rutaAtrasado(c) ? 3 : grupoRuta(c).p;
+const costoRuta = c => rPaso(c)==="LLAMADA" ? 3 : 1;
 const modeloRuta = c => modeloCorto(c) || (c.modelo_interes ? tc(c.modelo_interes) : "");
 function accionRuta(c){
   if(rEst(c)==="RESPONDIO") return {t:"Dar seguimiento", tipo:"wa", c:"var(--sv-verde)"};
-  if(c.ruta_paso==="LLAMADA") return {t:"Llamar", tipo:"tel", c:"var(--sv-ambar)"};
-  return {t:"Enviar WhatsApp "+(c.ruta_paso==="WA2"?"2":"1"), tipo:"wa", c:"var(--sv-azul)"};
+  if(rPaso(c)==="LLAMADA") return {t:"Llamar", tipo:"tel", c:"var(--sv-ambar)"};
+  return {t:"Enviar WhatsApp "+(rPaso(c)==="WA2"?"2":"1"), tipo:"wa", c:"var(--sv-azul)"};
 }
 const claveRuta = c => {
   if(rEst(c)==="RESPONDIO") return "RUTA_RESPONDIO";
-  const n = c.ruta_paso==="WA2" ? 2 : 1, g = grupoRuta(c).k;
+  const n = rPaso(c)==="WA2" ? 2 : 1, g = grupoRuta(c).k;
   if(g==="SHOWROOM") return "RUTA_SHOWROOM_"+n;
   if(g==="APROBADOS") return "RUTA_APROBADOS_"+n;
   if(g==="PASADAS") return "RUTA_PASADAS_"+n;
@@ -2531,14 +2550,14 @@ function bloqueHoy(lista){
 }
 function pillRuta(c){
   if(rEst(c)==="RESPONDIO") return {t:"Respondió", c:"var(--sv-verde)"};
-  if(rutaAtrasado(c)) return {t:"Atrasado · "+(c.ruta_paso==="LLAMADA"?"llamada":c.ruta_paso==="WA2"?"WhatsApp 2":"WhatsApp 1"), c:"var(--sv-ambar)"};
-  if(c.ruta_carril==="SHOWROOM" && c.ruta_paso==="WA1") return {t:"Vino "+fechaCorta(c.base||c.fecha), c:"var(--sv-rojo)"};
-  if(c.ruta_paso==="LLAMADA") return {t:"Por llamar", c:"var(--sv-ambar)"};
-  if(c.ruta_paso==="WA2") return {t:"WhatsApp 2", c:"var(--sv-azul)"};
+  if(rutaAtrasado(c)) return {t:"Atrasado · "+(rPaso(c)==="LLAMADA"?"llamada":rPaso(c)==="WA2"?"WhatsApp 2":"WhatsApp 1"), c:"var(--sv-ambar)"};
+  if(c.ruta_carril==="SHOWROOM" && rPaso(c)==="WA1") return {t:"Vino "+fechaCorta(c.base||c.fecha), c:"var(--sv-rojo)"};
+  if(rPaso(c)==="LLAMADA") return {t:"Por llamar", c:"var(--sv-ambar)"};
+  if(rPaso(c)==="WA2") return {t:"WhatsApp 2", c:"var(--sv-azul)"};
   return {t:"Barrido", c:"var(--sv-azul)"};
 }
 function dotsRuta(c){
-  const i = c.ruta_paso==="WA2" ? 1 : c.ruta_paso==="LLAMADA" ? 2 : 0;
+  const i = rPaso(c)==="WA2" ? 1 : rPaso(c)==="LLAMADA" ? 2 : 0;
   const txt = rEst(c)==="RESPONDIO" ? (ultimaNota(c.notas) || "Seguimiento "+fechaCorta(c.prox))
     : rutaAtrasado(c) ? "Tocaba "+fechaCorta(c.prox) : c.ruta_carril==="SHOWROOM" ? "Cotizó "+fechaCorta(c.base||c.fecha) : c.intentos ? c.intentos+" WhatsApp sin respuesta" : "Primer mensaje";
   if(rEst(c)==="RESPONDIO") return `<div class="r-dots">${esc(txt)}</div>`;
@@ -2566,9 +2585,9 @@ function pintarRutaHoy(A){
   const diasRest = Math.max(1, Math.round((sem.fin - new Date(hoyF.getFullYear(),hoyF.getMonth(),hoyF.getDate()))/864e5)+1);
   const B = bloqueHoy(filtrarRuta(L, RUTA_F));
   const T = bloqueHoy(L).due;
-  const n = {SHOW:T.filter(c=>c.ruta_carril==="SHOWROOM" && rEst(c)!=="RESPONDIO").length, CAMP:T.filter(c=>c.ruta_carril!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c))).length,
-    LLAM:T.filter(c=>rEst(c)==="POR LLAMAR").length, RESP:T.filter(c=>rEst(c)==="RESPONDIO").length};
-  const tipoF = {SHOW:c=>c.ruta_carril==="SHOWROOM" && rEst(c)!=="RESPONDIO", CAMP:c=>c.ruta_carril!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c)), LLAM:c=>rEst(c)==="POR LLAMAR", RESP:c=>rEst(c)==="RESPONDIO"}[RUTA_F.tipo];
+  const n = {SHOW:T.filter(c=>grupoRuta(c).k==="SHOWROOM" && rEst(c)!=="RESPONDIO").length, CAMP:T.filter(c=>grupoRuta(c).k!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c))).length,
+    LLAM:RUTA_MIG ? T.filter(c=>rEst(c)==="POR LLAMAR").length : llamadasDe(A).pend.length, RESP:T.filter(c=>rEst(c)==="RESPONDIO").length};
+  const tipoF = {SHOW:c=>grupoRuta(c).k==="SHOWROOM" && rEst(c)!=="RESPONDIO", CAMP:c=>grupoRuta(c).k!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c)), LLAM:c=>rEst(c)==="POR LLAMAR", RESP:c=>rEst(c)==="RESPONDIO"}[RUTA_F.tipo];
   const lista = tipoF ? B.hoy.filter(tipoF) : B.hoy;
   const modelos = [...new Set(L.filter(c=>!["CERRADO"].includes(rEst(c))).map(modeloRuta).filter(Boolean))].sort();
   const tile = (k,num,txt,col,ink) => `<button type="button" class="r-tile${RUTA_F.tipo===k?" on":""}" data-r-tile="${k}" style="background:${col}${ink?";color:var(--ink)":""}"><b>${num}</b>${txt}</button>`;
@@ -2576,10 +2595,12 @@ function pintarRutaHoy(A){
   return `<div class="r-hola"><div><div class="sv-muted">${esc(hoyF.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"short"}))} · Chalco</div><h2>Hola, ${esc(nombre)}</h2></div>
       <button type="button" class="btn btn-sec btn-chico" id="rNoEres">${esVista()?"Volver a mi vista":"¿No eres tú?"}</button></div>
     ${ger && !esVista() && !segAlcance().vend ? `<div class="sv-muted" style="margin:-4px 0 10px">Viendo a todo el equipo · elige un asesor arriba o toca «¿No eres tú?»</div>` : ""}
-    <div class="r-sem"><div class="t"><span>Barrido · semana ${sem.n||""}</span><span>termina el ${sem.fin.getDate()}</span></div>
+    ${!RUTA_MIG ? `<div class="r-sem"><div class="t"><span>Barrido semanal</span><span>se activa el domingo</span></div>
+      <div class="s" style="margin-top:8px">El avance de la semana y la ruta con fechas se activan el domingo 1 en la noche. Mientras, tu lista sale con los pendientes de siempre.</div></div>` : ""}
+    ${!RUTA_MIG ? "" : `<div class="r-sem"><div class="t"><span>Barrido · semana ${sem.n||""}</span><span>termina el ${sem.fin.getDate()}</span></div>
       <div class="n">${yaMsg} <small>de ${barr.length} ya tienen su primer mensaje</small></div>
       <div class="bar"><i style="width:${barr.length?Math.round(yaMsg/barr.length*100):0}%"></i></div>
-      <div class="s">Hoy te tocan ${Math.ceil(faltan/diasRest)} · tu bloque de la mañana: ~${B.min} min</div></div>
+      <div class="s">Hoy te tocan ${Math.ceil(faltan/diasRest)} · tu bloque de la mañana: ~${B.min} min</div></div>`}
     <div class="r-tiles">${tile("SHOW",n.SHOW,"Showroom · vinieron ayer","var(--sv-rojo)")}${tile("CAMP",n.CAMP,"Campaña · WhatsApp de hoy","var(--sv-azul)")}${tile("LLAM",n.LLAM,"Por llamar","var(--sv-ambar)",true)}${tile("RESP",n.RESP,"Respondieron · seguimiento hoy","var(--sv-verde)")}</div>
     <div class="sv-chips">${CAMPS_RUTA.map(([k,t])=>`<button type="button" data-r-chip="${k}" class="${RUTA_F.camp===k?"on":""}">${t}</button>`).join("")}</div>
     <select class="r-sel" id="rModelo"><option value="">Modelo: todos</option>${modelos.map(m=>`<option ${RUTA_F.modelo===m?"selected":""}>${esc(m)}</option>`).join("")}</select>
@@ -2611,9 +2632,11 @@ function pintarRutaFicha(c){
   const h = HIST[c.fila], e = R_EST[rEst(c)] || {t:"—", c:"var(--sv-gris)"}, a = accionRuta(c);
   const abierto = ["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO"].includes(rEst(c));
   const pasos = [["WA1","WhatsApp 1"],["WA2","WhatsApp 2"],["LLAMADA","Llamada única"],["CONG","Congelador"]];
-  const idx = {WA1:0, WA2:1, LLAMADA:2}[c.ruta_paso];
+  const idx = {WA1:0, WA2:1, LLAMADA:2}[rPaso(c)];
   const fechaPaso = k => { if(idx==null) return ""; const d = new Date(c.prox||Date.now()); d.setDate(d.getDate()+3*(k-idx)); return k===idx ? (diaN(c.prox)<hoyN()?"tocaba "+fechaCorta(c.prox):diaN(c.prox)===hoyN()?"hoy":fechaCorta(c.prox)) : k<idx ? "hecho" : k===3 ? "si no responde" : fechaCorta(d); };
-  const ruta = rEst(c)==="RESPONDIO" ? `<div class="r-ruta"><div class="r-paso now"><span>Seguimiento con su asesor</span><span>${c.prox?fechaCorta(c.prox):""}</span></div></div>`
+  const ruta = !RUTA_MIG ? `<div class="r-ruta"><div class="r-paso now"><span>${esc(e.t)}${c.prox?" · próximo contacto":""}</span><span>${c.prox?fechaCorta(c.prox):""}</span></div>
+      <div class="sv-muted" style="margin-top:6px;font-size:12.5px">La ruta con fechas (WhatsApp 1 → WhatsApp 2 → llamada → congelador) se activa el domingo.</div></div>`
+    : rEst(c)==="RESPONDIO" ? `<div class="r-ruta"><div class="r-paso now"><span>Seguimiento con su asesor</span><span>${c.prox?fechaCorta(c.prox):""}</span></div></div>`
     : idx==null ? `<div class="r-ruta"><div class="r-paso"><span>${esc(e.t)}</span><span>${esc(c.resultado||"")}</span></div></div>`
     : `<div class="r-ruta">${pasos.map(([k,t],i)=>`<div class="r-paso ${i<idx?"hecho":i===idx?"now":""}"><span>${t}</span><span>${fechaPaso(i)}</span></div>`).join("")}</div>`;
   const evs = [];
@@ -2628,16 +2651,18 @@ function pintarRutaFicha(c){
       <div class="sv-chips" style="margin:0">${[grupoRuta(c).t, modeloRuta(c), c.campana&&!c.cotizado?"Desde "+fechaCorta(c.ruta_inicio||c.fecha):"Cotizó "+fechaCorta(c.base||c.fecha), segAlcance().g&&!esVista()?pila(c.vendedor):""].filter(Boolean).map(t=>`<span class="sv-tag" style="margin:0">${esc(t)}</span>`).join("")}</div>
       ${c.observaciones&&c.campana?`<div class="sv-muted" style="margin-top:8px;font-size:12.5px">${esc(tc(c.observaciones))}</div>`:""}</div>
     <div class="sv-sec">Su ruta</div>${ruta}
-    ${abierto?`<div class="sv-muted" style="margin-bottom:10px">Si marcas «Sin respuesta», el cliente avanza solo al siguiente paso y no te vuelve a salir hasta su fecha.</div>
+    ${abierto?`<div class="sv-muted" style="margin-bottom:10px">${RUTA_MIG?"Si marcas «Sin respuesta», el cliente avanza solo al siguiente paso y no te vuelve a salir hasta su fecha.":"Al registrar, el cliente sale de tu lista de hoy y vuelve en su siguiente fecha."}</div>
       <button type="button" class="sv-act" style="background:${a.c};width:100%;min-height:52px;font-size:16px;margin-bottom:12px" data-r-acc="${c.fila}">${a.t}</button>
       <div class="sv-sec">¿Qué pasó?</div>
-      <div class="r-res">${R_RES.map(([k,t,cl])=>`<button type="button" class="${cl}" data-r-res="${k}" data-fila="${c.fila}">${t}</button>`).join("")}</div>`:""}
+      <div class="r-res">${resRuta(c).map(([k,t,cl])=>`<button type="button" class="${cl}" data-r-res="${k}" data-fila="${c.fila}">${t}</button>`).join("")}</div>`:""}
     <div class="sv-acts"><button type="button" class="sv-act" style="background:var(--sv-cian)" data-fa="recotizar">${campSinCot(c)?"Cotizar":"Recotizar"}</button></div>
     <details class="sv-card"><summary style="font-weight:800;cursor:pointer">Historial (${h&&!h.error?evs.length:"…"})</summary>
       ${!h?`<div class="sv-muted">Cargando…</div>`:h.error?`<div class="sv-muted">${esc(h.error)}</div>`:evs.map(x=>`<div class="sv-muted" style="margin-top:6px">${fechaCorta(x.f)} · ${esc(x.t)}</div>`).join("")||`<div class="sv-muted">Sin movimientos.</div>`}</details>`;
 }
 function pintarRuta(A){
-  ver($("segTabs"), false); ver($("btnLlamadas"), false);
+  ver($("segTabs"), false);
+  if(RUTA_MIG) ver($("btnLlamadas"), false);
+  else { const LL = llamadasDe(A); $("cLlam").textContent = CLI_LEIDOS ? "("+LL.pend.length+")" : ""; ver($("btnLlamadas"), LL.pend.length+LL.hechas.length>0 && SEG_FICHA==null); $("btnLlamadas").classList.remove("on"); }
   const ficha = SEG_FICHA!=null ? CLIENTES.find(x=>x.fila===SEG_FICHA) : null;
   ver($("segFiltros"), !ficha);
   if(!CLI_LEIDOS){ $("segPanel").innerHTML=""; $("segLista").innerHTML='<div class="vacio">Cargando clientes…</div>'; return; }
@@ -2654,13 +2679,30 @@ function accionPrincipalRuta(c){
   if(a.tipo==="tel"){ location.href = "tel:+52"+c.tel; setTimeout(()=>abrirRegistroRuta(c), 800); return; }
   abrirMensaje(c); if(MSG) MSG.ruta = true;
 }
+/** En modo visual, a quien le toca llamada no se le ofrece «No desea mensajes» (la llamada no toca INTENTOS). */
+const resRuta = c => !RUTA_MIG && rEst(c)==="POR LLAMAR" ? R_RES.filter(x=>x[0]!=="NO_DESEA") : R_RES;
+/** Modo visual: guarda con las acciones actuales para que la migración lo respete. */
+async function guardarVisual(c, k, fecha, nota, clave){
+  if(rEst(c)==="POR LLAMAR"){
+    const m = {INTERESADO:"INTERESADO", VISITA:"VISITA", SIN_RESPUESTA:"NO_CONTESTO", COMPRO:"COMPRO", NO_INTERESA:"NO_INTERESA", EQUIVOCADO:"EQUIVOCADO"}[k];
+    return api("llamada", {fila:c.fila, folio:c.folio, resultado:m, fecha, nota});
+  }
+  const M = {SIN_RESPUESTA:["ENVIADO",""], INTERESADO:["INTERESADO",""], VISITA:["INTERESADO",""], COMPRO:["COMPRO",""],
+    NO_INTERESA:["PERDIDO","Ya no le interesa"], EQUIVOCADO:["PERDIDO","Número equivocado / no existe"], NO_DESEA:["PERDIDO","No desea mensajes"]}[k];
+  let j = await api("registrar", {fila:c.fila, folio:c.folio, resultado:M[0], motivo:M[1], nota, clave});
+  if((k==="INTERESADO" || k==="VISITA") && fecha){
+    try{ j = await api("reagendar", {fila:c.fila, folio:c.folio, fecha, nota:k==="VISITA"?"Visita agendada":""}); }
+    catch(e){ toast("Se guardó el resultado, pero no la fecha: "+e.message, true); }
+  }
+  return j;
+}
 function abrirRegistroRuta(c, pre){
-  const sig = c.ruta_paso==="WA1" ? "pasa a WhatsApp 2 en 3 días" : c.ruta_paso==="WA2" ? "pasa a Por llamar en 3 días" : c.ruta_paso==="LLAMADA" ? "pasa al congelador" : "vuelve a salir en 3 días";
+  const sig = !RUTA_MIG ? (rEst(c)==="POR LLAMAR" ? "pasa al congelador" : "vuelve en su siguiente fecha") : rPaso(c)==="WA1" ? "pasa a WhatsApp 2 en 3 días" : rPaso(c)==="WA2" ? "pasa a Por llamar en 3 días" : rPaso(c)==="LLAMADA" ? "pasa al congelador" : "vuelve a salir en 3 días";
   const clave = MSG && MSG.clave || "";
   abrirSheet(`<div class="cab-s"><div><h3>¿Qué pasó con ${esc(pila(c.nombre))}?</h3>
       <div class="muted" style="font-size:13px">Si no contestó toca «Sin respuesta»: ${sig}.</div></div>
       <button class="cerrar" data-cerrar>${SVG.x}</button></div>
-    <div class="r-res">${R_RES.map(([k,t,cl])=>`<button type="button" class="${cl}${pre===k?" on":""}" data-rr="${k}">${t}</button>`).join("")}</div>
+    <div class="r-res">${resRuta(c).map(([k,t,cl])=>`<button type="button" class="${cl}${pre===k?" on":""}" data-rr="${k}">${t}</button>`).join("")}</div>
     <div id="rrFecha" class="oculto"><label for="rrF" id="rrFL">Próximo seguimiento</label><input type="date" id="rrF"></div>
     <label for="rrNota">Nota (opcional)</label><input id="rrNota" placeholder="Ej. viene el sábado con su esposa">
     <div class="pila"><button class="btn btn-wa oculto" id="rrGuardar">Guardar</button></div>`);
@@ -2670,9 +2712,10 @@ function abrirRegistroRuta(c, pre){
     const k = elegido, b = $("rrGuardar"); if(!k) return;
     document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=true); b.textContent="Guardando…";
     try{
-      const j = await api("ruta", {fila:c.fila, folio:c.folio, resultado:k, fecha:$("rrF").value||"", nota:$("rrNota").value.trim(), clave});
+      const j = RUTA_MIG ? await api("ruta", {fila:c.fila, folio:c.folio, resultado:k, fecha:$("rrF").value||"", nota:$("rrNota").value.trim(), clave})
+        : await guardarVisual(c, k, $("rrF").value||"", $("rrNota").value.trim(), clave);
       ponerClienteLocal(j.cliente); cerrarSheet();
-      const n = j.cliente; toast("Guardado · "+((R_EST[n.ruta_estado]||{}).t||"")+(n.prox?" · siguiente: "+fechaCorta(n.prox):""));
+      const n = j.cliente; toast("Guardado · "+((R_EST[rEst(n)]||{}).t||"")+(n.prox && rutaDue(n)===false && !["CERRADO","CONGELADOR"].includes(rEst(n))?" · siguiente: "+fechaCorta(n.prox):""));
       pintarSeg();
     }catch(e){ toast(/desconocida/i.test(e.message)?"Falta pegar el Apps Script v12.":e.message, true); document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=false); b.textContent="Guardar"; }
   };
@@ -2828,7 +2871,8 @@ function pintarSeg(){
     s.innerHTML='<option value="">Todo el equipo</option>'+vs.map(v=>`<option value="${esc(v)}">${esc(tc(v))}</option>`).join("");
     s.value=vs.includes(antes)?antes:"";
   }
-  if(RUTA_ON()){ pintarRuta(A); return; }
+  RUTA_MIG = RUTA_ON();
+  if(SEG_TAB!=="llam" || RUTA_MIG){ if(SEG_TAB==="llam") SEG_TAB="hoy"; pintarRuta(A); return; }
   const ola1 = c => campSinCot(c) && esBF(c) && olaN(c)===1 ? 0 : 1;
   const hoy = A.lista.filter(pendienteDelMes).sort((a,b)=>ola1(a)-ola1(b)
     || (ola1(a)===0 ? segN(b)-segN(a) || String(a.folio).localeCompare(String(b.folio)) : 0)
@@ -2854,6 +2898,7 @@ function pintarSeg(){
   }else if(SEG_TAB==="react"){
     $("segPanel").innerHTML = pintarSegReact(A); $("segLista").innerHTML="";
   }else if(SEG_TAB==="llam"){
+    ver($("segTabs"), false);
     $("segPanel").innerHTML = pintarSegLlam(A); $("segLista").innerHTML="";
   }else if(SEG_TAB==="camp"){
     $("segPanel").innerHTML = pintarSegCamp(A); $("segLista").innerHTML="";
@@ -2873,7 +2918,8 @@ function instalarEventosSeg(){
     const ra = t.closest("[data-r-acc]"); if(ra){ const c=CLIENTES.find(x=>String(x.fila)===ra.dataset.rAcc); if(c) accionPrincipalRuta(c); return; }
     const rg = t.closest("[data-r-reg]"); if(rg){ const c=CLIENTES.find(x=>String(x.fila)===rg.dataset.rReg); if(c){ MSG=null; abrirRegistroRuta(c); } return; }
     const rs = t.closest("[data-r-res]"); if(rs){ const c=CLIENTES.find(x=>String(x.fila)===rs.dataset.fila); if(c){ MSG=null; abrirRegistroRuta(c, rs.dataset.rRes); } return; }
-    const rt = t.closest("[data-r-tile]"); if(rt){ RUTA_F.tipo = RUTA_F.tipo===rt.dataset.rTile ? "" : rt.dataset.rTile; pintarSeg(); return; }
+    const rt = t.closest("[data-r-tile]"); if(rt && !RUTA_MIG && rt.dataset.rTile==="LLAM"){ SEG_TAB="llam"; SEG_FICHA=null; pintarSeg(); window.scrollTo(0,0); return; }
+    if(rt){ RUTA_F.tipo = RUTA_F.tipo===rt.dataset.rTile ? "" : rt.dataset.rTile; pintarSeg(); return; }
     const rc = t.closest("[data-r-chip]"); if(rc){ RUTA_F.camp = rc.dataset.rChip; pintarSeg(); return; }
     const re = t.closest("[data-r-est]"); if(re){ PORT_F.estado = PORT_F.estado===re.dataset.rEst ? "" : re.dataset.rEst; pintarSeg(); return; }
     if(t.closest("#rPortafolio")){ RUTA_VISTA="port"; pintarSeg(); window.scrollTo(0,0); return; }
