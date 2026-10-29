@@ -284,8 +284,17 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .vm .sv-cl .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .vm .sv-cl .nm{font-weight:700;font-size:14px}
 .vm .sv-cl .sub{font-size:12px;color:var(--ink-2);font-weight:500}
+.vm .sv-llam-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-bottom:10px;border:0;border-radius:14px;background:var(--sv-verde);color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit}
+.vm .sv-llam-btn.on{outline:3px solid var(--line)}
+.vm .sv-llam-c .tel{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:12px;background:var(--sv-verde);color:#fff;font-weight:800;text-decoration:none;font-size:15px}
+.vm .sv-llam-res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.vm .sv-llam-res button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;padding:6px}
+.vm .sv-llam-res button.bien{background:var(--sv-verde);color:#fff;border-color:transparent}
+.vm .sv-llam-res button.mal{color:var(--sv-rojo)}
 .vm .sv-camp-g{display:block;width:100%;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
-.vm .sv-tabs button{font-size:12.5px}
+.vm .sv-tabs{gap:3px}
+.vm .sv-tabs button{font-size:12.5px;padding:6px 2px;min-width:0;line-height:1.15;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.vm .sv-tabs button .mono{display:block;font-size:11px;min-height:12px}
 .vm .sv-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.02em;vertical-align:1px;background:var(--chip);color:var(--sv-morado);border:1px solid var(--line);white-space:nowrap}
 .vm .sv-cl .st{margin-left:auto;font-size:11px;font-weight:800;border-radius:999px;padding:3px 8px;color:#fff;white-space:nowrap;flex:none}
 /* Renglón con botón de WhatsApp: el área grande abre la ficha */
@@ -541,6 +550,7 @@ body{background:var(--bg);color:var(--text)}
     <div class="vh-acc"><a class="vh-portal" href="#inicio">← Inicio</a><button type="button" class="vh-tema btn-tema" title="Cambiar modo claro / oscuro" aria-label="Cambiar modo claro / oscuro"></button></div>
   </div></div>
   <div class="app-main vm">
+    <button type="button" class="sv-llam-btn oculto" id="btnLlamadas">📞 Llamadas <span class="mono" id="cLlam"></span></button>
     <div class="sv-tabs" id="segTabs">
       <button data-t="hoy" class="on">Hoy <span class="mono" id="cHoy"></span></button>
       <button data-t="todos">Mis clientes</button>
@@ -731,7 +741,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "4.9", VERSION_FECHA = "27 oct 2026";
+const VERSION = "5.0", VERSION_FECHA = "29 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1874,7 +1884,7 @@ const EST_TXT = {"EN SEGUIMIENTO":"En seguimiento","INTERESADO":"Interesado","TR
 const EST_COLOR = {"EN SEGUIMIENTO":"var(--accent)","INTERESADO":"var(--m-asesores)","TRAMITE CREDITO":"var(--m-vc)",
   "APARTADO":"var(--warn)","VENDIDO":"var(--ok)","PERDIDO":"var(--bad)","SIN RESPUESTA":"var(--muted)"};
 const pillEst = e => `<span class="pill" style="--c:${EST_COLOR[e]||"var(--muted)"}"><i></i>${esc(EST_TXT[e]||e)}</span>`;
-const esPendiente = c => EN_CADENCIA.includes(c.estatus) && !!c.prox && diaN(c.prox)<=hoyN();
+const esPendiente = c => EN_CADENCIA.includes(c.estatus) && !!c.prox && diaN(c.prox)<=hoyN() && c.campana_estado!=="CONGELADOR";   // congelador: no sale pendiente
 const esReact = c => c.estatus==="SIN RESPUESTA" && (!c.ultimo || mesN(c.ultimo)<mesN(new Date()));
 const tipoPago = forma => (PAGOS.find(p=>p.n===forma)||{}).tipo || "contado";
 
@@ -2198,10 +2208,11 @@ function segAlcance(){
   let lista = misClientes();
   if(g) lista = fv ? lista.filter(c=>c.vendedor===fv) : lista;
   else lista = lista.filter(c=>nom(c.vendedor)===nom(u.nombre));   // el servidor ya filtra; esto es por si acaso
+  const base = lista;                                     // todo lo del asesor (para «Llamadas»)
   const camp = lista.filter(campVisible);                 // «Campañas»
   lista = lista.filter(c=>!enCampana(c));                 // cartera normal + graduados
   const metr = g && !fv ? lista.filter(c=>!ger.has(nom(c.vendedor))) : lista;   // métricas sin cotizaciones de gerentes
-  return {u, g, vend, lista, metr, camp};
+  return {u, g, vend, lista, metr, camp, base};
 }
 function filaCli(c, conWa){
   const pend = esPendiente(c), e = estadoCli(c);
@@ -2330,6 +2341,84 @@ function pintarSegCamp(A){
     ${lista.length ? lista.map(c=>filaCli(c,true)).join("") : `<div class="vacio">No hay clientes con ese filtro.</div>`}`;
 }
 
+/* ── Llamadas: una llamada a cada cliente "quemado" (2+ WhatsApp sin respuesta) · Apps Script v11 ── */
+const enLlamadas = c => !["VENDIDO","PERDIDO"].includes(c.estatus) && (c.intentos||0)>=2 && !c.prueba
+  && !/^Contestó/i.test(c.resultado||"") && !["CONGELADOR","CERRADA"].includes(c.campana_estado||"") && !c.fecha_llamada;
+const LLAM_RES = [
+  ["INTERESADO","Contestó · interesado","bien",2],
+  ["VISITA","Agendó visita","bien",1],
+  ["NO_CONTESTO","No contestó","",0],
+  ["COMPRO","Ya compró","bien",0],
+  ["NO_INTERESA","No le interesa","mal",0],
+  ["EQUIVOCADO","Número equivocado","mal",0]
+];
+let LLAM_PREP = null;
+function llamadasDe(A){
+  const pend = A.base.filter(enLlamadas), hechas = A.base.filter(c=>c.fecha_llamada);
+  const credito = c => c.campana && segN(c)===4 ? 1 : 0;
+  pend.sort((a,b)=>credito(b)-credito(a) || new Date(b.base||b.fecha)-new Date(a.base||a.fecha));
+  return {pend, hechas};
+}
+function pintarSegLlam(A){
+  const {pend, hechas} = llamadasDe(A), N = pend.length+hechas.length, X = hechas.length;
+  const ger = !!(SES && SES.rol==="GERENTE" && !esVista()), gerentes = gerentesSet();
+  const deGer = pend.filter(c=>gerentes.has(nom(c.vendedor))).length;
+  let prep = "";
+  if(ger && (deGer || LLAM_PREP)){
+    const P = LLAM_PREP;
+    prep = `<div class="sv-card"><div class="sv-sec">Preparar la lista (solo gerente)</div>
+      ${P && P.res && P.res.movidos!=null ? `<div class="sv-muted">Listo: respaldo «${esc(P.res.respaldo)}» y ${P.res.movidos} clientes pasaron a Osvaldo.</div>`
+      : P && P.res ? `<div class="sv-muted">Entran <b>${P.res.total}</b>: ${Object.entries(P.res.porAsesor).map(([n,k])=>esc(pila(n))+" "+k).join(" · ")}. Se hará un respaldo de SEGUIMIENTO y <b>${P.res.mover}</b> clientes a tu nombre pasan a Osvaldo.</div>
+          <button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:10px" id="llamPrepOk"${P.cargando?" disabled":""}>${P.cargando?"Aplicando…":"Confirmar"}</button>`
+      : `<div class="sv-muted">${deGer} cliente${deGer===1?"":"s"} de la lista está${deGer===1?"":"n"} a tu nombre: pasan a Osvaldo (con respaldo antes).</div>
+          <button type="button" class="sv-act ghost" style="width:100%;margin-top:10px" id="llamPrep"${P&&P.cargando?" disabled":""}>${P&&P.cargando?"Revisando…":"Ver conteo y preparar"}</button>`}
+      ${P && P.error ? `<div class="sv-aviso">${esc(P.error)}</div>` : ""}</div>`;
+  }
+  const tarjeta = c => `<div class="sv-card sv-llam-c">
+      <button type="button" class="sv-volver" data-ficha="${c.fila}" style="padding:0;text-align:left"><b style="font-size:16px;color:var(--ink)">${esc(tc(c.nombre+" "+c.apellidos))}</b>${tagCamp(c)}</button>
+      <div class="sv-muted" style="margin:4px 0 10px">${esc(modeloCorto(c) || c.modelo_interes || "Sin modelo")} · ${campSinCot(c) ? "sin cotización" : "cotizado "+fechaCorta(c.base||c.fecha)}<br>
+        ${esc(c.campana ? etiquetaCamp(c) : tc(c.origen||"—"))} · <b style="color:var(--ink)">${c.intentos||0} WhatsApp sin respuesta</b>${segAlcance().g&&!esVista()?" · "+esc(pila(c.vendedor)):""}</div>
+      <a class="tel" href="tel:+52${esc(c.tel)}">📞 ${esc(telFmt(c.tel))}</a>
+      <div class="sv-llam-res">${LLAM_RES.map(([k,t,cl])=>`<button type="button" class="${cl}" data-llam="${k}" data-fila="${c.fila}">${t}</button>`).join("")}</div>
+    </div>`;
+  return `<div class="sv-hdr"><div><button type="button" class="sv-volver" id="svLlamVolver">← Seguimiento</button><b style="display:block">Llamadas</b></div></div>
+    <div class="sv-card"><div class="sv-big">${X} <small>de ${N} llamadas hechas</small></div>
+      <div class="sv-prog"><span style="width:${N?Math.round(X/N*100):0}%;background:var(--sv-verde)"></span></div>
+      <div class="sv-muted">Una sola llamada por cliente: al registrar el resultado sale de la lista.</div></div>
+    ${prep}
+    ${pend.length ? pend.map(tarjeta).join("") : `<div class="vacio">No quedan llamadas pendientes. ¡Buen trabajo!</div>`}`;
+}
+function abrirLlamada(c, k){
+  const [, txt, , dias] = LLAM_RES.find(x=>x[0]===k);
+  const pideFecha = k==="INTERESADO" || k==="VISITA";
+  const d = new Date(); d.setDate(d.getDate()+(dias||1));
+  const iso = x => x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  abrirSheet(`<div class="cab-s"><div><h3>${esc(pila(c.nombre))} · ${txt}</h3>
+      <div class="muted" style="font-size:13px">${esc(telFmt(c.tel))}${k==="NO_CONTESTO"?" · pasa al congelador":k==="COMPRO"?" · se marca vendido":k==="NO_INTERESA"||k==="EQUIVOCADO"?" · se marca perdido":""}</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+    ${pideFecha?`<label for="llFecha">${k==="VISITA"?"Fecha de la visita":"Próximo seguimiento"}</label><input type="date" id="llFecha" value="${iso(d)}" min="${iso(new Date())}">`:""}
+    <label for="llNota">Nota (opcional)</label><input id="llNota" placeholder="Ej. viene el sábado con su esposa">
+    <div class="pila"><button class="btn btn-wa" id="llGuardar">Guardar resultado</button></div>`);
+  $("llGuardar").onclick = async ()=>{
+    const b = $("llGuardar"); b.disabled = true; b.textContent = "Guardando…";
+    try{
+      const j = await api("llamada", {fila:c.fila, folio:c.folio, resultado:k, fecha:pideFecha?$("llFecha").value:"", nota:$("llNota").value.trim()});
+      ponerClienteLocal(j.cliente); cerrarSheet();
+      toast("Llamada registrada · "+txt);
+      pintarSeg();
+    }catch(e){ toast(/desconocida/i.test(e.message)?"Falta pegar el Apps Script v11.":e.message, true); b.disabled=false; b.textContent="Guardar resultado"; }
+  };
+}
+async function prepararLlamadas(conf){
+  LLAM_PREP = Object.assign(LLAM_PREP||{}, {cargando:true, error:""}); pintarSeg();
+  try{
+    const j = await api("prepararLlamadas", {confirmar:!!conf});
+    LLAM_PREP.res = j;
+    if(conf){ toast("Respaldo hecho y "+j.movidos+" clientes pasaron a Osvaldo."); CLI_LEIDOS=0; await cargarClientes(true); }
+  }catch(e){ LLAM_PREP.error = /desconocida/i.test(e.message)?"Falta pegar el Apps Script v11.":e.message; }
+  LLAM_PREP.cargando = false; pintarSeg();
+}
+
 /* ── Ficha del cliente ── */
 function pintarFicha(c){
   const h = HIST[c.fila];
@@ -2348,7 +2437,7 @@ function pintarFicha(c){
     : h.error ? `<div class="sv-muted">${esc(h.error)}</div>${c.historial?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.historial)}</div>`:""}${c.notas?`<div class="sv-muted" style="white-space:pre-line;margin-top:8px">${esc(c.notas)}</div>`:""}<div class="sv-tl" style="margin-top:8px">${prox}</div>`
     : `<div class="sv-tl">${evs.map(x=>`<div style="--c:${x.c}"><b>${x.t}</b><br><small>${x.s}</small></div>`).join("")||`<div><small>Sin movimientos registrados.</small></div>`}${prox}</div>`;
   return `
-    <div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">← ${SEG_FICHA_DE==="react"?"Reactivación":SEG_FICHA_DE==="hoy"?"Hoy":SEG_FICHA_DE==="camp"?"Campañas":"Mis clientes"}</button><b style="display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b></div>
+    <div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">← ${SEG_FICHA_DE==="react"?"Reactivación":SEG_FICHA_DE==="hoy"?"Hoy":SEG_FICHA_DE==="camp"?"Campañas":SEG_FICHA_DE==="llam"?"Llamadas":"Mis clientes"}</button><b style="display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b></div>
       <span class="who" style="background:${est.c};color:#fff">${esc(etiqueta)}</span></div>
     <div class="sv-card">
       <div class="sv-sec">Datos</div>
@@ -2476,6 +2565,9 @@ function pintarSeg(){
   $("cReact").textContent = CLI_LEIDOS ? universoReact(A.lista).length : "";
   $("cCamp").textContent = CLI_LEIDOS ? A.camp.filter(esPendiente).length : "";
   ver($("tabCamp"), A.camp.length>0 || SEG_TAB==="camp");
+  const LL = llamadasDe(A);
+  $("cLlam").textContent = CLI_LEIDOS ? "("+LL.pend.length+")" : "";
+  ver($("btnLlamadas"), LL.pend.length+LL.hechas.length>0 && !(SEG_FICHA!=null)); $("btnLlamadas").classList.toggle("on", SEG_TAB==="llam");
   document.querySelectorAll("#segTabs button").forEach(b=>b.classList.toggle("on", b.dataset.t===SEG_TAB));
   const ficha = SEG_FICHA!=null ? CLIENTES.find(x=>x.fila===SEG_FICHA) : null;
   ver($("segTabs"), !ficha); ver($("segFiltros"), !ficha);
@@ -2489,6 +2581,8 @@ function pintarSeg(){
       + (otros ? `<button type="button" class="sv-volver" id="svOtrosPend" style="display:block;margin:10px auto 0">${otros} pendiente${otros===1?"":"s"} de meses anteriores → Mis clientes</button>` : "");
   }else if(SEG_TAB==="react"){
     $("segPanel").innerHTML = pintarSegReact(A); $("segLista").innerHTML="";
+  }else if(SEG_TAB==="llam"){
+    $("segPanel").innerHTML = pintarSegLlam(A); $("segLista").innerHTML="";
   }else if(SEG_TAB==="camp"){
     $("segPanel").innerHTML = pintarSegCamp(A); $("segLista").innerHTML="";
   }else{
@@ -2504,6 +2598,10 @@ function instalarEventosSeg(){
     const t = e.target;
     const w = t.closest("[data-wa-fila]"); if(w){ const c=CLIENTES.find(x=>String(x.fila)===w.dataset.waFila); if(c) abrirMensaje(c); return; }
     if(t.closest("#svOtrosPend")){ SEG_FILTRO={estado:"hoy", periodo:"todo"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
+    const ll = t.closest("[data-llam]"); if(ll){ const c=CLIENTES.find(x=>String(x.fila)===ll.dataset.fila); if(c) abrirLlamada(c, ll.dataset.llam); return; }
+    if(t.closest("#svLlamVolver")){ SEG_TAB="hoy"; pintarSeg(); window.scrollTo(0,0); return; }
+    if(t.closest("#llamPrep")){ prepararLlamadas(false); return; }
+    if(t.closest("#llamPrepOk")){ if(confirm("¿Hacer el respaldo y pasar a Osvaldo los clientes a tu nombre?")) prepararLlamadas(true); return; }
     const cg = t.closest("[data-camp-g]"); if(cg){ SEG_CAMP=cg.dataset.campG; SEG_CFILTRO="hoy"; pintarSeg(); window.scrollTo(0,0); return; }
     if(t.closest("#svCampVolver")){ SEG_CAMP=null; pintarSeg(); window.scrollTo(0,0); return; }
     const cch = t.closest("[data-cchip]"); if(cch){ SEG_CFILTRO=cch.dataset.cchip; pintarSeg(); return; }
@@ -3193,6 +3291,7 @@ async function arrancar(){
   $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; SEG_FICHA=null; SEG_CAMP=null;
     if(SEG_TAB==="todos") SEG_FILTRO={estado:"todos", periodo:SEG_FILTRO.periodo||"todo"}; pintarSeg(); });
   $("segVendedor").addEventListener("change",pintarSeg);
+  $("btnLlamadas").onclick=()=>{ SEG_TAB="llam"; SEG_FICHA=null; pintarSeg(); window.scrollTo(0,0); };
   $("segRecargar").onclick=()=>{ cargarClientes(true); cargarDatosSeg(true); };
   instalarEventosSeg(); instalarEventosGer();
   $("segLista").addEventListener("click",e=>{
