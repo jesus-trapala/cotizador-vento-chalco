@@ -291,6 +291,50 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .vm .sv-llam-res button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;padding:6px}
 .vm .sv-llam-res button.bien{background:var(--sv-verde);color:#fff;border-color:transparent}
 .vm .sv-llam-res button.mal{color:var(--sv-rojo)}
+/* ── Seguimiento nuevo (ruta) ── */
+.vm .r-hola{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:12px}
+.vm .r-hola h2{margin:0;font-size:26px;line-height:1.05}
+.vm .r-hola .btn{min-height:44px}
+.vm .r-sem{background:var(--ink);color:var(--card);border-radius:20px;padding:16px;margin-bottom:12px}
+.vm .r-sem .t{display:flex;justify-content:space-between;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.vm .r-sem .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:40px;font-weight:600;line-height:1.1;margin-top:6px}
+.vm .r-sem .n small{font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:600;opacity:.8}
+.vm .r-sem .bar{height:10px;border-radius:5px;background:rgba(127,127,127,.35);overflow:hidden;margin:10px 0 8px}
+.vm .r-sem .bar i{display:block;height:100%;background:var(--sv-ambar)}
+.vm .r-sem .s{font-size:13px;opacity:.85}
+.vm .r-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.vm .r-tile{border:0;border-radius:18px;padding:14px;min-height:92px;color:#fff;text-align:left;display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.vm .r-tile b{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:32px;line-height:1}
+.vm .r-tile.on{outline:3px solid var(--ink);outline-offset:2px}
+.vm .r-sel{width:100%;min-height:44px;border-radius:12px;margin-bottom:12px}
+.vm .r-lh{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 10px}
+.vm .r-lh b{font-size:19px}
+.vm .r-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px}
+.vm .r-card .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.vm .r-card .nm{font-size:16.5px;font-weight:800;color:var(--ink);background:none;border:0;padding:0;text-align:left;cursor:pointer;font-family:inherit}
+.vm .r-pill{font-size:11.5px;font-weight:800;padding:5px 9px;border-radius:10px;white-space:nowrap;color:#fff}
+.vm .r-dots{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-2)}
+.vm .r-dots i{width:22px;height:6px;border-radius:3px;background:var(--line);display:inline-block}
+.vm .r-dots i.d{background:var(--ink)}.vm .r-dots i.c{background:var(--sv-ambar)}
+.vm .r-acts{display:flex;gap:8px}
+.vm .r-acts .act{flex:1;min-height:46px;border-radius:12px;border:0;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
+.vm .r-acts .reg{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;padding:0 14px;cursor:pointer;font-family:inherit}
+.vm .r-ruta{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-bottom:12px}
+.vm .r-paso{display:flex;justify-content:space-between;padding:7px 0 7px 12px;margin-left:6px;border-left:3px solid var(--line);font-size:14px;color:var(--ink-2)}
+.vm .r-paso.hecho{color:var(--ink)}.vm .r-paso.now{border-color:var(--sv-azul);color:var(--sv-azul);font-weight:800}
+.vm .r-res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.vm .r-res button{min-height:52px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;padding:6px}
+.vm .r-res button.ok{background:var(--sv-verde);border-color:transparent;color:#fff}
+.vm .r-res button.mal{color:var(--sv-rojo)}
+.vm .r-etapa{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;text-align:left;color:var(--ink);font-family:inherit}
+.vm .r-etapa i{width:12px;height:40px;border-radius:6px;flex:none}.vm .r-etapa div{flex:1}.vm .r-etapa b.n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:22px}
+.vm .r-etapa.on{outline:3px solid var(--ink);outline-offset:1px}
+.vm .r-fila{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px;cursor:pointer;text-align:left;color:var(--ink);font-family:inherit;min-height:56px}
+.vm .r-fila .sub{font-size:12px;color:var(--ink-2)}
+.sheet .r-res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.sheet .r-res button{min-height:52px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;padding:6px}
+.sheet .r-res button.ok{background:var(--ok);border-color:transparent;color:#fff}
+.sheet .r-res button.mal{color:var(--bad)}
 .vm .sv-camp-g{display:block;width:100%;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
 .vm .sv-tabs{gap:3px}
 .vm .sv-tabs button{font-size:12.5px;padding:6px 2px;min-width:0;line-height:1.15;flex-direction:column;align-items:center;justify-content:center;gap:1px}
@@ -741,7 +785,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "5.1", VERSION_FECHA = "29 oct 2026";
+const VERSION = "5.2", VERSION_FECHA = "29 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -2419,6 +2463,233 @@ async function prepararLlamadas(conf){
   LLAM_PREP.cargando = false; pintarSeg();
 }
 
+/* ══════════ Seguimiento nuevo: la ruta (Apps Script v12) ══════════
+   Estados: NUEVO · WHATSAPP · POR LLAMAR · RESPONDIO · CONGELADOR · CERRADO.
+   Ruta: WhatsApp 1 → WhatsApp 2 (+3 días) → llamada única (+3 días) → congelador.
+   «Sin respuesta» avanza al siguiente paso con su fecha: el cliente sale de la lista de hoy. */
+const RUTA_ON = () => CLIENTES.some(c=>c.ruta_estado);
+const R_EST = {
+  NUEVO:{t:"Nuevos", s:"Aún sin primer mensaje", c:"var(--sv-rojo)"},
+  WHATSAPP:{t:"En WhatsApp", s:"Mensaje 1 o 2 en curso", c:"var(--sv-azul)"},
+  "POR LLAMAR":{t:"Por llamar", s:"No respondió por WhatsApp", c:"var(--sv-ambar)"},
+  RESPONDIO:{t:"Respondieron", s:"En seguimiento contigo", c:"var(--sv-verde)"},
+  CONGELADOR:{t:"Congelador", s:"Sin contacto · buscable, fuera de ruta", c:"var(--sv-gris)"},
+  CERRADO:{t:"Cerrados", s:"Compró, no le interesa o número malo", c:"var(--ink)"}
+};
+const R_RES = [
+  ["INTERESADO","Respondió · interesado","ok",2],["VISITA","Agendó visita","ok",1],
+  ["SIN_RESPUESTA","Sin respuesta","",0],["COMPRO","Ya compró","ok",0],
+  ["NO_INTERESA","No le interesa","mal",0],["EQUIVOCADO","Número equivocado","mal",0],
+  ["NO_DESEA","No desea mensajes","mal",0]
+];
+let RUTA_VISTA = "hoy", RUTA_F = {camp:"", modelo:"", tipo:""}, PORT_F = {estado:"", camp:"", modelo:"", q:""};
+const rEst = c => c.ruta_estado || "";
+const rutaDue = c => ["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO"].includes(rEst(c)) && !!c.prox && diaN(c.prox)<=hoyN() && !c.prueba;
+const rutaAtrasado = c => rutaDue(c) && diaN(c.prox)<hoyN() && (c.ruta_paso!=="WA1" || c.ruta_carril==="SHOWROOM");
+function grupoRuta(c){
+  if(c.ruta_carril==="SHOWROOM") return {p:2, k:"SHOWROOM", t:"Showroom"};
+  if(c.campana==="APROBADOS SIN ENGANCHE" || (esBF(c) && segN(c)===4)) return {p:4, k:"APROBADOS", t:"Aprobados sin enganche"};
+  if(!c.campana) return {p:5, k:"PASADAS", t:"Cotizaciones pasadas"};
+  if(esRVC(c)) return {p:6, k:"RVC", t:"Rechazados VC"};
+  if(esBF(c)) return {p:7, k:"BF", t:"Buen Fin"};
+  return {p:8, k:"OTRA", t:tc(c.campana)};
+}
+const prioridadRuta = c => rEst(c)==="RESPONDIO" ? 1 : c.ruta_carril==="SHOWROOM" ? 2 : rutaAtrasado(c) ? 3 : grupoRuta(c).p;
+const costoRuta = c => c.ruta_paso==="LLAMADA" ? 3 : 1;
+const modeloRuta = c => modeloCorto(c) || (c.modelo_interes ? tc(c.modelo_interes) : "");
+function accionRuta(c){
+  if(rEst(c)==="RESPONDIO") return {t:"Dar seguimiento", tipo:"wa", c:"var(--sv-verde)"};
+  if(c.ruta_paso==="LLAMADA") return {t:"Llamar", tipo:"tel", c:"var(--sv-ambar)"};
+  return {t:"Enviar WhatsApp "+(c.ruta_paso==="WA2"?"2":"1"), tipo:"wa", c:"var(--sv-azul)"};
+}
+const claveRuta = c => {
+  if(rEst(c)==="RESPONDIO") return "RUTA_RESPONDIO";
+  const n = c.ruta_paso==="WA2" ? 2 : 1, g = grupoRuta(c).k;
+  if(g==="SHOWROOM") return "RUTA_SHOWROOM_"+n;
+  if(g==="APROBADOS") return "RUTA_APROBADOS_"+n;
+  if(g==="PASADAS") return "RUTA_PASADAS_"+n;
+  if(g==="RVC") return "RVC_"+n;
+  if(g==="BF") return (segN(c)===3 ? "RUTA_BF_NOPASO_" : "RUTA_BF_INTERESADO_")+n;
+  return "LIBRE";
+};
+/** Semana operativa: lunes a domingo; la primera es del domingo 1 al domingo 8 de noviembre. */
+function semanaRuta(){
+  const h = new Date(); h.setHours(0,0,0,0);
+  const i1 = new Date(2026,10,1), f1 = new Date(2026,10,8);
+  if(h>=i1 && h<=f1) return {ini:i1, fin:f1, n:1};
+  const ini = new Date(h); ini.setDate(h.getDate()-((h.getDay()+6)%7));
+  const fin = new Date(ini); fin.setDate(ini.getDate()+6);
+  return {ini, fin, n:h>f1 ? Math.floor((ini-new Date(2026,10,9))/6048e5)+2 : 0};
+}
+const minutosBloque = () => Number(((CFG&&CFG.campanas)||{}).bloque) || 60;
+/** La lista de hoy: lo que vence, por prioridad, sin pasar de los minutos del bloque. */
+function bloqueHoy(lista){
+  const due = lista.filter(rutaDue).sort((a,b)=>prioridadRuta(a)-prioridadRuta(b) || diaN(a.prox)-diaN(b.prox) || new Date(b.base||b.fecha)-new Date(a.base||a.fecha));
+  const tope = minutosBloque(); let min = 0; const hoy = [], resto = [];
+  due.forEach(c=>{ const k=costoRuta(c); if(min+k<=tope){ hoy.push(c); min+=k; } else resto.push(c); });
+  return {due, hoy, resto, min};
+}
+function pillRuta(c){
+  if(rEst(c)==="RESPONDIO") return {t:"Respondió", c:"var(--sv-verde)"};
+  if(rutaAtrasado(c)) return {t:"Atrasado · "+(c.ruta_paso==="LLAMADA"?"llamada":c.ruta_paso==="WA2"?"WhatsApp 2":"WhatsApp 1"), c:"var(--sv-ambar)"};
+  if(c.ruta_carril==="SHOWROOM" && c.ruta_paso==="WA1") return {t:"Vino "+fechaCorta(c.base||c.fecha), c:"var(--sv-rojo)"};
+  if(c.ruta_paso==="LLAMADA") return {t:"Por llamar", c:"var(--sv-ambar)"};
+  if(c.ruta_paso==="WA2") return {t:"WhatsApp 2", c:"var(--sv-azul)"};
+  return {t:"Barrido", c:"var(--sv-azul)"};
+}
+function dotsRuta(c){
+  const i = c.ruta_paso==="WA2" ? 1 : c.ruta_paso==="LLAMADA" ? 2 : 0;
+  const txt = rEst(c)==="RESPONDIO" ? (ultimaNota(c.notas) || "Seguimiento "+fechaCorta(c.prox))
+    : rutaAtrasado(c) ? "Tocaba "+fechaCorta(c.prox) : c.ruta_carril==="SHOWROOM" ? "Cotizó "+fechaCorta(c.base||c.fecha) : c.intentos ? c.intentos+" WhatsApp sin respuesta" : "Primer mensaje";
+  if(rEst(c)==="RESPONDIO") return `<div class="r-dots">${esc(txt)}</div>`;
+  return `<div class="r-dots">${[0,1,2].map(k=>`<i class="${k<i?"d":k===i?"c":""}"></i>`).join("")}<span style="margin-left:4px">${esc(txt)}</span></div>`;
+}
+function tarjetaRuta(c){
+  const p = pillRuta(c), a = accionRuta(c), g = segAlcance().g && !esVista();
+  return `<div class="r-card"><div class="top"><div><button type="button" class="nm" data-ficha="${c.fila}">${esc(tc(c.nombre+" "+c.apellidos))}</button>
+      <div class="sv-muted" style="font-size:12.5px">${esc([modeloRuta(c), grupoRuta(c).t].filter(Boolean).join(" · "))}${g?" · "+esc(pila(c.vendedor)):""}</div></div>
+      <span class="r-pill" style="background:${p.c}">${esc(p.t)}</span></div>
+    ${dotsRuta(c)}
+    <div class="r-acts"><button type="button" class="act" style="background:${a.c}" data-r-acc="${c.fila}">${a.t}</button><button type="button" class="reg" data-r-reg="${c.fila}">Registrar</button></div></div>`;
+}
+function filtrarRuta(lista, f){
+  return lista.filter(c=>(!f.camp || grupoRuta(c).k===f.camp) && (!f.modelo || modeloRuta(c)===f.modelo));
+}
+const CAMPS_RUTA = [["","Todas"],["SHOWROOM","Showroom"],["APROBADOS","Aprobados sin enganche"],["BF","Buen Fin"],["RVC","Rechazados VC"],["PASADAS","Cotizaciones pasadas"]];
+function pintarRutaHoy(A){
+  const u = yo(), nombre = pila(u.nombre), hoyF = new Date();
+  const L = A.base.filter(c=>!c.prueba);
+  const sem = semanaRuta();
+  const barr = L.filter(c=>c.ruta_carril!=="SHOWROOM" && c.ruta_inicio && new Date(c.ruta_inicio)>=sem.ini && new Date(c.ruta_inicio)<=new Date(sem.fin.getTime()+864e5-1));
+  const yaMsg = barr.filter(c=>c.intentos>0 || !["NUEVO"].includes(rEst(c))).length;
+  const faltan = barr.filter(c=>rEst(c)==="NUEVO").length;
+  const diasRest = Math.max(1, Math.round((sem.fin - new Date(hoyF.getFullYear(),hoyF.getMonth(),hoyF.getDate()))/864e5)+1);
+  const B = bloqueHoy(filtrarRuta(L, RUTA_F));
+  const T = bloqueHoy(L).due;
+  const n = {SHOW:T.filter(c=>c.ruta_carril==="SHOWROOM" && rEst(c)!=="RESPONDIO").length, CAMP:T.filter(c=>c.ruta_carril!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c))).length,
+    LLAM:T.filter(c=>rEst(c)==="POR LLAMAR").length, RESP:T.filter(c=>rEst(c)==="RESPONDIO").length};
+  const tipoF = {SHOW:c=>c.ruta_carril==="SHOWROOM" && rEst(c)!=="RESPONDIO", CAMP:c=>c.ruta_carril!=="SHOWROOM" && ["NUEVO","WHATSAPP"].includes(rEst(c)), LLAM:c=>rEst(c)==="POR LLAMAR", RESP:c=>rEst(c)==="RESPONDIO"}[RUTA_F.tipo];
+  const lista = tipoF ? B.hoy.filter(tipoF) : B.hoy;
+  const modelos = [...new Set(L.filter(c=>!["CERRADO"].includes(rEst(c))).map(modeloRuta).filter(Boolean))].sort();
+  const tile = (k,num,txt,col,ink) => `<button type="button" class="r-tile${RUTA_F.tipo===k?" on":""}" data-r-tile="${k}" style="background:${col}${ink?";color:var(--ink)":""}"><b>${num}</b>${txt}</button>`;
+  const ger = SES && SES.rol==="GERENTE";
+  return `<div class="r-hola"><div><div class="sv-muted">${esc(hoyF.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"short"}))} · Chalco</div><h2>Hola, ${esc(nombre)}</h2></div>
+      <button type="button" class="btn btn-sec btn-chico" id="rNoEres">${esVista()?"Volver a mi vista":"¿No eres tú?"}</button></div>
+    ${ger && !esVista() && !segAlcance().vend ? `<div class="sv-muted" style="margin:-4px 0 10px">Viendo a todo el equipo · elige un asesor arriba o toca «¿No eres tú?»</div>` : ""}
+    <div class="r-sem"><div class="t"><span>Barrido · semana ${sem.n||""}</span><span>termina el ${sem.fin.getDate()}</span></div>
+      <div class="n">${yaMsg} <small>de ${barr.length} ya tienen su primer mensaje</small></div>
+      <div class="bar"><i style="width:${barr.length?Math.round(yaMsg/barr.length*100):0}%"></i></div>
+      <div class="s">Hoy te tocan ${Math.ceil(faltan/diasRest)} · tu bloque de la mañana: ~${B.min} min</div></div>
+    <div class="r-tiles">${tile("SHOW",n.SHOW,"Showroom · vinieron ayer","var(--sv-rojo)")}${tile("CAMP",n.CAMP,"Campaña · WhatsApp de hoy","var(--sv-azul)")}${tile("LLAM",n.LLAM,"Por llamar","var(--sv-ambar)",true)}${tile("RESP",n.RESP,"Respondieron · seguimiento hoy","var(--sv-verde)")}</div>
+    <div class="sv-chips">${CAMPS_RUTA.map(([k,t])=>`<button type="button" data-r-chip="${k}" class="${RUTA_F.camp===k?"on":""}">${t}</button>`).join("")}</div>
+    <select class="r-sel" id="rModelo"><option value="">Modelo: todos</option>${modelos.map(m=>`<option ${RUTA_F.modelo===m?"selected":""}>${esc(m)}</option>`).join("")}</select>
+    <div class="r-lh"><b>Tu lista de hoy</b><span class="sv-muted">${lista.length} · ${B.min<=minutosBloque()?"cabe en "+(minutosBloque()===60?"1 hora":minutosBloque()+" min"):""}</span></div>
+    ${lista.length ? lista.map(tarjetaRuta).join("") : `<div class="vacio">${B.due.length?"Nada con ese filtro.":"No tienes pendientes hoy. ¡Buen trabajo!"}</div>`}
+    ${B.resto.length ? `<div class="sv-muted" style="text-align:center;margin:8px 0">${B.resto.length} más no caben en tu bloque: pasan a mañana en el mismo orden.</div>` : ""}
+    <button type="button" class="btn btn-sec" id="rPortafolio" style="width:100%;min-height:48px;margin-top:6px">Mi portafolio →</button>`;
+}
+function pintarRutaPort(A){
+  const L = A.base.filter(c=>!c.prueba), q = PORT_F.q.trim().toUpperCase(), dig = soloDig(PORT_F.q);
+  const base = filtrarRuta(L, PORT_F);
+  const cnt = {}; Object.keys(R_EST).forEach(k=>cnt[k]=base.filter(c=>rEst(c)===k).length);
+  const lista = base.filter(c=>(!PORT_F.estado || rEst(c)===PORT_F.estado) && (!q || (dig.length>=3 && String(c.tel).includes(dig)) || (c.nombre+" "+c.apellidos).toUpperCase().includes(q)));
+  const modelos = [...new Set(L.map(modeloRuta).filter(Boolean))].sort();
+  const muestra = (PORT_F.estado || q || PORT_F.camp || PORT_F.modelo) ? lista.slice(0,200) : [];
+  return `<div class="sv-hdr"><div><button type="button" class="sv-volver" id="rVolverHoy">‹ Hoy</button><b style="display:block;font-size:24px">Mi portafolio</b></div><span class="sv-muted">${L.length} clientes</span></div>
+    <div class="sv-search">⌕<input id="pBuscar" type="search" placeholder="Buscar por nombre o teléfono" value="${esc(PORT_F.q)}" autocomplete="off"></div>
+    <div class="sv-sec" style="margin-top:12px">Dónde está cada cliente</div>
+    ${Object.entries(R_EST).map(([k,e])=>`<button type="button" class="r-etapa${PORT_F.estado===k?" on":""}" data-r-est="${k}"><i style="background:${e.c}"></i><div><b>${e.t}</b><div class="sv-muted" style="font-size:12px">${e.s}</div></div><b class="n">${cnt[k]}</b></button>`).join("")}
+    <div class="sv-sec" style="margin-top:12px">Filtrar</div>
+    <select class="r-sel" id="pCamp">${CAMPS_RUTA.map(([k,t])=>`<option value="${k}" ${PORT_F.camp===k?"selected":""}>Campaña: ${t.toLowerCase()==="todas"?"todas":t}</option>`).join("")}</select>
+    <select class="r-sel" id="pModelo"><option value="">Modelo: todos</option>${modelos.map(m=>`<option ${PORT_F.modelo===m?"selected":""}>${esc(m)}</option>`).join("")}</select>
+    ${muestra.length ? muestra.map(c=>`<button type="button" class="r-fila" data-ficha="${c.fila}"><i class="dot" style="width:10px;height:10px;border-radius:50%;background:${(R_EST[rEst(c)]||{}).c||"var(--sv-gris)"}"></i>
+        <div style="flex:1;min-width:0"><b>${esc(tc(c.nombre+" "+c.apellidos))}</b><div class="sub">${esc([modeloRuta(c), grupoRuta(c).t, (R_EST[rEst(c)]||{}).t].filter(Boolean).join(" · "))}</div></div>
+        <span class="sv-muted mono" style="font-size:12px">${esc(telFmt(c.tel))}</span></button>`).join("")
+      : (PORT_F.estado||q||PORT_F.camp||PORT_F.modelo) ? `<div class="vacio">Nadie con ese filtro.</div>` : `<div class="sv-muted" style="text-align:center">Toca un estado o busca para ver la lista. Ej.: llegó promoción de un modelo → filtra el modelo y escríbeles.</div>`}`;
+}
+function pintarRutaFicha(c){
+  const h = HIST[c.fila], e = R_EST[rEst(c)] || {t:"—", c:"var(--sv-gris)"}, a = accionRuta(c);
+  const abierto = ["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO"].includes(rEst(c));
+  const pasos = [["WA1","WhatsApp 1"],["WA2","WhatsApp 2"],["LLAMADA","Llamada única"],["CONG","Congelador"]];
+  const idx = {WA1:0, WA2:1, LLAMADA:2}[c.ruta_paso];
+  const fechaPaso = k => { if(idx==null) return ""; const d = new Date(c.prox||Date.now()); d.setDate(d.getDate()+3*(k-idx)); return k===idx ? (diaN(c.prox)<hoyN()?"tocaba "+fechaCorta(c.prox):diaN(c.prox)===hoyN()?"hoy":fechaCorta(c.prox)) : k<idx ? "hecho" : k===3 ? "si no responde" : fechaCorta(d); };
+  const ruta = rEst(c)==="RESPONDIO" ? `<div class="r-ruta"><div class="r-paso now"><span>Seguimiento con su asesor</span><span>${c.prox?fechaCorta(c.prox):""}</span></div></div>`
+    : idx==null ? `<div class="r-ruta"><div class="r-paso"><span>${esc(e.t)}</span><span>${esc(c.resultado||"")}</span></div></div>`
+    : `<div class="r-ruta">${pasos.map(([k,t],i)=>`<div class="r-paso ${i<idx?"hecho":i===idx?"now":""}"><span>${t}</span><span>${fechaPaso(i)}</span></div>`).join("")}</div>`;
+  const evs = [];
+  if(h && !h.error){
+    h.cotizaciones.forEach(x=>evs.push({f:x.fecha, t:`Cotización · ${x.modelo||""}${x.total?" · "+money(x.total):""}`}));
+    h.contactos.forEach(x=>evs.push({f:x.fecha, t:`${x.resultado||x.mensaje||"Contacto"} · ${pilaUsuario(x.usuario)}${x.nota?" · “"+x.nota+"”":""}`}));
+    evs.sort((x,y)=>new Date(y.f)-new Date(x.f));
+  }
+  return `<div class="sv-hdr"><div><button type="button" class="sv-volver" id="svFichaVolver">‹ ${RUTA_VISTA==="port"?"Mi portafolio":"Hoy"}</button></div></div>
+    <div class="sv-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><b style="font-size:23px;line-height:1.1">${esc(tc(c.nombre+" "+c.apellidos))}</b><span class="r-pill" style="background:${e.c}">${esc(e.t)}</span></div>
+      <a class="mono" href="tel:+52${esc(c.tel)}" style="display:inline-block;margin:8px 0;font-size:17px;font-weight:700;color:var(--ink)">📞 ${esc(telFmt(c.tel))}</a>
+      <div class="sv-chips" style="margin:0">${[grupoRuta(c).t, modeloRuta(c), c.campana&&!c.cotizado?"Desde "+fechaCorta(c.ruta_inicio||c.fecha):"Cotizó "+fechaCorta(c.base||c.fecha), segAlcance().g&&!esVista()?pila(c.vendedor):""].filter(Boolean).map(t=>`<span class="sv-tag" style="margin:0">${esc(t)}</span>`).join("")}</div>
+      ${c.observaciones&&c.campana?`<div class="sv-muted" style="margin-top:8px;font-size:12.5px">${esc(tc(c.observaciones))}</div>`:""}</div>
+    <div class="sv-sec">Su ruta</div>${ruta}
+    ${abierto?`<div class="sv-muted" style="margin-bottom:10px">Si marcas «Sin respuesta», el cliente avanza solo al siguiente paso y no te vuelve a salir hasta su fecha.</div>
+      <button type="button" class="sv-act" style="background:${a.c};width:100%;min-height:52px;font-size:16px;margin-bottom:12px" data-r-acc="${c.fila}">${a.t}</button>
+      <div class="sv-sec">¿Qué pasó?</div>
+      <div class="r-res">${R_RES.map(([k,t,cl])=>`<button type="button" class="${cl}" data-r-res="${k}" data-fila="${c.fila}">${t}</button>`).join("")}</div>`:""}
+    <div class="sv-acts"><button type="button" class="sv-act" style="background:var(--sv-cian)" data-fa="recotizar">${campSinCot(c)?"Cotizar":"Recotizar"}</button></div>
+    <details class="sv-card"><summary style="font-weight:800;cursor:pointer">Historial (${h&&!h.error?evs.length:"…"})</summary>
+      ${!h?`<div class="sv-muted">Cargando…</div>`:h.error?`<div class="sv-muted">${esc(h.error)}</div>`:evs.map(x=>`<div class="sv-muted" style="margin-top:6px">${fechaCorta(x.f)} · ${esc(x.t)}</div>`).join("")||`<div class="sv-muted">Sin movimientos.</div>`}</details>`;
+}
+function pintarRuta(A){
+  ver($("segTabs"), false); ver($("btnLlamadas"), false);
+  const ficha = SEG_FICHA!=null ? CLIENTES.find(x=>x.fila===SEG_FICHA) : null;
+  ver($("segFiltros"), !ficha);
+  if(!CLI_LEIDOS){ $("segPanel").innerHTML=""; $("segLista").innerHTML='<div class="vacio">Cargando clientes…</div>'; return; }
+  $("segLista").innerHTML = "";
+  if(ficha){ $("segPanel").innerHTML = pintarRutaFicha(ficha); return; }
+  SEG_FICHA = null;
+  const foco = document.activeElement && document.activeElement.id==="pBuscar", pos = foco ? document.activeElement.selectionStart : 0;
+  $("segPanel").innerHTML = RUTA_VISTA==="port" ? pintarRutaPort(A) : pintarRutaHoy(A);
+  if(foco && $("pBuscar")){ const b=$("pBuscar"); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} }
+}
+/** Acción principal: WhatsApp con el texto del paso, o llamada. Después pregunta «¿Qué pasó?». */
+function accionPrincipalRuta(c){
+  const a = accionRuta(c);
+  if(a.tipo==="tel"){ location.href = "tel:+52"+c.tel; setTimeout(()=>abrirRegistroRuta(c), 800); return; }
+  abrirMensaje(c); if(MSG) MSG.ruta = true;
+}
+function abrirRegistroRuta(c, pre){
+  const sig = c.ruta_paso==="WA1" ? "pasa a WhatsApp 2 en 3 días" : c.ruta_paso==="WA2" ? "pasa a Por llamar en 3 días" : c.ruta_paso==="LLAMADA" ? "pasa al congelador" : "vuelve a salir en 3 días";
+  const clave = MSG && MSG.clave || "";
+  abrirSheet(`<div class="cab-s"><div><h3>¿Qué pasó con ${esc(pila(c.nombre))}?</h3>
+      <div class="muted" style="font-size:13px">Si no contestó toca «Sin respuesta»: ${sig}.</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+    <div class="r-res">${R_RES.map(([k,t,cl])=>`<button type="button" class="${cl}${pre===k?" on":""}" data-rr="${k}">${t}</button>`).join("")}</div>
+    <div id="rrFecha" class="oculto"><label for="rrF" id="rrFL">Próximo seguimiento</label><input type="date" id="rrF"></div>
+    <label for="rrNota">Nota (opcional)</label><input id="rrNota" placeholder="Ej. viene el sábado con su esposa">
+    <div class="pila"><button class="btn btn-wa oculto" id="rrGuardar">Guardar</button></div>`);
+  const iso = x => x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  let elegido = null;
+  const guardar = async () => {
+    const k = elegido, b = $("rrGuardar"); if(!k) return;
+    document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=true); b.textContent="Guardando…";
+    try{
+      const j = await api("ruta", {fila:c.fila, folio:c.folio, resultado:k, fecha:$("rrF").value||"", nota:$("rrNota").value.trim(), clave});
+      ponerClienteLocal(j.cliente); cerrarSheet();
+      const n = j.cliente; toast("Guardado · "+((R_EST[n.ruta_estado]||{}).t||"")+(n.prox?" · siguiente: "+fechaCorta(n.prox):""));
+      pintarSeg();
+    }catch(e){ toast(/desconocida/i.test(e.message)?"Falta pegar el Apps Script v12.":e.message, true); document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=false); b.textContent="Guardar"; }
+  };
+  const elegir = k => {
+    elegido = k; const r = R_RES.find(x=>x[0]===k);
+    document.querySelectorAll("[data-rr]").forEach(x=>x.style.outline = x.dataset.rr===k ? "3px solid var(--text)" : "");
+    const pide = k==="INTERESADO" || k==="VISITA";
+    ver($("rrFecha"), pide); ver($("rrGuardar"), true);
+    if(pide){ const d=new Date(); d.setDate(d.getDate()+(r[3]||2)); $("rrF").value=iso(d); $("rrF").min=iso(new Date()); $("rrFL").textContent = k==="VISITA"?"Fecha de la visita":"Próximo seguimiento"; }
+    else $("rrF").value="";
+    $("rrGuardar").textContent = "Guardar · "+r[1];
+  };
+  document.querySelectorAll("[data-rr]").forEach(b=>b.onclick=()=>elegir(b.dataset.rr));
+  $("rrGuardar").onclick = guardar;
+  if(pre) elegir(pre);
+}
+
 /* ── Ficha del cliente ── */
 function pintarFicha(c){
   const h = HIST[c.fila];
@@ -2557,6 +2828,7 @@ function pintarSeg(){
     s.innerHTML='<option value="">Todo el equipo</option>'+vs.map(v=>`<option value="${esc(v)}">${esc(tc(v))}</option>`).join("");
     s.value=vs.includes(antes)?antes:"";
   }
+  if(RUTA_ON()){ pintarRuta(A); return; }
   const ola1 = c => campSinCot(c) && esBF(c) && olaN(c)===1 ? 0 : 1;
   const hoy = A.lista.filter(pendienteDelMes).sort((a,b)=>ola1(a)-ola1(b)
     || (ola1(a)===0 ? segN(b)-segN(a) || String(a.folio).localeCompare(String(b.folio)) : 0)
@@ -2598,6 +2870,15 @@ function instalarEventosSeg(){
     const t = e.target;
     const w = t.closest("[data-wa-fila]"); if(w){ const c=CLIENTES.find(x=>String(x.fila)===w.dataset.waFila); if(c) abrirMensaje(c); return; }
     if(t.closest("#svOtrosPend")){ SEG_FILTRO={estado:"hoy", periodo:"todo"}; SEG_TAB="todos"; pintarSeg(); window.scrollTo(0,0); return; }
+    const ra = t.closest("[data-r-acc]"); if(ra){ const c=CLIENTES.find(x=>String(x.fila)===ra.dataset.rAcc); if(c) accionPrincipalRuta(c); return; }
+    const rg = t.closest("[data-r-reg]"); if(rg){ const c=CLIENTES.find(x=>String(x.fila)===rg.dataset.rReg); if(c){ MSG=null; abrirRegistroRuta(c); } return; }
+    const rs = t.closest("[data-r-res]"); if(rs){ const c=CLIENTES.find(x=>String(x.fila)===rs.dataset.fila); if(c){ MSG=null; abrirRegistroRuta(c, rs.dataset.rRes); } return; }
+    const rt = t.closest("[data-r-tile]"); if(rt){ RUTA_F.tipo = RUTA_F.tipo===rt.dataset.rTile ? "" : rt.dataset.rTile; pintarSeg(); return; }
+    const rc = t.closest("[data-r-chip]"); if(rc){ RUTA_F.camp = rc.dataset.rChip; pintarSeg(); return; }
+    const re = t.closest("[data-r-est]"); if(re){ PORT_F.estado = PORT_F.estado===re.dataset.rEst ? "" : re.dataset.rEst; pintarSeg(); return; }
+    if(t.closest("#rPortafolio")){ RUTA_VISTA="port"; pintarSeg(); window.scrollTo(0,0); return; }
+    if(t.closest("#rVolverHoy")){ RUTA_VISTA="hoy"; pintarSeg(); window.scrollTo(0,0); return; }
+    if(t.closest("#rNoEres")){ if(esVista()) ponerVista(null); else if(SES && SES.rol==="GERENTE") elegirVista(); else if(confirm("¿Cerrar sesión para entrar con otro usuario?")) cerrarSesion(); return; }
     const ll = t.closest("[data-llam]"); if(ll){ const c=CLIENTES.find(x=>String(x.fila)===ll.dataset.fila); if(c) abrirLlamada(c, ll.dataset.llam); return; }
     if(t.closest("#svLlamVolver")){ SEG_TAB="hoy"; pintarSeg(); window.scrollTo(0,0); return; }
     if(t.closest("#llamPrep")){ prepararLlamadas(false); return; }
@@ -2795,6 +3076,74 @@ function htmlCampanas(){
       <div class="sv-muted" style="margin-top:8px">«Pasaron a Mis clientes»: contestaron con interés, trámite, apartado o compra, vinieron a la agencia o se cotizaron; desde ahí cuentan en la conversión del mes. «Cerrados sin respuesta»: su ola terminó y nunca contestaron; no cuentan como perdidos.</div></div>`;
   }).join("");
 }
+/* ── Gerencia: activar la ruta (migración) e importar VentoCredit ── */
+let MIG = null, IVC = {tipo:"APROBADOS", filas:null, archivo:"", res:null, cargando:false, error:""};
+function htmlMigrarRuta(){
+  if(esVista() || !SES || SES.rol!=="GERENTE") return "";
+  const M = MIG;
+  const tabla = c => { const est = ["NUEVO","WHATSAPP","POR LLAMAR","RESPONDIO","CONGELADOR","CERRADO"];
+    return `<table class="sv-table"><tr><th>Asesor</th>${est.map(e=>`<th>${esc((R_EST[e]||{}).t||e)}</th>`).join("")}</tr>${Object.entries(c).map(([n,v])=>`<tr><td>${esc(pila(n))}</td>${est.map(e=>`<td>${v[e]||0}</td>`).join("")}</tr>`).join("")}</table>`; };
+  let cuerpo;
+  if(RUTA_ON() && !(M && M.res)) cuerpo = `<div class="sv-muted">El seguimiento nuevo ya está activo.</div>`;
+  else if(!M || !M.res) cuerpo = `<div class="sv-muted">Acomoda a todos los clientes en la ruta nueva (WhatsApp 1 → WhatsApp 2 → llamada → congelador) e integra los Rechazados VC. Primero ves el conteo real; se hace un respaldo de SEGUIMIENTO antes de escribir.</div>
+      <button type="button" class="sv-act" style="background:var(--sv-azul);width:100%;margin-top:10px" id="migVer"${M&&M.cargando?" disabled":""}>${M&&M.cargando?"Calculando…":"Ver conteo"}</button>`;
+  else cuerpo = `<div class="sv-muted" style="margin-bottom:8px">Arranca el ${fechaCorta(M.res.arranque)}. Rechazados VC: ${M.res.rechazados.nuevos} a la ruta · ${M.res.rechazados.congelador} al congelador · ${M.res.rechazados.yaEstaban} ya estaban.</div>
+      <div style="overflow-x:auto">${tabla(M.res.conteo)}</div>
+      ${M.res.reasignados.length?`<details class="sv-det"><summary>Clientes a tu nombre que se reparten · ${M.res.reasignados.length}</summary><div class="sv-muted" style="white-space:pre-line">${M.res.reasignados.map(esc).join("\n")}</div></details>`:""}
+      ${M.res.aplicado ? `<div class="sv-aviso" style="margin-top:10px">Listo. Respaldo: ${esc(M.res.respaldo)}.</div>`
+        : `<button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:10px" id="migOk"${M.cargando?" disabled":""}>${M.cargando?"Aplicando…":"Confirmar y activar"}</button>`}`;
+  return `<div class="sv-card"><div class="sv-sec">Seguimiento nuevo · activar</div>${M&&M.error?`<div class="sv-aviso">${esc(M.error)}</div>`:""}${cuerpo}</div>`;
+}
+async function accionMigrar(conf){
+  MIG = Object.assign(MIG||{}, {cargando:true, error:""}); pintarGerencia();
+  try{
+    const j = await api("migrarRuta", {confirmar:!!conf}); MIG.res = j;
+    if(conf){ toast("Seguimiento nuevo activado."); CLI_LEIDOS=0; await cargarClientes(true); cargarConfig(); }
+  }catch(e){ MIG.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v12." : e.message; }
+  MIG.cargando = false; pintarGerencia();
+}
+function htmlImportarVC(){
+  if(esVista() || !SES || SES.rol!=="GERENTE") return "";
+  const I = IVC, R = I.res;
+  const lista = (t, xs) => xs && xs.length ? `<details class="sv-det"><summary>${t} · ${xs.length}</summary><div class="sv-muted" style="white-space:pre-line">${xs.map(esc).join("\n")}</div></details>` : "";
+  return `<div class="sv-card"><div class="sv-sec">Importar VentoCredit (cada lunes)</div>
+    <div class="sv-muted" style="margin-bottom:10px">Agencia 25: entran como «Aprobados sin enganche». Otras agencias: solo si el teléfono ya existe en el cotizador. Mismo teléfono = se actualiza, no se duplica. Mismo nombre con otro teléfono = no se crea y queda para que lo revises.</div>
+    <select id="ivcTipo" class="r-sel"><option value="APROBADOS" ${I.tipo==="APROBADOS"?"selected":""}>Aprobados sin enganche</option><option value="RECHAZADOS" ${I.tipo==="RECHAZADOS"?"selected":""}>Rechazados</option></select>
+    <input type="file" id="ivcArchivo" accept=".xlsx,.xls,.csv" style="width:100%;min-height:44px">
+    ${I.archivo?`<div class="sv-muted" style="margin-top:6px">${esc(I.archivo)} · ${I.filas?I.filas.length:0} renglones</div>`:""}
+    ${I.error?`<div class="sv-aviso" style="margin-top:8px">${esc(I.error)}</div>`:""}
+    ${R ? `<div class="sv-big" style="margin-top:10px">${R.nuevos} <small>nuevos${R.aplicado?" · importados ✓":""}</small></div>
+      <div class="sv-muted">${R.filas} renglones · ${R.actualizados.length} ya existían (se actualizan) · ${R.ignorados} de otras agencias ignorados · ${R.sinTel.length} sin teléfono</div>
+      <table class="sv-table" style="margin-top:6px">${Object.entries(R.porAsesor||{}).map(([n,k])=>`<tr><td>${esc(pila(n))}</td><td>${k}</td></tr>`).join("")}</table>
+      ${lista("Revisar duplicado (no se crean)", (R.revisar||[]).map(x=>x.cliente+" · tel "+telFmt(x.tel)+" · parecido a "+x.folio+" (tel "+telFmt(x.telExistente)+")"))}
+      ${lista("Ya existían", R.actualizados)}${lista("Sin teléfono", R.sinTel)}
+      ${R.aplicado?"":`<button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:10px" id="ivcOk"${I.cargando?" disabled":""}>${I.cargando?"Importando…":"Confirmar importación"}</button>`}`
+    : I.filas ? `<button type="button" class="sv-act" style="background:var(--sv-azul);width:100%;margin-top:10px" id="ivcVer"${I.cargando?" disabled":""}>${I.cargando?"Leyendo…":"Ver resumen"}</button>` : ""}</div>`;
+}
+function cargarXLSX(){
+  if(window.XLSX) return Promise.resolve();
+  return new Promise((ok, mal)=>{ const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; sc.onload=ok; sc.onerror=()=>mal(new Error("No se pudo cargar el lector de Excel. Revisa el internet.")); document.head.appendChild(sc); });
+}
+async function leerArchivoVC(file){
+  IVC = Object.assign(IVC, {filas:null, res:null, error:"", archivo:file.name, cargando:true}); pintarGerencia();
+  try{
+    await cargarXLSX();
+    const wb = XLSX.read(await file.arrayBuffer(), {type:"array", cellDates:true});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const p2 = n => String(n).padStart(2,"0");
+    IVC.filas = XLSX.utils.sheet_to_json(ws, {raw:true, defval:""}).map(o=>{ const x={}; Object.keys(o).forEach(k=>{ const v=o[k]; x[k] = v instanceof Date ? p2(v.getDate())+"/"+p2(v.getMonth()+1)+"/"+v.getFullYear() : String(v); }); return x; });
+    if(!IVC.filas.length) IVC.error = "El archivo no tiene renglones.";
+  }catch(e){ IVC.error = e.message; }
+  IVC.cargando = false; pintarGerencia();
+}
+async function accionImportarVC(conf){
+  IVC.cargando = true; IVC.error = ""; pintarGerencia();
+  try{
+    const j = await api("importarVC", {tipo:IVC.tipo, filas:IVC.filas, confirmar:!!conf}); IVC.res = j;
+    if(conf){ toast(j.nuevos+" clientes importados."); CLI_LEIDOS=0; await cargarClientes(true); }
+  }catch(e){ IVC.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v12." : e.message; }
+  IVC.cargando = false; pintarGerencia();
+}
 let GER_CIERRE = null;   // {k, ola, res, cargando, error}
 /** Estado de la ola elegida, botón «Cerrar ola» y lista de cerrados. */
 function htmlEstadoOla(k, ola, olas, deC){
@@ -2832,7 +3181,7 @@ async function accionCerrarOla(k, ola, conf){
 }
 function htmlGerHerramientas(mesSel){
   const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
-  return `${htmlImportarCampana()}
+  return `${htmlMigrarRuta()}${htmlImportarVC()}${htmlImportarCampana()}
     <div class="sv-card"><div class="sv-sec">Buscar cotización</div>
       <div class="sv-search">⌕<input id="gerBusca" type="search" placeholder="Nombre del cliente o WhatsApp…" autocomplete="off"></div>
       <div id="gerBuscaRes" class="sv-res-busca"><div class="sv-muted">Escribe al menos 3 letras.</div></div></div>
@@ -2856,6 +3205,10 @@ function instalarEventosGer(){
     const h = e.target.closest(".sv-bloque>h2");
     if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
     const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+    if(e.target.closest("#migVer")){ accionMigrar(false); return; }
+    if(e.target.closest("#migOk")){ if(confirm("¿Activar el seguimiento nuevo? Se hace un respaldo de SEGUIMIENTO antes.")) accionMigrar(true); return; }
+    if(e.target.closest("#ivcVer")){ accionImportarVC(false); return; }
+    if(e.target.closest("#ivcOk")){ if(confirm("¿Importar "+IVC.res.nuevos+" clientes nuevos?")) accionImportarVC(true); return; }
     const cv = e.target.closest("#olaCerrarVer"); if(cv){ accionCerrarOla(cv.dataset.k, Number(cv.dataset.ola)||0, false); return; }
     if(e.target.closest("#olaCerrarOk") && GER_CIERRE && GER_CIERRE.res){
       if(confirm("¿Cerrar "+GER_CIERRE.res.cerrar+" clientes sin respuesta? Dejan de verse para los asesores.")) accionCerrarOla(GER_CIERRE.k, GER_CIERRE.ola, true);
@@ -2869,7 +3222,10 @@ function instalarEventosGer(){
       if(R && confirm("¿Importar "+R.nuevos+" clientes de «"+R.hoja+"» a la cartera de los asesores?")) accionCampana(true);
     }
   });
-  v.addEventListener("change", e=>{ if(e.target.id==="campHoja"){ CAMP_IMP.hoja = e.target.value; CAMP_IMP.res = null; pintarGerencia(); } });
+  v.addEventListener("change", e=>{
+    if(e.target.id==="ivcArchivo" && e.target.files[0]){ leerArchivoVC(e.target.files[0]); return; }
+    if(e.target.id==="ivcTipo"){ IVC.tipo = e.target.value; IVC.res = null; pintarGerencia(); return; }
+    if(e.target.id==="campHoja"){ CAMP_IMP.hoja = e.target.value; CAMP_IMP.res = null; pintarGerencia(); } });
   v.addEventListener("input", e=>{ if(e.target.id==="gerBusca") $("gerBuscaRes").innerHTML = buscarCotizacion(e.target.value); });
 }
 
@@ -2916,6 +3272,7 @@ function claveCampana(c){
   return "LIBRE";
 }
 function claveSugerida(c){
+  if(c.ruta_estado && RUTA_ON()){ const kr = claveRuta(c); if(plantillas().some(p=>p.clave===kr)) return kr; }
   const kc = claveCampana(c);
   if(kc) return plantillas().some(p=>p.clave===kc) ? kc : plantillas()[0].clave;
   let k="LIBRE";
@@ -2973,12 +3330,12 @@ function pintarComponer(){
   $("msTexto").addEventListener("input", marcaUbic); marcaUbic();
   $("msAbrir").onclick=()=>{
     window.open(`https://wa.me/52${c.tel}?text=${encodeURIComponent($("msTexto").value)}`,"_blank");
-    if(!conFicha){ pintarResultado(); return; }
+    if(!conFicha){ if(MSG.ruta) abrirRegistroRuta(c); else pintarResultado(); return; }
     /* Con ficha: la ventana se queda abierta para el paso 2 */
     $("msAbrir").textContent="1 · Mensaje enviado ✓ (volver a abrir)";
     $("msGuia").innerHTML="<b>Ahora el paso 2:</b> toca «Compartir ficha», elige WhatsApp y al cliente (ya sale hasta arriba en tus chats).";
   };
-  $("msSolo").onclick=()=>pintarResultado();
+  $("msSolo").onclick=()=>{ if(MSG.ruta) abrirRegistroRuta(c); else pintarResultado(); };
   if(conFicha) $("msFicha").onclick=async()=>{
     /* El mensaje ya se mandó por separado: la ficha va sola */
     const r=await compartirFicha(MSG.ficha, "", c.tel);
@@ -3291,6 +3648,12 @@ async function arrancar(){
   $("segTabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-t]"); if(!b) return; SEG_TAB=b.dataset.t; SEG_FICHA=null; SEG_CAMP=null;
     if(SEG_TAB==="todos") SEG_FILTRO={estado:"todos", periodo:SEG_FILTRO.periodo||"todo"}; pintarSeg(); });
   $("segVendedor").addEventListener("change",pintarSeg);
+  $("vSeg").addEventListener("change", e=>{
+    if(e.target.id==="rModelo"){ RUTA_F.modelo=e.target.value; pintarSeg(); }
+    if(e.target.id==="pCamp"){ PORT_F.camp=e.target.value; pintarSeg(); }
+    if(e.target.id==="pModelo"){ PORT_F.modelo=e.target.value; pintarSeg(); }
+  });
+  $("vSeg").addEventListener("input", e=>{ if(e.target.id==="pBuscar"){ PORT_F.q=e.target.value; pintarSeg(); } });
   $("btnLlamadas").onclick=()=>{ SEG_TAB="llam"; SEG_FICHA=null; pintarSeg(); window.scrollTo(0,0); };
   $("segRecargar").onclick=()=>{ cargarClientes(true); cargarDatosSeg(true); };
   instalarEventosSeg(); instalarEventosGer();
