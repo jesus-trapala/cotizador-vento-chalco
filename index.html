@@ -335,6 +335,52 @@ body.con-vista .vh,body.con-vista .appbar{top:var(--alto-franja,48px)}
 .sheet .r-res button{min-height:52px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;padding:6px}
 .sheet .r-res button.ok{background:var(--ok);border-color:transparent;color:#fff}
 .sheet .r-res button.mal{color:var(--bad)}
+/* ── Seguimiento v3 (cuadros, ruta y Bóveda) ── */
+.vm .s3-top{display:flex;gap:8px;margin-bottom:14px}
+.vm .s3-crumb{flex:1;min-height:44px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;gap:4px;padding:6px 12px;font-size:13px;font-weight:700;flex-wrap:wrap}
+.vm .s3-crumb button{background:none;border:0;padding:4px 2px;color:var(--sv-azul);font:inherit;cursor:pointer}
+.vm .s3-crumb i{color:var(--ink-2);font-style:normal}
+.vm .s3-ib{width:44px;min-height:44px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:18px;font-weight:800;cursor:pointer;font-family:inherit;display:grid;place-items:center}
+.vm .s3-h1{margin:0;font-size:26px;line-height:1.1}
+.vm .s3-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.vm .s3-sec{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}
+.vm .s3-bar{height:10px;border-radius:5px;background:var(--chip);overflow:hidden;margin:8px 0}
+.vm .s3-bar b{display:block;height:100%;background:var(--sv-azul)}
+.vm .s3-big{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:62px;border:0;border-radius:16px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:16px;color:#fff;text-align:left;cursor:pointer;font-family:inherit}
+.vm .s3-big small{display:block;font-weight:500;font-size:13px;opacity:.92}
+.vm .s3-big.borde{background:var(--card);color:var(--ink);border:1.5px solid var(--line);justify-content:center;min-height:52px}
+.vm .s3-g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.vm .s3-k{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;min-height:84px;text-align:left;color:var(--ink);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.vm .s3-k b{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:30px;line-height:1.1}
+.vm .s3-caras{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:6px}
+.vm .s3-caras b{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:20px;margin-top:4px}
+.vm .s3-caras span{font-size:12px;color:var(--ink-2)}
+.vm .s3-cuadro{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;border:0;border-radius:18px;padding:16px;margin-bottom:12px;color:#fff;text-align:left;cursor:pointer;font-family:inherit}
+.vm .s3-cuadro .h{display:flex;justify-content:space-between;gap:10px}
+.vm .s3-cuadro .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:42px;font-weight:600;line-height:1}
+.vm .s3-cuadro .p{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.vm .s3-pills{display:flex;gap:6px;flex-wrap:wrap}
+.vm .s3-pill{background:rgba(0,0,0,.28);border-radius:15px;padding:3px 10px 3px 3px;display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:14px}
+.vm .s3-row{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px;min-height:64px;text-align:left;color:var(--ink);cursor:pointer;font-family:inherit}
+.vm .s3-row .t{flex:1;min-width:0}.vm .s3-row .t b{display:block;font-size:15px}.vm .s3-row .t span{font-size:12.5px;color:var(--ink-2)}
+.vm .s3-chip{font-size:11.5px;font-weight:800;padding:5px 8px;border-radius:10px;background:var(--chip);white-space:nowrap}
+.vm .s3-seg{display:flex;background:var(--chip);border-radius:12px;padding:4px;gap:4px;flex:1}
+.vm .s3-seg button{flex:1;min-height:38px;border:0;border-radius:9px;background:none;color:var(--ink-2);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+.vm .s3-seg button.on{background:var(--sv-azul);color:#fff}
+.vm .s3-pag{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.vm .s3-pag button{min-width:52px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer}
+.vm .s3-pag button:disabled{opacity:.35}
+.vm .s3-paso{display:flex;justify-content:space-between;gap:8px;padding:9px 0 9px 12px;margin-left:6px;border-left:3px solid var(--line);font-size:14px;color:var(--ink-2)}
+.vm .s3-paso.hecho{border-color:var(--ok);color:var(--ink)}.vm .s3-paso.now{font-weight:800}
+.vm .s3-res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.vm .s3-res button{min-height:52px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;padding:6px}
+.vm .s3-res button.v{background:var(--sv-verde);border-color:transparent;color:#fff}
+.vm .s3-cic{display:flex;gap:12px;padding-bottom:14px}
+.vm .s3-num{width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.vm .s3-in{width:100%;min-height:44px;border-radius:12px;margin-bottom:10px}
+.sheet .s3-res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.sheet .s3-res button{min-height:52px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;padding:6px}
+.sheet .s3-res button.v{background:var(--ok);border-color:transparent;color:#fff}
 .vm .sv-camp-g{display:block;width:100%;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
 .vm .sv-tabs{gap:3px}
 .vm .sv-tabs button{font-size:12.5px;padding:6px 2px;min-width:0;line-height:1.15;flex-direction:column;align-items:center;justify-content:center;gap:1px}
@@ -785,7 +831,7 @@ body{background:var(--bg);color:var(--text)}
    ══════════════════════════════════════════════════════════════════ */
 /* MENOR sube con ajustes y correcciones; MAYOR cuando cambian columnas
    de la hoja, formas de pago o secciones completas.                    */
-const VERSION = "5.3", VERSION_FECHA = "29 oct 2026";
+const VERSION = "6.0", VERSION_FECHA = "30 oct 2026";
 const CONFIG = {
   URL_GUARDADO: "https://script.google.com/macros/s/AKfycbwpwfk__fzINCd7YkKh6g-nsjXjowrxNcc8QhfYxRfAVUVERDg-GBP4o3wBAbX3TV4C/exec",
   URL_PRECIOS_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAYyFDR-SuEWqeqEix6dolJF4ad1raaVZR64l-0P26StX09XXEUMY6-eYZKm97MKR77MVytt3fGZ2h/pub?gid=394431904&single=true&output=csv",
@@ -1757,7 +1803,7 @@ function pintarVista(){
 function ponerVista(n){
   const enSeg = vistaActual()==="vSeg";
   guardarVista(n); cerrarSheet(); pintarVista(); pintarVendedores();
-  if(enSeg){ SEG_TAB="hoy"; pintarSeg(); window.scrollTo(0,0); }
+  if(enSeg){ SEG_TAB="hoy"; S3.pila=[{p:"inicio"}]; S3.bloque=null; pintarSeg(); window.scrollTo(0,0); }
   else { location.hash="#inicio"; ruta(); }
 }
 function elegirVista(){
@@ -2733,6 +2779,334 @@ function abrirRegistroRuta(c, pre){
   if(pre) elegir(pre);
 }
 
+/* ══════════ Seguimiento v3: cuadros, ruta, caritas y Bóveda (Apps Script v13) ══════════
+   Cartera = 3 cuadros (Showroom > Aprobados sin enganche > Cotizaciones pasadas).
+   Ruta: WhatsApp 1 → WhatsApp 2 (+3 días) → llamada (+4, día 8) → Bóveda.
+   «Sin respuesta» avanza con su fecha: el cliente sale de la lista de hoy. */
+const CUAD = {
+  SHOWROOM:{t:"Showroom", s:"Vinieron a la agencia este mes", c:"var(--sv-azul)", p:1},
+  APROBADOS:{t:"Aprobados sin enganche", s:"Crédito listo, solo falta el enganche", c:"#0F7A66", p:2},
+  PASADAS:{t:"Cotizaciones pasadas", s:"Cotizaron en meses anteriores", c:"var(--sv-morado)", p:3}
+};
+const CARAS = {ok:{t:"Al día", c:"var(--ok)"}, hoy:{t:"Toca hoy", c:"#E2B93B"}, atr:{t:"Atrasado", c:"#EE8A3C"}, mal:{t:"Se te pasó", c:"var(--bad)"}, gris:{t:"Fuera de la cartera", c:"var(--muted)"}};
+const S3_RES = [["INTERESADO","Respondió · interesado","v",2],["VISITA","Agendó visita","v",1],["SIN_RESPUESTA","Sin respuesta","",0],["COMPRO","Ya compró","",0],["NO_INTERESA","No le interesa","",0],["EQUIVOCADO","Número equivocado","",0]];
+let S3 = {pila:[{p:"inicio"}], vend:"", bloque:null, q:"", orden:"peor", modelo:"", hoja:0, bq:""};
+const seg3Activo = () => !!SES && (SES.rol==="GERENTE" || ((CFG&&CFG.campanas)||{}).segNuevo==="TODOS");
+const enCartera = c => ["RUTA","RESPONDIO"].includes(c.ruta_estado) && !!CUAD[c.ruta_carril];
+const atraso = c => c.prox ? hoyN()-diaN(c.prox) : -1;
+const carita = c => !enCartera(c) ? "gris" : atraso(c)<0 ? "ok" : atraso(c)===0 ? "hoy" : atraso(c)<=2 ? "atr" : "mal";
+const PESO_CARA = {mal:4, atr:3, hoy:2, ok:1, gris:0};
+const dueS3 = c => enCartera(c) && !!c.prox && diaN(c.prox)<=hoyN();
+const modeloS3 = c => modeloCorto(c) || (c.modelo_interes ? tc(c.modelo_interes) : "");
+function caraSVG(k, tam){
+  const C = CARAS[k] || CARAS.gris, t = tam||30, o = "#1b1b1b";
+  const boca = {ok:"M10 19 Q16 25 22 19", hoy:"M10.5 21 H21.5", atr:"M10 23 Q16 18 22 23", mal:"M10 24 Q16 18.5 22 24"}[k];
+  const cejas = k==="mal" ? `<path d="M8 9.5 L13.5 11.5 M24 9.5 L18.5 11.5" stroke="${o}" stroke-width="2.2" stroke-linecap="round"/>` : "";
+  const cara = k==="gris" ? `<path d="M10 16 H22" stroke="${o}" stroke-width="2.2" stroke-linecap="round" opacity=".6"/>`
+    : `<circle cx="11.5" cy="14" r="2" fill="${o}"/><circle cx="20.5" cy="14" r="2" fill="${o}"/>${cejas}<path d="${boca}" stroke="${o}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 32 32" width="${t}" height="${t}" role="img" aria-label="${C.t}" style="flex:none;width:${t}px;height:${t}px"><title>${C.t}</title><circle cx="16" cy="16" r="16" fill="${C.c}"/>${cara}</svg>`;
+}
+function pasoTxt(c){
+  if(c.ruta_estado==="RESPONDIO") return "Respondió";
+  if(c.ruta_estado==="BOVEDA") return "Bóveda";
+  if(c.ruta_estado==="CERRADO") return "Cerrado";
+  return {WA1:"WhatsApp 1", WA2:"WhatsApp 2", LLAMADA:"Llamada"}[c.ruta_paso] || "—";
+}
+function motivoCara(c){
+  const k = carita(c), d = atraso(c), p = pasoTxt(c);
+  if(k==="gris") return c.ruta_estado==="CERRADO" ? "Cerrado"+(c.motivo?" · "+c.motivo:"") : "En la Bóveda · fuera de tu lista";
+  if(k==="ok") return "Al día · "+p+" el "+fechaCorta(c.prox);
+  if(k==="hoy") return "Toca hoy · "+p;
+  return (k==="atr"?"Atrasado ":"Se te pasó · ")+d+" día"+(d===1?"":"s")+" · "+p+" tocaba "+(d===1?"ayer":fechaCorta(c.prox));
+}
+function claveMsg(c){
+  if(c.ruta_estado==="RESPONDIO") return "LIBRE";
+  const n = c.ruta_paso==="WA2" ? 2 : 1;
+  if(c.ruta_carril==="SHOWROOM") return n===1 ? "PASO_1" : (c.forma_pago==="MAXIKASH" ? "PASO_5_SIN_POLIZA" : "PASO_5");
+  if(c.ruta_carril==="APROBADOS") return "APROB_"+n;
+  return n===1 ? "REACTIVACION" : "PASO_30";
+}
+function textoMsg(c){
+  const k = claveMsg(c), P = plantillas().find(x=>x.clave===k) || plantillas().find(x=>x.clave==="LIBRE") || {texto:"Hola {nombre}, soy {vendedor} de Vento Chalco. "};
+  const promo = (((CFG&&CFG.campanas)||{}).promo||"").trim();
+  return llenar(P.texto, varsDe(c)).trim() + (promo && c.ruta_estado!=="RESPONDIO" ? "\n\n"+promo : "");
+}
+function accionS3(c){
+  if(c.ruta_estado==="RESPONDIO") return {t:"Dar seguimiento por WhatsApp", tipo:"wa", c:"var(--sv-verde)"};
+  if(c.ruta_paso==="LLAMADA") return {t:"Llamar", tipo:"tel", c:"#EE8A3C"};
+  return {t:"Enviar WhatsApp "+(c.ruta_paso==="WA2"?"2":"1"), tipo:"wa", c:"var(--sv-azul)"};
+}
+/** Base del usuario: lo suyo; el gerente ve todo o elige asesor. */
+function s3Base(){
+  const A = segAlcance(); let L = A.base.filter(c=>!c.prueba);
+  if(SES && SES.rol==="GERENTE" && !esVista() && S3.vend) L = L.filter(c=>nom(c.vendedor)===nom(S3.vend));
+  return L;
+}
+const ordenPeor = (a,b) => PESO_CARA[carita(b)]-PESO_CARA[carita(a)] || atraso(b)-atraso(a) || CUADp(a)-CUADp(b) || (a.nombre+a.apellidos).localeCompare(b.nombre+b.apellidos);
+const CUADp = c => (CUAD[c.ruta_carril]||{p:9}).p;
+/** Bloque de hoy: respondieron con fecha de hoy → atrasados (peores primero) → Showroom → Aprobados → Pasadas; tope en minutos. */
+function bloqueS3(L){
+  const g = c => c.ruta_estado==="RESPONDIO" ? 0 : atraso(c)>=1 ? 1 : 1+CUADp(c);
+  const due = L.filter(dueS3).sort((a,b)=>g(a)-g(b) || (g(a)===1 ? atraso(b)-atraso(a) : 0) || diaN(a.prox)-diaN(b.prox) || (a.nombre+a.apellidos).localeCompare(b.nombre+b.apellidos));
+  const tope = Number(((CFG&&CFG.campanas)||{}).bloque)||60; let min = 0; const hoy = [];
+  due.forEach(c=>{ const k = c.ruta_estado==="RUTA" && c.ruta_paso==="LLAMADA" ? 3 : 1; if(min+k<=tope){ hoy.push(c); min+=k; } });
+  return {due, hoy, min};
+}
+function semanaS3(){
+  const h = new Date(); h.setHours(0,0,0,0);
+  const i1 = new Date(2026,10,1), f1 = new Date(2026,10,8);
+  if(h<=f1) return {ini:i1, fin:f1, n:1};
+  const ini = new Date(h); ini.setDate(h.getDate()-((h.getDay()+6)%7)); const fin = new Date(ini); fin.setDate(ini.getDate()+6);
+  return {ini, fin, n:Math.floor((ini-new Date(2026,10,9))/6048e5)+2};
+}
+/* ── pantallas ── */
+const s3Act = () => S3.pila[S3.pila.length-1];
+function s3Ir(x){ S3.pila.push(x); S3.hoja = 0; pintarSeg(); window.scrollTo(0,0); }
+function s3Volver(i){ S3.pila = S3.pila.slice(0, i+1); if(s3Act().p!=="ficha") S3.bloque = s3Act().p==="bloque" ? S3.bloque : null; S3.hoja=0; pintarSeg(); window.scrollTo(0,0); }
+function s3Etiqueta(x){
+  if(x.p==="inicio") return "Seguimiento";
+  if(x.p==="port") return "Portafolio";
+  if(x.p==="lista") return x.titulo;
+  if(x.p==="ficha"){ const c = CLIENTES.find(y=>y.fila===x.fila); return c ? tc(c.nombre+" "+c.apellidos).split(" ").slice(0,2).join(" ") : "Cliente"; }
+  if(x.p==="ciclo") return "Ciclo del cliente";
+  if(x.p==="buscar") return "Buscar";
+  if(x.p==="listo") return "Listo por hoy";
+  return "";
+}
+function s3Barra(){
+  const crumbs = S3.pila.map((x,i)=> i===S3.pila.length-1 ? `<span>${esc(s3Etiqueta(x))}${x.p==="ficha"&&S3.bloque?` <i>(${S3.bloque.i+1} de ${S3.bloque.filas.length})</i>`:""}</span>` : `<button type="button" data-s3-crumb="${i}">${esc(s3Etiqueta(x))}</button><i>›</i>`).join("");
+  return `<div class="s3-top"><div class="s3-crumb">${crumbs}</div><button type="button" class="s3-ib" data-s3-go="buscar" aria-label="Buscar cliente">⌕</button><button type="button" class="s3-ib" data-s3-go="ciclo" aria-label="Cómo funciona el ciclo del cliente">?</button></div>`;
+}
+function s3Selector(){
+  if(!(SES && SES.rol==="GERENTE" && !esVista())) return "";
+  const ases = (CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE").map(u=>u.n);
+  return `<select class="s3-in" id="s3Vend"><option value="">Todo el equipo</option>${ases.map(n=>`<option value="${esc(n)}" ${S3.vend===n?"selected":""}>${esc(tc(n))}</option>`).join("")}</select>`;
+}
+function s3Inicio(){
+  const L = s3Base(), cart = L.filter(enCartera), B = bloqueS3(L), sem = semanaS3();
+  const fin = new Date(sem.fin.getTime()+864e5-1);
+  const semL = cart.filter(c=>c.ruta_inicio && new Date(c.ruta_inicio)>=sem.ini && new Date(c.ruta_inicio)<=fin);
+  const semX = L.filter(c=>c.ruta_inicio && new Date(c.ruta_inicio)>=sem.ini && new Date(c.ruta_inicio)<=fin && !(c.ruta_estado==="RUTA" && c.ruta_paso==="WA1"));
+  const semY = semL.length + L.filter(c=>c.ruta_inicio && new Date(c.ruta_inicio)>=sem.ini && new Date(c.ruta_inicio)<=fin && !enCartera(c)).length;
+  const cuenta = {ok:0,hoy:0,atr:0,mal:0}; cart.forEach(c=>cuenta[carita(c)]++);
+  const contesto = cart.filter(c=>c.ruta_estado==="RUTA" && c.ultimo && hoyN()-diaN(c.ultimo)<=3 && (c.intentos||0)>0);
+  const u = yo(), d = new Date();
+  const sinReinicio = !CLIENTES.some(c=>c.ruta_estado);
+  return `${s3Barra()}
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px"><div><div class="sv-muted">${esc(d.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}))}</div><h1 class="s3-h1">Hola, ${esc(pila(u.nombre))}</h1></div>
+      <button type="button" class="btn btn-sec btn-chico" id="s3NoEres" style="min-height:44px">${esVista()?"Volver a mi vista":"¿No eres tú?"}</button></div>
+    ${s3Selector()}
+    ${sinReinicio?`<div class="sv-aviso" style="margin-bottom:12px">Falta aplicar el reinicio del 1 de noviembre (Gerencia › Herramientas). Mientras, no hay cartera que mostrar.</div>`:""}
+    <div class="s3-box"><div class="s3-sec">Semana ${sem.n} · primer mensaje · ${sem.ini.getDate()} al ${sem.fin.getDate()} ${sem.fin.toLocaleDateString("es-MX",{month:"short"})}</div>
+      <div><b style="font-size:38px;font-family:'IBM Plex Mono',ui-monospace,monospace">${semX.length}</b> <span class="sv-muted" style="font-size:15px">de ${semY} ya tienen su primer mensaje</span></div>
+      <div class="s3-bar"><b style="width:${semY?Math.round(semX.length/semY*100):0}%"></b></div>
+      <div class="sv-muted">${sem.n===1?"La semana 2 salen las llamadas de quien no respondió.":"Quien no respondió sus 2 WhatsApp te sale para llamarle una vez."}</div></div>
+    <button type="button" class="s3-big" style="background:var(--sv-azul)" data-s3-bloque="1"><span>Empezar mi bloque de hoy<small>${B.hoy.length} cliente${B.hoy.length===1?"":"s"} · unos ${B.min} minutos${B.due.length>B.hoy.length?" · "+(B.due.length-B.hoy.length)+" pasan a mañana":""}</small></span><span aria-hidden="true">›</span></button>
+    <button type="button" class="s3-big" style="background:var(--sv-verde);min-height:56px" data-s3-lista="contesto"><span>Me contestó alguien<small>A quién le escribiste en los últimos 3 días</small></span><span aria-hidden="true" style="width:26px;height:26px;display:grid;place-items:center">${ICO_WA}</span></button>
+    <div class="s3-g2">
+      <button type="button" class="s3-k" data-s3-lista="cartera"><b>${cart.length}</b>Mi cartera</button>
+      <button type="button" class="s3-k" data-s3-lista="hoy"><b>${B.due.length}</b>Toca gestionar hoy</button>
+      <button type="button" class="s3-k" data-s3-lista="atrasados"><b style="color:#EE8A3C">${cart.filter(c=>atraso(c)>=1).length}</b>Atrasados</button>
+      <button type="button" class="s3-k" data-s3-lista="respondieron"><b style="color:var(--ok)">${cart.filter(c=>c.ruta_estado==="RESPONDIO").length}</b>Respondieron</button></div>
+    <div class="s3-box"><div class="s3-sec">Cómo va tu cartera</div><div class="s3-caras">${["ok","hoy","atr","mal"].map(k=>`<div>${caraSVG(k)}<b>${cuenta[k]}</b><span>${CARAS[k].t}</span></div>`).join("")}</div></div>
+    <button type="button" class="s3-big borde" data-s3-go="port">Ver mi portafolio ›</button>`;
+}
+function s3Port(){
+  const L = s3Base(), cart = L.filter(enCartera);
+  return `${s3Barra()}${s3Selector()}
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><h1 class="s3-h1">Mi portafolio</h1><span class="sv-muted" style="font-weight:700">${cart.length} clientes</span></div>
+    ${Object.entries(CUAD).map(([k,q])=>{ const l = cart.filter(c=>c.ruta_carril===k), n = {ok:0,hoy:0,atr:0,mal:0}; l.forEach(c=>n[carita(c)]++);
+      return `<button type="button" class="s3-cuadro" style="background:${q.c}" data-s3-lista="cuadro:${k}"><div class="h"><div><div class="p">${q.p} · Prioridad</div><b style="font-size:21px">${q.t}</b><div style="font-size:13px">${q.s}</div></div><span class="n">${l.length}</span></div>
+        <div class="s3-pills">${["ok","hoy","atr","mal"].map(c=>`<span class="s3-pill">${caraSVG(c,22)}${n[c]}</span>`).join("")}</div></button>`; }).join("")}
+    <div class="s3-g2"><button type="button" class="s3-row" style="justify-content:space-between;min-height:52px" data-s3-lista="boveda"><span class="sv-muted" style="font-weight:700">Bóveda</span><b>${L.filter(c=>c.ruta_estado==="BOVEDA").length}</b></button>
+      <button type="button" class="s3-row" style="justify-content:space-between;min-height:52px" data-s3-lista="cerrados"><span class="sv-muted" style="font-weight:700">Cerrados</span><b>${L.filter(c=>c.ruta_estado==="CERRADO").length}</b></button></div>`;
+}
+const LISTAS = {
+  cartera:{t:"Mi cartera", f:enCartera}, hoy:{t:"Toca gestionar hoy", f:dueS3}, atrasados:{t:"Atrasados", f:c=>enCartera(c)&&atraso(c)>=1},
+  respondieron:{t:"Respondieron", f:c=>enCartera(c)&&c.ruta_estado==="RESPONDIO"}, boveda:{t:"Bóveda", f:c=>c.ruta_estado==="BOVEDA"}, cerrados:{t:"Cerrados", f:c=>c.ruta_estado==="CERRADO"},
+  contesto:{t:"Me contestó alguien", f:c=>enCartera(c)&&c.ruta_estado==="RUTA"&&c.ultimo&&hoyN()-diaN(c.ultimo)<=3&&(c.intentos||0)>0, orden:(a,b)=>new Date(b.ultimo)-new Date(a.ultimo)}
+};
+function s3Lista(x){
+  const def = x.tipo.startsWith("cuadro:") ? {t:CUAD[x.tipo.slice(7)].t, f:c=>enCartera(c)&&c.ruta_carril===x.tipo.slice(7)} : LISTAS[x.tipo];
+  const L = s3Base().filter(def.f), q = S3.q.trim().toUpperCase(), dig = soloDig(S3.q);
+  const modelos = [...new Set(L.map(modeloS3).filter(Boolean))].sort();
+  let l = L.filter(c=>(!S3.modelo || modeloS3(c)===S3.modelo) && (!q || (dig.length>=3 && String(c.tel).includes(dig)) || (c.nombre+" "+c.apellidos).toUpperCase().includes(q)));
+  l.sort(def.orden || (S3.orden==="az" ? (a,b)=>(a.nombre+a.apellidos).localeCompare(b.nombre+b.apellidos) : ordenPeor));
+  const por = 10, hojas = Math.max(1, Math.ceil(l.length/por)); if(S3.hoja>=hojas) S3.hoja = hojas-1;
+  const ver = l.slice(S3.hoja*por, S3.hoja*por+por), g = SES && SES.rol==="GERENTE" && !esVista() && !S3.vend;
+  return `${s3Barra()}
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><h1 class="s3-h1">${esc(def.t)}</h1><span class="sv-muted" style="font-weight:700">${l.length}</span></div>
+    <input class="s3-in" id="s3q" type="search" placeholder="Buscar en esta lista" value="${esc(S3.q)}" autocomplete="off">
+    <div style="display:flex;gap:8px;margin-bottom:10px">${def.orden?"":`<div class="s3-seg"><button type="button" class="${S3.orden==="peor"?"on":""}" data-s3-orden="peor">Peores primero</button><button type="button" class="${S3.orden==="az"?"on":""}" data-s3-orden="az">A – Z</button></div>`}
+      <select id="s3Modelo" style="min-height:44px;border-radius:12px;max-width:45%"><option value="">Modelo</option>${modelos.map(m=>`<option ${S3.modelo===m?"selected":""}>${esc(m)}</option>`).join("")}</select></div>
+    ${ver.length ? ver.map(c=>{ const k = carita(c); return `<button type="button" class="s3-row" data-s3-ficha="${c.fila}">${caraSVG(k)}<div class="t"><b>${esc(tc(c.nombre+" "+c.apellidos))}</b><span>${esc([modeloS3(c), pasoTxt(c)+(c.prox&&enCartera(c)&&k==="ok"?" el "+fechaCorta(c.prox):""), g?pila(c.vendedor):""].filter(Boolean).join(" · "))}</span></div><span class="s3-chip" style="color:${CARAS[k].c}">${k==="gris"?esc(pasoTxt(c)):CARAS[k].t}</span></button>`; }).join("")
+      : `<div class="vacio">No hay clientes aquí.</div>`}
+    ${hojas>1?`<div class="s3-pag"><button type="button" data-s3-hoja="-1" ${S3.hoja===0?"disabled":""} aria-label="Hoja anterior">‹</button><b>Hoja ${S3.hoja+1} de ${hojas}</b><button type="button" data-s3-hoja="1" ${S3.hoja>=hojas-1?"disabled":""} aria-label="Hoja siguiente">›</button></div>`:""}`;
+}
+function s3Ficha(c){
+  const k = carita(c), a = accionS3(c), h = HIST[c.fila], dentro = enCartera(c);
+  const etq = [CUAD[c.ruta_carril] ? CUAD[c.ruta_carril].t : c.ruta_estado==="BOVEDA" ? "Bóveda" : "Cerrado", modeloS3(c),
+    c.cotizado ? "Cotizó "+fechaCorta(c.base||c.fecha) : c.campana==="APROBADOS SIN ENGANCHE" ? "Aprobado VentoCredit" : "Desde "+fechaCorta(c.ruta_inicio||c.fecha),
+    c.ruta_carril==="SHOWROOM" && /VENTOCREDIT/i.test(c.observaciones||"") ? "Crédito aprobado" : "", SES&&SES.rol==="GERENTE" ? pila(c.vendedor) : ""].filter(Boolean);
+  const pasos = [["WA1","WhatsApp 1"],["WA2","WhatsApp 2"],["LLAMADA","Llamada"],["BOV","Bóveda"]];
+  const idx = c.ruta_estado==="RUTA" ? {WA1:0, WA2:1, LLAMADA:2}[c.ruta_paso] : null;
+  const fechaPaso = i => {
+    if(idx==null) return "";
+    if(i<idx) return "hecho";
+    if(i===3) return "sin contacto, sale de tu lista";
+    if(i===idx){ const d = atraso(c); return d<0 ? fechaCorta(c.prox) : d===0 ? "hoy" : "tocaba "+(d===1?"ayer":fechaCorta(c.prox)); }
+    const f = new Date(c.prox); const base = atraso(c)>0 ? new Date() : f;
+    const dd = new Date(base); dd.setDate(dd.getDate() + (i-idx===1 ? (idx===0?3:4) : 7)); return "≈ "+fechaCorta(dd);
+  };
+  const ruta = c.ruta_estado==="RESPONDIO" ? `<div class="s3-paso now" style="border-color:var(--ok)"><span>Respondió · seguimiento con su asesor</span><span>${c.prox?fechaCorta(c.prox):""}</span></div>`
+    : idx==null ? `<div class="s3-paso"><span>${esc(c.ruta_estado==="BOVEDA"?"En la Bóveda":"Cerrado")}</span><span>${esc(c.resultado||"")}</span></div>`
+    : pasos.map(([,t],i)=>`<div class="s3-paso ${i<idx?"hecho":i===idx?"now":""}" style="${i===idx?"border-color:"+CARAS[k].c+";color:"+CARAS[k].c:""}"><span>${t}</span><span>${fechaPaso(i)}</span></div>`).join("");
+  const evs = [];
+  if(h && !h.error){
+    h.cotizaciones.forEach(x=>evs.push({f:x.fecha, t:`Cotización ${x.modelo||""}${x.total?" · "+money(x.total):""}`}));
+    h.contactos.forEach(x=>evs.push({f:x.fecha, t:`${x.resultado||x.mensaje||"Contacto"} · ${pilaUsuario(x.usuario)}${x.nota?" · “"+x.nota+"”":""}`}));
+    evs.sort((x,y)=>new Date(y.f)-new Date(x.f));
+  }
+  return `${s3Barra()}
+    <div class="s3-box"><div style="display:flex;gap:12px;align-items:center">${caraSVG(k,48)}<div><b style="font-size:21px;line-height:1.15;display:block">${esc(tc(c.nombre+" "+c.apellidos))}</b><div style="color:${CARAS[k].c};font-weight:800;font-size:13px">${esc(motivoCara(c))}</div></div></div>
+      <a href="tel:+52${esc(c.tel)}" class="mono" style="display:inline-block;margin:10px 0;font-size:17px;font-weight:800;color:var(--ink)">📞 ${esc(telFmt(c.tel))}</a>
+      <div class="s3-pills">${etq.map((t,i)=>`<span class="s3-chip" style="${i===0&&CUAD[c.ruta_carril]?"background:"+CUAD[c.ruta_carril].c+";color:#fff":""}">${esc(t)}</span>`).join("")}</div></div>
+    <div class="s3-sec">Su ruta</div><div class="s3-box">${ruta}</div>
+    ${dentro?`<button type="button" class="s3-big" style="background:${a.c};justify-content:center" data-s3-accion="${c.fila}">${a.t}</button>
+      <div class="s3-sec">¿Qué pasó?</div>
+      <div class="s3-res">${S3_RES.map(([r,t,cl])=>`<button type="button" class="${cl}" data-s3-res="${r}" data-fila="${c.fila}">${t}</button>`).join("")}</div>`
+      : `<div class="sv-muted" style="margin-bottom:12px">${c.ruta_estado==="BOVEDA"?"Está en la Bóveda: regresa a tu cartera si vuelve a cotizar o si entra a una campaña nueva.":"Cliente cerrado."}</div>`}
+    <button type="button" class="s3-big borde" data-fa-cot="${c.fila}">${c.cotizado?"Recotizar":"Cotizar"} en el cotizador</button>
+    <details class="s3-box"><summary style="font-weight:800;cursor:pointer;min-height:28px">Historial (${h&&!h.error?evs.length:"…"})</summary>
+      ${!h?`<div class="sv-muted">Cargando…</div>`:h.error?`<div class="sv-muted">${esc(h.error)}</div>`:evs.map(x=>`<div class="sv-muted" style="margin-top:6px">${fechaCorta(x.f)} · ${esc(x.t)}</div>`).join("")||`<div class="sv-muted">Sin movimientos.</div>`}</details>`;
+}
+function s3Ciclo(){
+  const paso = (n,col,t,cuando,s) => `<div class="s3-cic"><span class="s3-num" style="background:${col}">${n}</span><div><b>${t}</b> <span style="color:var(--sv-azul);font-size:12px;font-weight:700">${cuando}</span><div class="sv-muted">${s}</div></div></div>`;
+  return `${s3Barra()}<h1 class="s3-h1">Ciclo del cliente</h1><div class="sv-muted" style="margin:6px 0 14px;font-size:14px">Cómo avanza cada cliente, cuándo cambia y por qué. Tú solo marcas qué pasó; la app mueve las fechas.</div>
+    <div class="s3-box">${paso(0,"var(--sv-gris)","Entra a tu cartera","día 0","Cotizaste en el cotizador o llegó aprobado de VentoCredit. Aparece en su cuadro.")}
+      ${paso(1,"var(--sv-azul)","WhatsApp 1","día 1","Lo envías, marcas qué pasó y desaparece hasta su siguiente paso.")}
+      ${paso(2,"var(--sv-azul)","WhatsApp 2","día 4","Recordatorio con obsequios o enganche, según su cuadro.")}
+      ${paso(3,"#EE8A3C","Llamada","día 8","Si no respondió ningún mensaje, te sale para llamarle una vez.")}
+      ${paso(4,"var(--sv-gris)","Bóveda","sin contacto","Sale de tu lista y se guarda en la Bóveda. Se encuentra con la lupa y regresa si vuelve a cotizar o entra a una campaña nueva.")}</div>
+    <div class="s3-sec">Si pasa algo, cambia de camino</div>
+    <div class="s3-box"><b style="color:var(--ok)">Respondió o agendó visita</b><div class="sv-muted">Sale de la ruta y pasa a «Respondieron». Te vuelve a salir el día que pongas (o en 2 días).</div></div>
+    <div class="s3-box"><b>Compró · No le interesa · Número equivocado</b><div class="sv-muted">Se cierra. Ya no aparece en tu lista.</div></div>
+    <div class="s3-box"><b style="color:var(--sv-azul)">Volvió a cotizar</b><div class="sv-muted">Regresa a Showroom con la misma ficha, aunque estuviera en la Bóveda.</div></div>
+    <div class="s3-sec">Qué significa cada carita</div>
+    <div class="s3-box s3-g2" style="margin-bottom:12px">${[["ok","ya lo gestionaste"],["hoy","su paso vence hoy"],["atr","1–2 días"],["mal","3+ días"]].map(([k,t])=>`<span style="display:flex;gap:8px;align-items:center">${caraSVG(k,26)}<span><b>${CARAS[k].t}</b><br><span class="sv-muted">${t}</span></span></span>`).join("")}</div>
+    <div class="s3-box sv-muted"><b style="color:var(--ink)">Un cliente = una ficha.</b> Nunca aparece en dos cuadros ni dos veces en tu lista.<br><b style="color:var(--ink)">Cambio de mes:</b> lo abierto en Showroom pasa a Cotizaciones pasadas, sin reiniciar su ruta.</div>`;
+}
+function s3Buscar(){
+  const q = S3.bq.trim(), Q = q.toUpperCase(), dig = soloDig(q);
+  const L = q.length<2 ? [] : s3Base().filter(c=> dig.length>=4 ? String(c.tel).endsWith(dig) || String(c.tel).includes(dig) : (c.nombre+" "+c.apellidos).toUpperCase().includes(Q)).slice(0,40);
+  return `${s3Barra()}<h1 class="s3-h1" style="margin-bottom:10px">Buscar</h1>
+    <input class="s3-in" id="s3b" type="search" placeholder="Nombre o últimos 4 dígitos del teléfono" value="${esc(S3.bq)}" autocomplete="off">
+    <div class="sv-muted" style="margin-bottom:10px">Busca en tu cartera, la Bóveda y los cerrados.</div>
+    ${L.map(c=>{ const k = carita(c); return `<button type="button" class="s3-row" data-s3-ficha="${c.fila}">${caraSVG(k)}<div class="t"><b>${esc(tc(c.nombre+" "+c.apellidos))}</b><span>${esc([telFmt(c.tel), CUAD[c.ruta_carril]?CUAD[c.ruta_carril].t:pasoTxt(c)].join(" · "))}</span></div></button>`; }).join("") || (q.length>=2?`<div class="vacio">Sin resultados.</div>`:"")}`;
+}
+function s3Listo(){
+  return `${s3Barra()}<div class="s3-box" style="text-align:center;padding:28px 16px">${caraSVG("ok",64)}<h1 class="s3-h1" style="margin-top:12px">Listo por hoy</h1><div class="sv-muted" style="margin-top:6px">Terminaste tu bloque. Lo que no alcanzó sale mañana.</div></div>
+    <button type="button" class="s3-big borde" data-s3-crumb="0">Volver al inicio</button>`;
+}
+function pintarSeg3(){
+  ver($("segTabs"), false); ver($("btnLlamadas"), false); ver($("segFiltros"), false);
+  if(!CLI_LEIDOS){ $("segPanel").innerHTML = ""; $("segLista").innerHTML = '<div class="vacio">Cargando clientes…</div>'; return; }
+  $("segLista").innerHTML = "";
+  const x = s3Act();
+  const foco = document.activeElement && ["s3q","s3b"].includes(document.activeElement.id) ? document.activeElement.id : "", pos = foco ? document.activeElement.selectionStart : 0;
+  let html;
+  if(x.p==="port") html = s3Port();
+  else if(x.p==="lista") html = s3Lista(x);
+  else if(x.p==="ficha"){ const c = CLIENTES.find(y=>y.fila===x.fila); html = c ? s3Ficha(c) : (S3.pila.pop(), s3Inicio()); }
+  else if(x.p==="ciclo") html = s3Ciclo();
+  else if(x.p==="buscar") html = s3Buscar();
+  else if(x.p==="listo") html = s3Listo();
+  else html = s3Inicio();
+  $("segPanel").innerHTML = html;
+  if(foco && $(foco)){ const b = $(foco); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(e){} }
+}
+function s3AbrirFicha(fila){ const c = CLIENTES.find(y=>String(y.fila)===String(fila)); if(!c) return; s3Ir({p:"ficha", fila:c.fila}); cargarHistorial(c, true); }
+function s3Bloque(){
+  const B = bloqueS3(s3Base());
+  if(!B.hoy.length){ toast("No tienes pendientes hoy."); return; }
+  S3.bloque = {filas:B.hoy.map(c=>c.fila), i:0};
+  S3.pila = [{p:"inicio"}]; s3AbrirFicha(S3.bloque.filas[0]);
+}
+function s3Siguiente(){
+  if(!S3.bloque){ if(s3Act().p==="ficha") S3.pila.pop(); pintarSeg(); return; }
+  S3.bloque.i++;
+  S3.pila = [{p:"inicio"}];
+  if(S3.bloque.i >= S3.bloque.filas.length){ S3.bloque = null; s3Ir({p:"listo"}); return; }
+  s3AbrirFicha(S3.bloque.filas[S3.bloque.i]);
+}
+function s3Accion(c){
+  const a = accionS3(c);
+  if(a.tipo==="tel"){ location.href = "tel:+52"+c.tel; setTimeout(()=>s3QuePaso(c), 800); return; }
+  const clave = claveMsg(c);
+  window.open(`https://wa.me/52${c.tel}?text=${encodeURIComponent(textoMsg(c))}`, "_blank");
+  s3QuePaso(c, null, clave);
+}
+function s3QuePaso(c, pre, clave){
+  const sig = c.ruta_estado==="RESPONDIO" ? "te vuelve a salir en 3 días" : c.ruta_paso==="WA1" ? "pasa a WhatsApp 2 en 3 días" : c.ruta_paso==="WA2" ? "pasa a la llamada en 4 días" : "se va a la Bóveda";
+  abrirSheet(`<div class="cab-s"><div><h3>¿Qué pasó con ${esc(pila(c.nombre))}?</h3>
+      <div class="muted" style="font-size:13px">Si no contestó toca «Sin respuesta»: ${sig}.</div></div>
+      <button class="cerrar" data-cerrar>${SVG.x}</button></div>
+    <div class="s3-res">${S3_RES.map(([k,t,cl])=>`<button type="button" class="${cl}" data-q="${k}">${t}</button>`).join("")}</div>
+    <div id="qFecha" class="oculto"><label for="qF" id="qFL">Próximo seguimiento</label><input type="date" id="qF"></div>
+    <label for="qNota">Nota (opcional)</label><input id="qNota" placeholder="Ej. viene el sábado con su esposa">
+    <div class="pila"><button class="btn btn-wa oculto" id="qGuardar">Guardar</button></div>`);
+  const iso = x => x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  let elegido = null;
+  const elegir = k => {
+    elegido = k; const R = S3_RES.find(x=>x[0]===k), pide = k==="INTERESADO" || k==="VISITA";
+    document.querySelectorAll("[data-q]").forEach(b=>b.style.outline = b.dataset.q===k ? "3px solid var(--text)" : "");
+    ver($("qFecha"), pide); ver($("qGuardar"), true);
+    if(pide){ const d = new Date(); d.setDate(d.getDate()+(R[3]||2)); $("qF").value = iso(d); $("qF").min = iso(new Date()); $("qFL").textContent = k==="VISITA" ? "Fecha de la visita" : "Próximo seguimiento"; }
+    $("qGuardar").textContent = "Guardar · "+R[1];
+  };
+  document.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>elegir(b.dataset.q));
+  $("qGuardar").onclick = async ()=>{
+    if(!elegido) return;
+    document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=true); $("qGuardar").textContent = "Guardando…";
+    try{
+      const j = await api("ruta", {fila:c.fila, folio:c.folio, resultado:elegido, fecha:$("qF").value||"", nota:$("qNota").value.trim(), clave:clave||claveMsg(c)});
+      ponerClienteLocal(j.cliente); cerrarSheet();
+      const n = j.cliente;
+      toast("Guardado · "+(n.ruta_estado==="BOVEDA" ? "pasó a la Bóveda" : n.ruta_estado==="CERRADO" ? "cliente cerrado" : n.ruta_estado==="RESPONDIO" ? "Respondió · "+fechaCorta(n.prox) : pasoTxt(n)+" el "+fechaCorta(n.prox)));
+      s3Siguiente();
+    }catch(e){ toast(/desconocida/i.test(e.message)?"Falta pegar el Apps Script v13.":e.message, true); document.querySelectorAll("#sheetCont button").forEach(x=>x.disabled=false); $("qGuardar").textContent = "Guardar"; }
+  };
+  if(pre) elegir(pre);
+}
+function instalarSeg3(){
+  const v = $("vSeg");
+  v.addEventListener("click", e=>{
+    if(!seg3Activo()) return;
+    const t = e.target, q = sel => t.closest(sel);
+    if(q("[data-s3-crumb],[data-s3-go],[data-s3-lista],[data-s3-ficha],[data-s3-bloque],[data-s3-orden],[data-s3-hoja],[data-s3-accion],[data-s3-res],[data-fa-cot],#s3NoEres")) e.stopImmediatePropagation();
+    let b;
+    if((b = q("[data-s3-crumb]"))){ S3.bloque = null; s3Volver(Number(b.dataset.s3Crumb)); return; }
+    if((b = q("[data-s3-go]"))){ const p = b.dataset.s3Go; if(p==="buscar") S3.bq = ""; s3Ir({p}); return; }
+    if((b = q("[data-s3-lista]"))){ const tp = b.dataset.s3Lista, def = tp.startsWith("cuadro:") ? CUAD[tp.slice(7)].t : LISTAS[tp].t; S3.q = ""; S3.modelo = ""; S3.orden = "peor"; s3Ir({p:"lista", tipo:tp, titulo:def}); return; }
+    if((b = q("[data-s3-ficha]"))){ S3.bloque = null; s3AbrirFicha(b.dataset.s3Ficha); return; }
+    if((b = q("[data-s3-bloque]"))){ s3Bloque(); return; }
+    if((b = q("[data-s3-orden]"))){ S3.orden = b.dataset.s3Orden; S3.hoja = 0; pintarSeg(); return; }
+    if((b = q("[data-s3-hoja]"))){ S3.hoja += Number(b.dataset.s3Hoja); pintarSeg(); window.scrollTo(0,0); return; }
+    if((b = q("[data-s3-accion]"))){ const c = CLIENTES.find(y=>String(y.fila)===b.dataset.s3Accion); if(c) s3Accion(c); return; }
+    if((b = q("[data-s3-res]"))){ const c = CLIENTES.find(y=>String(y.fila)===b.dataset.fila); if(c) s3QuePaso(c, b.dataset.s3Res); return; }
+    if((b = q("[data-fa-cot]"))){ const c = CLIENTES.find(y=>String(y.fila)===b.dataset.faCot); if(c) recotizar(c); return; }
+    if(q("#s3NoEres")){ if(esVista()) ponerVista(null); else if(SES && SES.rol==="GERENTE") elegirVista(); else if(confirm("¿Cerrar sesión para entrar con otro usuario?")) cerrarSesion(); return; }
+  }, true);
+  v.addEventListener("change", e=>{
+    if(e.target.id==="s3Vend"){ S3.vend = e.target.value; pintarSeg(); }
+    if(e.target.id==="s3Modelo"){ S3.modelo = e.target.value; S3.hoja = 0; pintarSeg(); }
+  });
+  v.addEventListener("input", e=>{
+    if(e.target.id==="s3q"){ S3.q = e.target.value; S3.hoja = 0; pintarSeg(); }
+    if(e.target.id==="s3b"){ S3.bq = e.target.value; pintarSeg(); }
+  });
+}
+
 /* ── Ficha del cliente ── */
 function pintarFicha(c){
   const h = HIST[c.fila];
@@ -2871,8 +3245,7 @@ function pintarSeg(){
     s.innerHTML='<option value="">Todo el equipo</option>'+vs.map(v=>`<option value="${esc(v)}">${esc(tc(v))}</option>`).join("");
     s.value=vs.includes(antes)?antes:"";
   }
-  RUTA_MIG = RUTA_ON();
-  if(SEG_TAB!=="llam" || RUTA_MIG){ if(SEG_TAB==="llam") SEG_TAB="hoy"; pintarRuta(A); return; }
+  if(seg3Activo()){ pintarSeg3(); return; }
   const ola1 = c => campSinCot(c) && esBF(c) && olaN(c)===1 ? 0 : 1;
   const hoy = A.lista.filter(pendienteDelMes).sort((a,b)=>ola1(a)-ola1(b)
     || (ola1(a)===0 ? segN(b)-segN(a) || String(a.folio).localeCompare(String(b.folio)) : 0)
@@ -3153,13 +3526,13 @@ function htmlImportarVC(){
   const I = IVC, R = I.res;
   const lista = (t, xs) => xs && xs.length ? `<details class="sv-det"><summary>${t} · ${xs.length}</summary><div class="sv-muted" style="white-space:pre-line">${xs.map(esc).join("\n")}</div></details>` : "";
   return `<div class="sv-card"><div class="sv-sec">Importar VentoCredit (cada lunes)</div>
-    <div class="sv-muted" style="margin-bottom:10px">Agencia 25: entran como «Aprobados sin enganche». Otras agencias: solo si el teléfono ya existe en el cotizador. Mismo teléfono = se actualiza, no se duplica. Mismo nombre con otro teléfono = no se crea y queda para que lo revises.</div>
+    <div class="sv-muted" style="margin-bottom:10px">Aprobados de la agencia 25 con 3 meses o menos entran a «Aprobados sin enganche» (los más viejos a la Bóveda). Otras agencias: solo si el teléfono ya existe. Rechazados: a la Bóveda. Mismo teléfono = se actualiza, no se duplica. Mismo nombre con otro teléfono = no se crea y queda para revisar.</div>
     <select id="ivcTipo" class="r-sel"><option value="APROBADOS" ${I.tipo==="APROBADOS"?"selected":""}>Aprobados sin enganche</option><option value="RECHAZADOS" ${I.tipo==="RECHAZADOS"?"selected":""}>Rechazados</option></select>
     <input type="file" id="ivcArchivo" accept=".xlsx,.xls,.csv" style="width:100%;min-height:44px">
     ${I.archivo?`<div class="sv-muted" style="margin-top:6px">${esc(I.archivo)} · ${I.filas?I.filas.length:0} renglones</div>`:""}
     ${I.error?`<div class="sv-aviso" style="margin-top:8px">${esc(I.error)}</div>`:""}
     ${R ? `<div class="sv-big" style="margin-top:10px">${R.nuevos} <small>nuevos${R.aplicado?" · importados ✓":""}</small></div>
-      <div class="sv-muted">${R.filas} renglones · ${R.actualizados.length} ya existían (se actualizan) · ${R.ignorados} de otras agencias ignorados · ${R.sinTel.length} sin teléfono</div>
+      <div class="sv-muted">${R.filas} renglones · ${R.actualizados.length} ya existían (se actualizan)${R.aCartera&&R.aCartera.length?" · "+R.aCartera.length+" regresan de la Bóveda o Pasadas a Aprobados":""} · ${R.ignorados} de otras agencias ignorados · ${R.sinTel.length} sin teléfono</div>
       <table class="sv-table" style="margin-top:6px">${Object.entries(R.porAsesor||{}).map(([n,k])=>`<tr><td>${esc(pila(n))}</td><td>${k}</td></tr>`).join("")}</table>
       ${lista("Revisar duplicado (no se crean)", (R.revisar||[]).map(x=>x.cliente+" · tel "+telFmt(x.tel)+" · parecido a "+x.folio+" (tel "+telFmt(x.telExistente)+")"))}
       ${lista("Ya existían", R.actualizados)}${lista("Sin teléfono", R.sinTel)}
@@ -3189,6 +3562,57 @@ async function accionImportarVC(conf){
     if(conf){ toast(j.nuevos+" clientes importados."); CLI_LEIDOS=0; await cargarClientes(true); }
   }catch(e){ IVC.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v12." : e.message; }
   IVC.cargando = false; pintarGerencia();
+}
+/* ── Gerencia: reinicio del 1 de noviembre y activación para todos ── */
+let REI = {filas:[], archivos:[], res:null, cargando:false, error:""};
+function htmlReinicio(){
+  if(esVista() || !SES || SES.rol!=="GERENTE") return "";
+  const R = REI.res, cs = ["SHOWROOM","APROBADOS","PASADAS"], ases = (CFG?CFG.usuarios:[]).filter(u=>u.rol!=="GERENTE").map(u=>u.n);
+  const tabla = R ? `<table class="sv-table"><tr><th>Cuadro</th>${ases.map(n=>`<th>${esc(pila(n))}</th>`).join("")}</tr>
+      ${cs.map(k=>`<tr><td>${CUAD[k].t}</td>${ases.map(n=>`<td>${((R.conteo[k]||{})[n])||0}</td>`).join("")}</tr>`).join("")}
+      <tr><td><b>Cartera</b></td>${ases.map(n=>`<td><b>${cs.reduce((t,k)=>t+(((R.conteo[k]||{})[n])||0),0)}</b></td>`).join("")}</tr>
+      <tr><td>Bóveda</td>${ases.map(n=>`<td>${(R.boveda||{})[n]||0}</td>`).join("")}</tr></table>` : "";
+  const lista = (t, xs) => xs && xs.length ? `<details class="sv-det"><summary>${t} · ${xs.length}</summary><div class="sv-muted" style="white-space:pre-line">${xs.map(esc).join("\n")}</div></details>` : "";
+  const activo = ((CFG&&CFG.campanas)||{}).segNuevo==="TODOS";
+  return `<div class="sv-card"><div class="sv-sec">Seguimiento · reinicio del 1 de noviembre</div>
+    ${CLIENTES.some(c=>c.ruta_estado) && !R ? `<div class="sv-muted">El reinicio ya se aplicó.</div>` : `
+    <div class="sv-muted" style="margin-bottom:8px">Sube el reporte de aprobados de VentoCredit (agencia 25) y el de aprobados fuera del cotizador. Puedes elegir varios archivos. Primero ves el conteo; se respaldan SEGUIMIENTO y CONTACTOS antes de escribir.</div>
+    <input type="file" id="reiArchivos" accept=".xlsx,.xls,.csv" multiple style="width:100%;min-height:44px">
+    ${REI.archivos.length?`<div class="sv-muted" style="margin-top:6px">${REI.archivos.map(esc).join(" · ")} · ${REI.filas.length} renglones</div>`:""}
+    ${REI.error?`<div class="sv-aviso" style="margin-top:8px">${esc(REI.error)}</div>`:""}
+    ${R ? `<div class="sv-muted" style="margin:10px 0 6px">Aprobados leídos: ${R.aprobadosLeidos} · nuevos: ${R.nuevos} · cerrados: ${R.cerrados}</div><div style="overflow-x:auto">${tabla}</div>
+      ${lista("Sin asesor que se reparten", R.repartidos)}${lista("Revisar duplicado (no se crean)", (R.revisar||[]).map(x=>x.cliente+" · tel "+telFmt(x.tel)+" · parecido a "+x.folio+" (tel "+telFmt(x.telExistente)+")"))}
+      ${R.aplicado ? `<div class="sv-aviso" style="margin-top:10px">Listo. Respaldo: ${esc(R.respaldo)}.</div>` : `<button type="button" class="sv-act" style="background:var(--sv-verde);width:100%;margin-top:10px" id="reiOk"${REI.cargando?" disabled":""}>${REI.cargando?"Aplicando…":"Confirmar reinicio"}</button>`}`
+      : `<button type="button" class="sv-act" style="background:var(--sv-azul);width:100%;margin-top:10px" id="reiVer"${REI.cargando?" disabled":""}>${REI.cargando?"Calculando…":"Ver conteo"}</button>`}`}
+    <div class="sv-sec" style="margin-top:14px">Seguimiento nuevo para los asesores</div>
+    <div class="sv-muted">${activo?"Activo para todos.":"Hoy solo lo ves tú. Kevin y Osvaldo ven la pantalla anterior."}</div>
+    <button type="button" class="sv-act ${activo?"ghost":""}" style="${activo?"":"background:var(--sv-verde);"}width:100%;margin-top:8px" id="segTodos" data-valor="${activo?"GERENTE":"TODOS"}">${activo?"Regresar a solo gerente":"Activar para todos"}</button></div>`;
+}
+async function leerArchivosRei(files){
+  REI = Object.assign(REI, {filas:[], archivos:[], res:null, error:"", cargando:true}); pintarGerencia();
+  try{
+    await cargarXLSX();
+    const p2 = n => String(n).padStart(2,"0");
+    for(const file of files){
+      const wb = XLSX.read(await file.arrayBuffer(), {type:"array", cellDates:true}), ws = wb.Sheets[wb.SheetNames[0]];
+      XLSX.utils.sheet_to_json(ws, {raw:true, defval:""}).forEach(o=>{ const x={}; Object.keys(o).forEach(k=>{ const v=o[k]; x[k] = v instanceof Date ? p2(v.getDate())+"/"+p2(v.getMonth()+1)+"/"+v.getFullYear() : String(v); }); REI.filas.push(x); });
+      REI.archivos.push(file.name);
+    }
+  }catch(e){ REI.error = e.message; }
+  REI.cargando = false; pintarGerencia();
+}
+async function accionReinicio(conf){
+  REI.cargando = true; REI.error = ""; pintarGerencia();
+  try{
+    const j = await api("reinicio", {aprobados:REI.filas, confirmar:!!conf}); REI.res = j;
+    if(conf){ toast("Reinicio aplicado."); CLI_LEIDOS = 0; await cargarClientes(true); cargarConfig(); }
+  }catch(e){ REI.error = /desconocida/i.test(e.message) ? "Falta pegar el Apps Script v13." : e.message; }
+  REI.cargando = false; pintarGerencia();
+}
+async function accionSegTodos(valor){
+  try{ await api("segNuevo", {valor}); await cargarConfig(); toast(valor==="TODOS" ? "Seguimiento nuevo activo para todos." : "Seguimiento nuevo solo para ti."); }
+  catch(e){ toast(/desconocida/i.test(e.message) ? "Falta pegar el Apps Script v13." : e.message, true); }
+  pintarGerencia();
 }
 let GER_CIERRE = null;   // {k, ola, res, cargando, error}
 /** Estado de la ola elegida, botón «Cerrar ola» y lista de cerrados. */
@@ -3227,7 +3651,7 @@ async function accionCerrarOla(k, ola, conf){
 }
 function htmlGerHerramientas(mesSel){
   const V = VENTAS[mesSel]||{}, revisar = (V.ventas||[]).filter(v=>v.mes===mesSel && mismoDiaVenta(v));
-  return `${htmlMigrarRuta()}${htmlImportarVC()}${htmlImportarCampana()}
+  return `${htmlReinicio()}${htmlImportarVC()}
     <div class="sv-card"><div class="sv-sec">Buscar cotización</div>
       <div class="sv-search">⌕<input id="gerBusca" type="search" placeholder="Nombre del cliente o WhatsApp…" autocomplete="off"></div>
       <div id="gerBuscaRes" class="sv-res-busca"><div class="sv-muted">Escribe al menos 3 letras.</div></div></div>
@@ -3251,6 +3675,9 @@ function instalarEventosGer(){
     const h = e.target.closest(".sv-bloque>h2");
     if(h){ const s=h.parentElement, id=s.dataset.bloque, c=gerCerrados(); s.classList.toggle("cerrado"); c[id]=s.classList.contains("cerrado"); try{ localStorage.setItem("vch_ger_cerrados", JSON.stringify(c)); }catch(x){} return; }
     const cop = e.target.closest("[data-copiar]"); if(cop) copiarTexto(cop.dataset.copiar);
+    if(e.target.closest("#reiVer")){ if(!REI.filas.length && !confirm("No subiste el reporte de aprobados: nadie entrará a «Aprobados sin enganche». ¿Ver el conteo así?")) return; accionReinicio(false); return; }
+    if(e.target.closest("#reiOk")){ if(confirm("¿Aplicar el reinicio? Se respaldan SEGUIMIENTO y CONTACTOS antes.")) accionReinicio(true); return; }
+    const st = e.target.closest("#segTodos"); if(st){ if(confirm(st.dataset.valor==="TODOS" ? "¿Activar el seguimiento nuevo para Kevin y Osvaldo?" : "¿Regresar el seguimiento nuevo a solo gerente?")) accionSegTodos(st.dataset.valor); return; }
     if(e.target.closest("#migVer")){ accionMigrar(false); return; }
     if(e.target.closest("#migOk")){ if(confirm("¿Activar el seguimiento nuevo? Se hace un respaldo de SEGUIMIENTO antes.")) accionMigrar(true); return; }
     if(e.target.closest("#ivcVer")){ accionImportarVC(false); return; }
@@ -3270,6 +3697,7 @@ function instalarEventosGer(){
   });
   v.addEventListener("change", e=>{
     if(e.target.id==="ivcArchivo" && e.target.files[0]){ leerArchivoVC(e.target.files[0]); return; }
+    if(e.target.id==="reiArchivos" && e.target.files.length){ leerArchivosRei([...e.target.files]); return; }
     if(e.target.id==="ivcTipo"){ IVC.tipo = e.target.value; IVC.res = null; pintarGerencia(); return; }
     if(e.target.id==="campHoja"){ CAMP_IMP.hoja = e.target.value; CAMP_IMP.res = null; pintarGerencia(); } });
   v.addEventListener("input", e=>{ if(e.target.id==="gerBusca") $("gerBuscaRes").innerHTML = buscarCotizacion(e.target.value); });
@@ -3702,7 +4130,7 @@ async function arrancar(){
   $("vSeg").addEventListener("input", e=>{ if(e.target.id==="pBuscar"){ PORT_F.q=e.target.value; pintarSeg(); } });
   $("btnLlamadas").onclick=()=>{ SEG_TAB="llam"; SEG_FICHA=null; pintarSeg(); window.scrollTo(0,0); };
   $("segRecargar").onclick=()=>{ cargarClientes(true); cargarDatosSeg(true); };
-  instalarEventosSeg(); instalarEventosGer();
+  instalarEventosSeg(); instalarEventosGer(); instalarSeg3();
   $("segLista").addEventListener("click",e=>{
     const b=e.target.closest("[data-wa]"); if(!b) return;
     const c=CLIENTES.find(x=>String(x.fila)===b.dataset.wa); if(c) abrirMensaje(c);
